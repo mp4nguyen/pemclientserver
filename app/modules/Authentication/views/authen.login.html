@@ -1,0 +1,63 @@
+<div>
+    <!-- BEGIN LOGIN FORM -->
+    <form class="login-form content" name="loginCtrl.loginForm" method="post" ng-submit="loginCtrl.login()" novalidate>
+        <div class="form-title">
+            <span class="form-title">Welcome.</span>
+            <span class="form-subtitle">Please login(Builing phone booking).</span>
+        </div>
+        <div class="alert alert-danger display-hide">
+            <button class="close" data-close="alert"></button>
+            <span> Enter any username and password. </span>
+        </div>
+
+        <!--UserName-->
+        <div class="form-group" ng-class="{'has-error':loginCtrl.showClickedValidation && loginCtrl.loginForm.username.$invalid}">
+            <!--ie8, ie9 does not support html5 placeholder, so we just show field title for that-->
+            <label class="control-label visible-ie8 visible-ie9">Username</label>
+            <div class="input-icon">
+                <i class="fa fa-user"></i>
+                <input class="form-control form-control-solid placeholder-no-fix" type="text" autocomplete="off" placeholder="Username" name="username" required ng-pattern="/^\s*\S+\s*$/" ng-model="loginCtrl.username"/>
+            </div>
+            <!-- ERROR -->
+            <span ng-show="loginCtrl.showClickedValidation">
+                <span for="username" ng-show="loginCtrl.loginForm.username.$error.required" class="help-block">Username is required.</span>
+                <span for="username" ng-show="loginCtrl.loginForm.username.$error.pattern" class="help-block">Username cannot contains whitespace.</span>
+            </span>
+            <!-- ERROR -->
+        </div>
+
+        <!--Password-->
+        <div class="form-group" ng-class="{'has-error':loginCtrl.showClickedValidation && loginCtrl.loginForm.password.$invalid}">
+            <label class="control-label visible-ie8 visible-ie9">Password</label>
+            <div class="input-icon">
+                <i class="fa fa-lock"></i>
+                <input class="form-control form-control-solid placeholder-no-fix" type="password" autocomplete="off" placeholder="Password" name="password" required ng-model="loginCtrl.password"/>
+            </div>
+            <!-- ERROR -->
+            <span ng-show="loginCtrl.showClickedValidation">
+                <span for="password" ng-show="loginCtrl.loginForm.password.$error.required" class="help-block">Password is required.</span>
+            </span>
+            <!-- ERROR -->
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn red btn-block uppercase"> <i class="fa fa-spinner fa-spin" ng-hide="!loginCtrl.loading1 && !loginCtrl.loading2 "></i>Login</button>
+        </div>
+        <div class="form-actions">
+            <div class="pull-left">
+                <!--<label class="rememberme check"> <input type="checkbox" name="remember" value="1" />Remember me </label>-->
+            </div>
+            <div class="pull-right forget-password-block">
+                <a ui-sref="authentication.forgotpass" id="forget-password" class="forget-password">Forgot Password?</a>
+            </div>
+        </div>
+        <!--
+        <div class="create-account">
+            <p>
+                <a ui-sref="authentication.registration" class="btn-primary btn" id="register-btn">Create an account</a>
+            </p>
+        </div>
+        -->
+    </form>
+    <!-- END LOGIN FORM -->
+</div>
+<!-- END LOGIN -->

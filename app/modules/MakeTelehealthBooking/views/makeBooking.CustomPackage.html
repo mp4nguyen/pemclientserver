@@ -1,0 +1,17 @@
+<div class="modal-header">
+    <h3 class="modal-title">Please Select Assessments</h3>
+   
+</div>
+<div class="modal-body">
+    <div ng-repeat="header in CustomPackageCtrl.companyObject.assessments">
+        <h4>{{header.assName}}</h4>
+        <div ng-repeat=" ass in header.assessments ">
+            <input type="checkbox" checklist-model="CustomPackageCtrl.assessments" checklist-value="ass.id" >
+            <label>{{ass.assName}}</label>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" type="button" ng-click="CustomPackageCtrl.ok()">OK</button>
+    <button class="btn btn-warning" type="button" ng-click="CustomPackageCtrl.cancel()">Cancel</button>
+</div>

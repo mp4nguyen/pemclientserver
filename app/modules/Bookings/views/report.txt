@@ -1,0 +1,76 @@
+<table cellspacing="0" cellpadding="4" align="center" style="border-collapse: collapse">
+        <tbody><tr><td colspan="4" bgcolor="Silver"><b>Booking Details</b></td></tr>
+        <tr>
+          <td style="border:1px solid gray">Company</td>
+          <td style="border:1px solid gray" colspan="3">Test Company</td>
+        </tr>
+        <tr>
+          <td style="border:1px solid gray">PO Number</td>
+          <td style="border:1px solid gray" colspan="3">2</td>
+        </tr>
+        <tr>
+          <td style="border:1px solid gray">Project Identification</td>
+          <td style="border:1px solid gray" colspan="3">N/A</td>
+        </tr>
+        <tr>
+          <td style="border:1px solid gray">Booking Person</td>
+          <td style="border:1px solid gray" colspan="3">Robin Bell</td>
+        </tr>
+        <tr>
+          <td style="border:1px solid gray">Booking Person contact number</td>
+          <td style="border:1px solid gray" colspan="3">000</td>
+        </tr>
+        <tr>
+          <td style="border:1px solid gray">Results to</td>
+          <td style="border:1px solid gray" colspan="3">phuong_thql@yahoo.com</td>
+        </tr>
+        <tr>
+          <td style="border:1px solid gray">Invoices to</td>
+          <td style="border:1px solid gray" colspan="3">phuong_thql@yahoo.com</td>
+        </tr>
+        <tr>
+          <td style="border:1px solid gray">Comments</td>
+          <td style="border:1px solid gray" colspan="3"></td>
+        </tr>
+
+        <tr><td colspan="4" bgcolor="Silver"><b>Worker Details</b></td></tr>
+        <tr>
+          <td style="border:1px solid gray">Name</td>
+          <td style="border:1px solid gray">test</td>
+          <td style="border:1px solid gray">DoB</td>
+          <td style="border:1px solid gray">01 Jan 0001</td>
+        </tr>
+        <tr>
+          <td style="border:1px solid gray">Phone</td>
+          <td style="border:1px solid gray">1</td>
+          <td style="border:1px solid gray">Email</td>
+          <td style="border:1px solid gray">phuong_thql@yahoo.com</td>
+        </tr>
+        <tr>
+          <td style="border:1px solid gray">Position applied for</td>
+          <td style="border:1px solid gray" colspan="3">null</td>
+        </tr>
+        <tr><td colspan="4" bgcolor="Silver"><b>Assessment Details</b></td></tr>
+        <tr>
+          <td style="border:1px solid gray" colspan="4">
+</td></tr><tr><td style="border:1px solid gray" colspan="4"><b>FUNCTION CAPACITY ASSESSMENT</b><br>&nbsp;&nbsp;Job-specific functional capacity/musculoskeletal assessment (PMMMSA)<br></td></tr>          
+        
+
+        <tr><td colspan="4" bgcolor="Silver"><b>Appointment Details</b></td></tr>
+        <tr>
+          <td style="border:1px solid gray">Appointment location</td>
+          <td style="border:1px solid gray" colspan="3">Belmont</td>
+        </tr>
+        <tr>
+          <td style="border:1px solid gray">Appointment time</td>
+          <td style="border:1px solid gray" colspan="3">11 Dec 2015 at 11:45 AM</td>
+        </tr>
+        <tr>
+          <td style="border:1px solid gray">Appointment Notes</td>
+          <td style="border:1px solid gray" colspan="3"></td>
+        </tr>
+        <tr>
+          <td style="border:1px solid gray">Appointment status</td>
+          <td style="border:1px solid gray" colspan="3">Confirmed</td>
+        </tr>
+      </tbody></table>

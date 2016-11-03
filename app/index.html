@@ -1,0 +1,232 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory
+    <!-- build:css(.) styles/vendor.css
+    <!-- bower:css
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+    <!-- endbower -->
+    <!-- endbuild -->
+    <!-- build:css(.tmp) styles/main.css
+    <link rel="stylesheet" href="styles/main.css">
+    <!-- endbuild
+
+    <link rel="stylesheet" href="/dist/vendor/mycss.css">
+    -->
+
+
+
+      <link href="bower_components/toastr/toastr.css" rel="stylesheet"/>
+      <link href="bower_components/acute-select/acute/acute.select/acute.select.css" rel="stylesheet" />
+      <link rel="stylesheet" href="styles/main.css">
+      <link rel="stylesheet" href="styles/checkbox.css">
+      <link rel="styleSheet" href="bower_components/angular-ui-grid/ui-grid.min.css"/>
+      <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+      <link rel="stylesheet" href="bower_components/ui-select/dist/select.css" />
+      <link rel="stylesheet" href="common/css/selectize.default.css">
+      <link rel="stylesheet" href="common/css/font-awesome-4.5.0/css/font-awesome.min.css" />
+
+
+      <link href="../assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+      <link href="../assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css" />
+
+      <link href="../assets/global/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css" />
+      <link href="../assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css" rel="stylesheet" type="text/css" />
+      <link href="../assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.css" rel="stylesheet" type="text/css" />
+      <link href="../assets/global/plugins/morris/morris.css" rel="stylesheet" type="text/css" />
+      <link href="../assets/global/plugins/fullcalendar/fullcalendar.min.css" rel="stylesheet" type="text/css" />
+      <link href="../assets/global/plugins/jqvmap/jqvmap/jqvmap.css" rel="stylesheet" type="text/css" />
+      <link href="../assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css" rel="stylesheet" type="text/css" />
+
+      <link href="../assets/global/plugins/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
+      <link href="../assets/global/plugins/select2/css/select2-bootstrap.min.css" rel="stylesheet" type="text/css" />
+
+      <link href="../assets/global/css/components.min.css" rel="stylesheet" id="style_components" type="text/css" />
+      <link href="../assets/global/css/plugins.min.css" rel="stylesheet" type="text/css" />
+
+      <link href="../assets/layouts/layout3/css/layout.min.css" rel="stylesheet" type="text/css" />
+      <link href="../assets/layouts/layout3/css/themes/default.min.css" rel="stylesheet" type="text/css" id="style_color" />
+      <link href="../assets/layouts/layout3/css/custom.min.css" rel="stylesheet" type="text/css" />
+      <link href="../assets/pages/css/login-2.min.css" rel="stylesheet" type="text/css" />
+
+      <link rel="shortcut icon" href="redimed.ico" />
+  </head>
+  <body ng-class="{0:'login', 1:'page-container-bg-solid page-boxed',2:'page-container-bg-solid'}[indexCtrl.className]"ng-app="ocsApp" ng-controller="IndexMainCtrl as indexCtrl">
+
+    <div ui-view="root"></div>
+
+    <!--  External adding by PhuongNM  -->
+
+
+    <!-- BEGIN CORE PLUGINS -->
+    <!--<script src="../assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+    <script src="../assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="../assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
+    <script src="../assets/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js" type="text/javascript"></script>
+    <script src="../assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+    <script src="../assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+    <script src="../assets/global/plugins/uniform/jquery.uniform.min.js" type="text/javascript"></script>
+    <script src="../assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
+-->
+    <!-- END CORE PLUGINS -->
+    <!-- BEGIN PAGE LEVEL PLUGINS -->
+    <!--
+    <script src="../assets/global/plugins/jquery-validation/js/jquery.validate.min.js" type="text/javascript"></script>
+    <script src="../assets/global/plugins/jquery-validation/js/additional-methods.min.js" type="text/javascript"></script>
+    <script src="../assets/global/plugins/select2/js/select2.full.min.js" type="text/javascript"></script>
+    <script src="../assets/pages/scripts/components-bootstrap-switch.min.js" type="text/javascript"></script>
+    <script src="../assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
+    <script src="../assets/pages/scripts/components-date-time-pickers.min.js" type="text/javascript"></script>
+    <script src="../assets/global/scripts/app.min.js" type="text/javascript"></script>
+    -->
+    <!-- END PAGE LEVEL PLUGINS -->
+    <!-- BEGIN THEME GLOBAL SCRIPTS -->
+
+    <!-- END THEME GLOBAL SCRIPTS -->
+    <!-- BEGIN PAGE LEVEL SCRIPTS -->
+
+
+    <!-- END PAGE LEVEL SCRIPTS -->
+    <!-- BEGIN THEME LAYOUT SCRIPTS -->
+    <!-- END THEME LAYOUT SCRIPTS -->
+    <!-- build:js(.) scripts/vendor.js -->
+    <!-- bower:js -->
+    <script src="dist/vendor/vendor.js"></script>
+<!--
+    <script src="bower_components/socket.io-client/socket.io.js"></script>
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/angular-animate/angular-animate.js"></script>
+    <script src="bower_components/angular-cookies/angular-cookies.js"></script>
+    <script src="bower_components/angular-resource/angular-resource.js"></script>
+    <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+    <script src="bower_components/angular-touch/angular-touch.js"></script>
+    <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+    <script src="bower_components/ui-router-extras/release/ct-ui-router-extras.js"></script>
+    <script src="bower_components/AngularJS-Toaster/toaster.js"></script>
+    <script src="bower_components/angular-toastr/dist/angular-toastr.tpls.js"></script>
+    <script src="bower_components/lodash/lodash.js"></script>
+    <script src="bower_components/fingerprint/fingerprint.js"></script>
+    <script src="bower_components/moment/moment.js"></script>
+    <script src="bower_components/angular-ui-grid/ui-grid.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="bower_components/jquery-ui/jquery-ui.js"></script>
+    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script src="bower_components/checklist-model/checklist-model.js"></script>
+    <script src="bower_components/toastr/toastr.js"></script>
+    <script src="bower_components/ag-grid/dist/ag-grid.js"></script>
+    <script src="bower_components/bootstrap-switch/dist/js/bootstrap-switch.js"></script>
+    <script src="bower_components/angular-bootstrap-switch/dist/angular-bootstrap-switch.js"></script>
+    <script src="bower_components/ng-idle/angular-idle.js"></script>
+    <script src="bower_components/ui-select/dist/select.js"></script>
+    <script src="bower_components/requirejs/require.js"></script>
+    <script src="bower_components/angular-logX/release/amd/angular-logX.js"></script>
+    <script src="bower_components/circular-json/build/circular-json.js"></script>
+    <script src="bower_components/pdfmake/build/pdfmake.js"></script>
+    <script src="bower_components/pdfmake/build/vfs_fonts.js"></script>
+    <script src="bower_components/ZingChart-AngularJS/src/zingchart-angularjs.js"></script>
+    <script src="bower_components/zingchart/client/zingchart.min.js"></script>
+    <script src="bower_components/bootstrap-ui-datetime-picker/dist/datetime-picker.min.js"></script>
+
+    <script type="text/javascript" src="bower_components/ui-router-extras/release/modular/ct-ui-router-extras.core.js"></script>
+    <script type="text/javascript" src="bower_components/ui-router-extras/release/modular/ct-ui-router-extras.statevis.js"></script>
+    <script type="text/javascript" src="bower_components/ui-router-extras/release/modular/ct-ui-router-extras.sticky.js"></script>
+    <script type="text/javascript" src="bower_components/ui-router-extras/release/modular/ct-ui-router-extras.dsr.js"></script>
+    <script type="text/javascript" src="bower_components/acute-select/acute/acute.select/acute.select.js"></script>
+  -->
+    <!-- endbower -->
+    <!-- endbuild -->
+    <script src="app.js"></script>
+    <script src="dist/scripts/main.js"></script>
+
+    <!--
+    <script src="app.js"></script>
+    <script src="bower_components/stacktrace/stacktrace.js"></script>
+    <script src="common/services/lbServices.js"></script>
+    <script src="common/services/api-services.js"></script>
+    <script src="common/services/helper.js"></script>
+    <script src="common/services/$log-services.js"></script>
+    <script src="common/services/$dynamicState.js"></script>
+    <script src="common/directives/dynamicFormDirectives.js"></script>
+    <script src="common/basecontrollers/tableBaseController.js"></script>
+    <script src="common/basecontrollers/detailWithTableBaseController.js"></script>
+    <script src="common/basecontrollers/detailBaseController.js"></script>
+
+    <script src="common/directives/masterdetaildirective/masterdetaildirective.js"></script>
+    <script src="common/directives/masterdetaildirective/services/masterdetaildirective.services.js"></script>
+
+
+    <script src="modules/Index/controllers/index.MainCtrl.js"></script>
+
+    <script src="modules/Authentication/authentication.js"></script>
+    <script src="modules/Authentication/controllers/authen.MainCtrl.js"></script>
+    <script src="modules/Authentication/controllers/authen.LoginCtrl.js"></script>
+    <script src="modules/Authentication/controllers/authen.ForgotPasswordCtrl.js"></script>
+    <script src="modules/Authentication/controllers/authen.ResetPasswordCtrl.js"></script>
+    <script src="modules/Authentication/services/authen.services.js"></script>
+
+    <script src="modules/Navigator/navigator.js"></script>
+    <script src="modules/Navigator/controllers/navigator.MainCtrl.js"></script>
+    <script src="modules/Navigator/controllers/navigator.idleAlertCtrl.js"></script>
+
+    <script src="modules/MakeBooking/makeBooking.js"></script>
+    <script src="modules/MakeBooking/controllers/makeBooking.MainCtrl.js"></script>
+    <script src="modules/MakeBooking/controllers/makeBooking.NewCandidateCtrl.js"></script>
+    <script src="modules/MakeBooking/controllers/makeBooking.CustomPackageCtrl.js"></script>
+    <script src="modules/MakeBooking/controllers/makeBooking.NewCompanyCtrl.js"></script>
+    <script src="modules/MakeBooking/services/makeBookingServices.js"></script>
+
+    <script src="modules/MakeTelehealthBooking/makeTelehealthBooking.js"></script>
+    <script src="modules/MakeTelehealthBooking/controllers/makeTelehealthBooking.MainCtrl.js"></script>
+    <script src="modules/MakeTelehealthBooking/services/makeTelehealthBookingServices.js"></script>
+    <script src="modules/MakeTelehealthBooking/controllers/makeTelehealthBooking.NewCompanyCtrl.js"></script>
+
+    <script src="modules/Bookings/bookings.js"></script>
+    <script src="modules/Bookings/controllers/bookings.MainCtrl.js"></script>
+    <script src="modules/Bookings/controllers/bookings.AdminEditBooking.js"></script>
+    <script src="modules/Bookings/controllers/bookings.ConfirmToCancelApptCtrl.js"></script>
+
+    <script src="modules/TelehealthBookings/telehealthBookings.js"></script>
+    <script src="modules/TelehealthBookings/controllers/telehealthBookings.MainCtrl.js"></script>
+
+
+    <script src="modules/Positions/positions.js"></script>
+    <script src="modules/Positions/controllers/positions.MainCtrl.js"></script>
+    <script src="modules/Positions/controllers/positions.NewPositionCtrl.js"></script>
+    <script src="modules/Positions/controllers/positions.ConfirmToDeletePositionCtrl.js"></script>
+
+
+    <script src="modules/Packages/packages.js"></script>
+    <script src="modules/Packages/controllers/packages.MainCtrl.js"></script>
+    <script src="modules/Packages/controllers/packages.NewPackageCtrl.js"></script>
+    <script src="modules/Packages/controllers/packages.ConfirmToDeletePackageCtrl.js"></script>
+
+    <script src="modules/Settings/settings.js"></script>
+    <script src="modules/Settings/controllers/settings.MainCtrl.js"></script>
+    <script src="modules/Settings/controllers/settings.NewAccountCtrl.js"></script>
+
+    <script src="modules/BookingReports/bookingreports.js"></script>
+    <script src="modules/BookingReports/controllers/bookingreports.MainCtrl.js"></script>
+
+    <script src="modules/Companies/companies.js"></script>
+    <script src="modules/Companies/services/companies.services.js"></script>
+    <script src="modules/Companies/controllers/companies.MainCtrl.js"></script>
+    <script src="modules/Companies/controllers/companies.NewCompanyCtrl.js"></script>
+    <script src="modules/Companies/controllers/companies.ConfirmToDeleteCompanyCtrl.js"></script>
+    <script src="modules/Companies/controllers/companies.NewSubCompanyCtrl.js"></script>
+
+    <script src="modules/Sites/sites.js"></script>
+    <script src="modules/Sites/services/sites.services.js"></script>
+    <script src="modules/Sites/controllers/sites.MainCtrl.js"></script>
+    <script src="modules/Sites/controllers/sites.NewSiteCtrl.js"></script>
+    <script src="modules/Sites/controllers/sites.ConfirmToDeleteSiteCtrl.js"></script>
+    <script src="modules/Sites/controllers/sites.NewCalendarCtrl.js"></script>
+-->
+
+    <!-- endbuild -->
+</body>
+</html>

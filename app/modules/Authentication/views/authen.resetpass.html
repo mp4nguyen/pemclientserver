@@ -1,0 +1,45 @@
+<div class="login">
+    <!-- BEGIN FORGOT PASSWORD FORM -->
+    <form class="content forget-form" name="resetPasswordCtrl.form">
+        <div class="form-title">
+            <span class="form-title">Reset Password ?</span>
+            <span class="form-subtitle">Enter your new password to reset the password.</span>
+        </div>
+
+        <!--Password-->
+        <div class="form-group" ng-class="{'has-error':resetPasswordCtrl.showClickedValidation && resetPasswordCtrl.form.password.$invalid}">
+            <!--ie8, ie9 does not support html5 placeholder, so we just show field title for that-->
+            <label class="control-label visible-ie8 visible-ie9">Password</label>
+            <div class="input-icon">
+                <i class="fa fa-user"></i>
+                <input class="form-control form-control-solid placeholder-no-fix" type="password" autocomplete="off" placeholder="Password" name="password" required ng-pattern="/^\s*\S+\s*$/" ng-model="resetPasswordCtrl.password"/>
+            </div>
+            <!-- ERROR -->
+            <span ng-show="resetPasswordCtrl.showClickedValidation">
+                <span for="password" ng-show="resetPasswordCtrl.form.password.$error.required" class="help-block">Password is required.</span>
+                <span for="password" ng-show="resetPasswordCtrl.form.password.$error.pattern" class="help-block">Password cannot contains whitespace.</span>
+            </span>
+            <!-- ERROR -->
+        </div>
+        <!--Re-Password-->
+        <div class="form-group" ng-class="{'has-error':resetPasswordCtrl.showClickedValidation && resetPasswordCtrl.form.repassword.$invalid}">
+            <!--ie8, ie9 does not support html5 placeholder, so we just show field title for that-->
+            <label class="control-label visible-ie8 visible-ie9">Re-password</label>
+            <div class="input-icon">
+                <i class="fa fa-user"></i>
+                <input class="form-control form-control-solid placeholder-no-fix" type="password" autocomplete="off" placeholder="Re-Password" name="repassword" required ng-pattern="/^\s*\S+\s*$/" ng-model="resetPasswordCtrl.repassword"/>
+            </div>
+            <!-- ERROR -->
+            <span ng-show="resetPasswordCtrl.showClickedValidation">
+                <span for="repassword" ng-show="resetPasswordCtrl.form.repassword.$error.required" class="help-block">Re-Password is required.</span>
+                <span for="repassword" ng-show="resetPasswordCtrl.form.repassword.$error.pattern" class="help-block">Re-Password cannot contains whitespace.</span>
+            </span>
+            <!-- ERROR -->
+        </div>
+
+        <div class="form-actions">
+            <button type="button" class="btn btn-primary uppercase pull-right" ng-click="resetPasswordCtrl.reset()">Submit</button>
+        </div>
+    </form>
+    <!-- END FORGOT PASSWORD FORM -->
+</div>

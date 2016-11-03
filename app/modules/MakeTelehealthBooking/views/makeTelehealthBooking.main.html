@@ -1,0 +1,399 @@
+
+<div class="page-content">
+    <div class="">
+        <div class="">
+            <div class="row">
+                <div class="col-md-1">
+                </div>
+                <div class="col-md-10">
+                    <form name ="MakeTelehealthBookingMainCtrl.form" class="form-horizontal form-row-seperated">
+                        <div class="">
+                            <div class="" id="tab_general">
+                                <div class="form-body">
+                                    <legend>
+                                        Patient information
+                                    </legend>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                          <div class="form-group" ng-class="{'has-error' : MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.bookingPerson.$invalid}" >
+                                              <label class="col-md-4 control-label">Patient name:
+                                                  <span class="required"> * </span>
+                                              </label>
+                                              <div class="col-md-8">
+                                                  <input type="text" class="form-control" name="patientName" placeholder="Patient name" ng-model="MakeTelehealthBookingMainCtrl.newBooking.patientName" required>
+                                                  <span for="patientName" ng-show="MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.patientName.$error.required" class="help-block">Patient name is required.</span>
+                                              </div>
+                                          </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                          <div class="form-group" ng-class="{'has-error' : MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.dob.$invalid}">
+                                              <div class="row">
+                                                  <label class="col-md-4 control-label">DOB:
+                                                      <span class="required"> * </span>
+                                                  </label>
+                                                  <div class="col-md-8">
+                                                      <div class="input-group input-medium date date-picker">
+                                                          <input type="text" name = "dob" class="form-control" uib-datepicker-popup="{{MakeTelehealthBookingMainCtrl.format}}" ng-model="MakeTelehealthBookingMainCtrl.newBooking.dob" is-open="MakeTelehealthBookingMainCtrl.dateStatus.dobOpened" min-date="minDate" max-date="maxDate" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+                                                          <span class="input-group-btn">
+                                                              <button type="button" class="btn btn-default" ng-click="MakeTelehealthBookingMainCtrl.openDOB($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                                                          </span>
+                                                      </div>
+                                                      <span for="candidateName" ng-show=" MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.dob.$error.required" class="help-block">DOB is required.</span>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                          <div class="form-group" ng-class="{'has-error' : MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.address.$invalid}" >
+                                              <label class="col-md-4 control-label">Address:
+                                                  <span class="required"> * </span>
+                                              </label>
+                                              <div class="col-md-8">
+                                                  <input type="text" class="form-control" name="address" placeholder="Address" ng-model="MakeTelehealthBookingMainCtrl.newBooking.address" required>
+                                                  <span for="address" ng-show=" MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.address.$error.required" class="help-block">Address is required.</span>
+                                              </div>
+                                          </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                          <div class="form-group" ng-class="{'has-error' : MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.suburb.$invalid}"  >
+                                              <label class="col-md-4 control-label">Suburb:
+                                                  <span class="required"> * </span>
+                                              </label>
+                                              <div class="col-md-8">
+                                                  <input type="text" class="form-control" name="suburb" placeholder="Suburb" ng-model="MakeTelehealthBookingMainCtrl.newBooking.suburb" required>
+                                                  <span for="contactNunber" ng-show=" MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.suburb.$error.required" class="help-block">Suburb is required.</span>
+                                              </div>
+                                          </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                          <div class="form-group" ng-class="{'has-error' : MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.state.$invalid}" >
+                                              <label class="col-md-4 control-label">State:
+                                                  <span class="required"> * </span>
+                                              </label>
+                                              <div class="col-md-8">
+                                                  <select name="state" class="table-group-action-input form-control input-medium" ng-options="state for state in MakeTelehealthBookingMainCtrl.stateList" ng-model="MakeTelehealthBookingMainCtrl.newBooking.state" required ></select>
+                                                  <span for="poNumber" ng-show=" MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.state.$error.required" class="help-block">State is required.</span>
+                                              </div>
+                                          </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                          <div class="form-group" ng-class="{'has-error' : MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.postcode.$invalid}"  >
+                                              <label class="col-md-4 control-label">Postcode:
+                                                  <span class="required"> * </span>
+                                              </label>
+                                              <div class="col-md-8">
+                                                  <input type="text" class="form-control" name="postcode" placeholder="Postcode" ng-model="MakeTelehealthBookingMainCtrl.newBooking.postcode" required>
+                                                  <span for="contactNunber" ng-show=" MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.postcode.$error.required" class="help-block">Postcode is required.</span>
+                                              </div>
+                                          </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                          <div class="form-group" ng-class="{'has-error' : MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.facetime.$invalid}" >
+                                              <label class="col-md-4 control-label">Facetime email:
+                                              </label>
+                                              <div class="col-md-8">
+                                                  <input type="email" class="form-control" name="facetime" placeholder="Facetime email" ng-model="MakeTelehealthBookingMainCtrl.newBooking.facetime">
+                                                  <span for="facetime" ng-show=" MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.facetime.$error.required" class="help-block">Facetime is required.</span>
+                                                  <span for="candidateName" ng-show=" MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.email.$error.email" class="help-block">Email is invalid format.</span>
+                                              </div>
+                                          </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                          <div class="form-group" ng-class="{'has-error' : MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.skype.$invalid}"  >
+                                              <label class="col-md-4 control-label">Skype:
+                                              </label>
+                                              <div class="col-md-8">
+                                                  <input type="text" class="form-control" name="contactNunber" placeholder="Skype" ng-model="MakeTelehealthBookingMainCtrl.newBooking.skype">
+                                                  <span for="contactNunber" ng-show=" MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.skype.$error.required" class="help-block">Skype is required.</span>
+                                              </div>
+                                          </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                          <div class="form-group" ng-class="{'has-error' : MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.contactNumber.$invalid}" >
+                                              <label class="col-md-4 control-label">Contact number:
+                                                  <span class="required"> * </span>
+                                              </label>
+                                              <div class="col-md-8">
+                                                  <input type="text" class="form-control" name="contactNumber" placeholder="Contact number" ng-model="MakeTelehealthBookingMainCtrl.newBooking.contactNumber" required>
+                                                  <span for="bookingPerson" ng-show=" MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.contactNumber.$error.required" class="help-block">Contact number is required.</span>
+                                              </div>
+                                          </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                          <div class="form-group" ng-class="{'has-error' : MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.occupation.$invalid}"  >
+                                              <label class="col-md-4 control-label">Occupation:
+                                                  <span class="required"> * </span>
+                                              </label>
+                                              <div class="col-md-8">
+                                                  <input type="text" class="form-control" name="occupation" placeholder="Occupation" ng-model="MakeTelehealthBookingMainCtrl.newBooking.occupation" required>
+                                                  <span for="contactNunber" ng-show=" MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.occupation.$error.required" class="help-block">Occupation is required.</span>
+                                              </div>
+                                          </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                          <div class="form-group"  ng-class="{'has-error' : MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.employer.$invalid}">
+                                            <label class="col-md-4 control-label">Employer:
+                                                <span class="required"> * </span>
+                                            </label>
+                                            <div class="col-md-6">
+                                                  <ui-select name="employer"  ng-model="MakeTelehealthBookingMainCtrl.newBooking.employer" theme="bootstrap" style="width:300px;" ng-change="MakeTelehealthBookingMainCtrl.selectedSubsidiary(MakeTelehealthBookingMainCtrl.newBooking.employer)">
+                                                      <ui-select-match placeholder="Select or search a employer in the list...">{{$select.selected.companyName}}</ui-select-match>
+                                                      <ui-select-choices repeat="item in MakeTelehealthBookingMainCtrl.companyObject.subsidiaries | filter: $select.search">
+                                                          <span ng-bind-html="item.companyName | highlight: $select.search"></span>
+                                                      </ui-select-choices>
+                                                  </ui-select>
+                                                  <span for="bookingPerson" ng-show=" MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.employer.$error.required" class="help-block">Employer is required.</span>
+                                              </div>
+                                              <div class="col-md-2"><a ng-click="MakeTelehealthBookingMainCtrl.newCompany()">New Employer</a></div>
+                                          </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                          <div class="form-group" ng-class="{'has-error' : MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.supervisor.$invalid}"  >
+                                              <label class="col-md-4 control-label">Supervisor:
+                                                  <span class="required"> * </span>
+                                              </label>
+                                              <div class="col-md-8">
+                                                  <input type="text" class="form-control" name="supervisor" placeholder="Supervisor" ng-model="MakeTelehealthBookingMainCtrl.newBooking.supervisor" required>
+                                                  <span for="supervisor" ng-show=" MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.supervisor.$error.required" class="help-block">Supervisor is required.</span>
+                                              </div>
+                                          </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                          <div class="form-group" ng-class="{'has-error' : MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.medicalState.$invalid}" >
+                                              <label class="col-md-4 control-label">State (Medical certificate jurisdiction):
+                                                  <span class="required"> * </span>
+                                              </label>
+                                              <div class="col-md-8">
+                                                  <select name="medicalState" class="table-group-action-input form-control input-medium" ng-options="state for state in MakeTelehealthBookingMainCtrl.stateList" ng-model="MakeTelehealthBookingMainCtrl.newBooking.medicalState" required ></select>
+                                                  <span for="poNumber" ng-show=" MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.medicalState.$error.required" class="help-block">State (Medical certificate jurisdiction) is required.</span>
+                                              </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                          <div class="form-group" ng-class="{'has-error' : MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.email.$invalid}"  >
+                                              <label class="col-md-4 control-label">Email for document:
+                                                  <span class="required"> * </span>
+                                              </label>
+                                              <div class="col-md-8">
+                                                  <input type="email" class="form-control" name="email" placeholder="Email for document" ng-model="MakeTelehealthBookingMainCtrl.newBooking.email" required>
+                                                  <span for="contactNunber" ng-show=" MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.email.$error.required" class="help-block">Email for document is required.</span>
+                                                  <span for="candidateName" ng-show=" MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.email.$error.email" class="help-block">Email is invalid format.</span>
+                                              </div>
+                                          </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                          <div class="form-group" ng-class="{'has-error' : MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.descriptionOfInjuryInvalid}" >
+                                              <label class="col-md-4 control-label">Description of injury:
+                                                  <span class="required"> * </span>
+                                              </label>
+                                              <div class="col-md-1">
+                                              </div>
+                                              <div class="col-md-7">
+                                                <div class="checkbox checkbox-success ">
+                                                  <input type="checkbox"  ng-model="MakeTelehealthBookingMainCtrl.newBooking.injuryLaceration" ng-change=(MakeTelehealthBookingMainCtrl.injuryDescChange())>
+                                                  <label>
+                                                     Laceration
+                                                  </label>
+                                                </div>
+                                                <div class="checkbox checkbox-success ">
+                                                  <input type="checkbox"  ng-model="MakeTelehealthBookingMainCtrl.newBooking.injuryCrush" ng-change=(MakeTelehealthBookingMainCtrl.injuryDescChange())>
+                                                  <label>
+                                                     Crush
+                                                  </label>
+                                                </div>
+                                                <div class="checkbox checkbox-success">
+                                                  <input type="checkbox"  ng-model="MakeTelehealthBookingMainCtrl.newBooking.injurySprain" ng-change=(MakeTelehealthBookingMainCtrl.injuryDescChange())>
+                                                  <label>
+                                                     Sprain/Strain
+                                                  </label>
+                                                </div>
+                                                <div class="checkbox checkbox-success">
+                                                  <input type="checkbox"  ng-model="MakeTelehealthBookingMainCtrl.newBooking.injuryFall"  ng-change=(MakeTelehealthBookingMainCtrl.injuryDescChange())>
+                                                  <label>
+                                                     Fall
+                                                  </label>
+                                                </div>
+                                                <div class="checkbox checkbox-success">
+                                                  <input type="checkbox"  ng-model="MakeTelehealthBookingMainCtrl.newBooking.injuryOther" ng-change=(MakeTelehealthBookingMainCtrl.injuryDescChange())>
+                                                  <label>
+                                                     Other
+                                                  </label>
+                                                </div>
+                                                <span for="candidateName" ng-show=" MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.descriptionOfInjuryInvalid" class="help-block">Description of Injury is required.</span>
+                                              </div>
+                                          </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                          <div class="form-group" ng-class="{'has-error' : MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.injuryDate.$invalid}">
+                                              <div class="row">
+                                                  <label class="col-md-4 control-label">Date of Injury:
+                                                      <span class="required"> * </span>
+                                                  </label>
+                                                  <div class="col-md-8">
+                                                      <div class="input-group input-medium date date-picker">
+                                                          <input type="text" name = "injuryDate" class="form-control" uib-datepicker-popup="{{MakeTelehealthBookingMainCtrl.format}}" ng-model="MakeTelehealthBookingMainCtrl.newBooking.injuryDate" is-open="MakeTelehealthBookingMainCtrl.dateStatus.injuryDateOpened" min-date="minDate" max-date="maxDate" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+                                                          <span class="input-group-btn">
+                                                              <button type="button" class="btn btn-default" ng-click="MakeTelehealthBookingMainCtrl.openInjuryDate($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                                                          </span>
+                                                      </div>
+                                                      <span for="candidateName" ng-show=" MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.injuryDate.$error.required" class="help-block">Date of injury is required.</span>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                        </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                      <div class="col-md-6">
+                                        <div class="form-group" ng-class="{'has-error' : MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.descriptionOfInjury.$invalid}" >
+                                            <label class="col-md-4 control-label">
+                                            </label>
+                                            <div class="col-md-8">
+                                              <textarea rows="3" type="text" class="form-control" name="descriptionOfInjury" placeholder="Description of injury" ng-model="MakeTelehealthBookingMainCtrl.newBooking.descriptionOfInjury" ng-show="MakeTelehealthBookingMainCtrl.isShowOtherInjyryDesc" ng-required="MakeTelehealthBookingMainCtrl.isShowOtherInjyryDesc"></textarea>
+                                              <span for="bookingPerson" ng-show=" MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.descriptionOfInjury.$error.required" class="help-block">Description of injury is required.</span>
+                                            </div>
+                                          </div>
+                                      </div>
+                                      <div class="col-md-6">
+                                        <div class="form-group" ng-class="{'has-error' : MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.medicalHistory.$invalid}" >
+                                            <label class="col-md-4 control-label">Medical history:
+                                              <span class="required"> * </span>
+                                            </label>
+                                            <div class="col-md-8">
+                                                <textarea rows="3" type="text" class="form-control" name="medicalHistory" placeholder="Medical history" ng-model="MakeTelehealthBookingMainCtrl.newBooking.medicalHistory" required></textarea>
+                                                <span>if non applicable please enter NIL</span>
+                                                <span for="bookingPerson" ng-show=" MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.medicalHistory.$error.required" class="help-block">Medical history is required.</span>
+                                            </div>
+                                        </div>
+                                      </div>
+
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                          <div class="form-group" ng-class="{'has-error' : MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.bodyPart.$invalid}" >
+                                              <label class="col-md-4 control-label">Body part:
+                                                  <span class="required"> * </span>
+                                              </label>
+                                              <div class="col-md-8">
+                                                  <select name="bodyPart" class="table-group-action-input form-control input-medium" ng-options="state for state in MakeTelehealthBookingMainCtrl.bodyPartList" ng-model="MakeTelehealthBookingMainCtrl.newBooking.bodyPart" required ></select>
+                                                  <span for="bodyPart" ng-show=" MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.bodyPart.$error.required" class="help-block">Body part is required.</span>
+                                              </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                          <div class="form-group" ng-class="{'has-error' : MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.allergies.$invalid}"  >
+                                              <label class="col-md-4 control-label">Allergies:
+                                                <span class="required"> * </span>
+                                              </label>
+                                              <div class="col-md-8">
+                                                  <input type="text" class="form-control" name="allergies" placeholder="Allergies" ng-model="MakeTelehealthBookingMainCtrl.newBooking.allergies" required>
+                                                  <span>if non applicable please enter NIL</span>
+                                                  <span for="contactNunber" ng-show=" MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.allergies.$error.required" class="help-block">Allergies is required.</span>
+                                              </div>
+                                          </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                          <div class="form-group" ng-class="{'has-error' : MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.serviceRequired.$invalid}" >
+                                              <label class="col-md-4 control-label">Service required:
+                                                  <span class="required"> * </span>
+                                              </label>
+                                              <div class="col-md-8">
+                                                  <select name="serviceRequired" class="table-group-action-input form-control input-medium" ng-options="state for state in MakeTelehealthBookingMainCtrl.serviceList" ng-model="MakeTelehealthBookingMainCtrl.newBooking.serviceRequired" required ></select>
+                                                  <span for="serviceRequired" ng-show=" MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.serviceRequired.$error.required" class="help-block">Service required is required.</span>
+                                              </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                          <div class="form-group" ng-class="{'has-error' : MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.apptDate.$invalid}">
+                                              <div class="row">
+                                                  <label class="col-md-4 control-label">Date of Appointment:
+                                                      <span class="required"> * </span>
+                                                  </label>
+                                                  <div class="col-md-8">
+                                                      <div class="input-group input-medium date date-picker">
+                                                          <input type="text" name = "apptDate" class="form-control" enableTime="true" enableDate="false" uib-datepicker-popup="{{MakeTelehealthBookingMainCtrl.format}}" ng-model="MakeTelehealthBookingMainCtrl.newBooking.apptDate" is-open="MakeTelehealthBookingMainCtrl.dateStatus.apptDateOpened" min-date="minDate" max-date="maxDate" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+                                                          <span class="input-group-btn">
+                                                              <button type="button" class="btn btn-default" ng-click="MakeTelehealthBookingMainCtrl.openApptDate($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                                                          </span>
+                                                      </div>
+                                                      <span for="candidateName" ng-show=" MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.apptDate.$error.required" class="help-block">Date of Appointment is required.</span>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                          <div class="form-group" ng-class="{'has-error' : MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.preferredTime.$invalid}" >
+                                              <label class="col-md-4 control-label">Preferred time:
+                                                  <span class="required"> * </span>
+                                              </label>
+                                              <div class="col-md-8">
+                                                  <div uib-timepicker ng-model="MakeTelehealthBookingMainCtrl.newBooking.preferredTime" ng-change="MakeTelehealthBookingMainCtrl.timechanged()" show-meridian="true"></div>
+                                                  <span for="bookingPerson" ng-show=" MakeTelehealthBookingMainCtrl.isSubmitted && MakeTelehealthBookingMainCtrl.form.preferredTime.$error.required" class="help-block">Preferred time is required.</span>
+                                              </div>
+                                          </div>
+                                        </div>
+                                    </div>
+                                    <legend>
+                                        Consent
+                                    </legend>
+                                    <div class="row">
+                                      <div class="checkbox checkbox-success">
+                                        <input type="checkbox" ng-model="MakeTelehealthBookingMainCtrl.newBooking.consent">
+                                        <label>
+                                           <b><i>Consent: patient has agreed for mdical information to be shared between all parties and a third person may be present during the consult. Patient has consented to be seen via Facetime or Skype. Patient agrees that all information provided is true.</i></b><br>
+                                           <b><i>If your claim is NOT ACCEPTED by the insurance company or your accounts are not settled by your employer, you will be liable for any invoices issued during the course of your treatment.</i></b>
+                                        </label>
+                                      </div>
+                                    </div>
+                                    <div class="row">
+                                      <label><b>Booking Person:<b> {{MakeTelehealthBookingMainCtrl.user.bookingPerson}} </label>
+                                      <label><b>Date:<b></label>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-offset-4 col-md-8">
+                                            <button ng-click="MakeTelehealthBookingMainCtrl.submitForm()" class="btn btn-outline btn-circle dark btn-sm green" ng-disabled="!MakeTelehealthBookingMainCtrl.newBooking.consent">
+                                                <i class="fa fa-floppy-o"></i> Submit
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-1">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

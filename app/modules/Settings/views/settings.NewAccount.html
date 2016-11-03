@@ -1,0 +1,350 @@
+<div class="modal-header">
+    <h3 class="modal-title">New Account</h3>
+</div>
+<div class="modal-body">
+    <form name="NewAccountCtrl.form" class="form-horizontal form-row-seperated" action="#">
+        <div class="tab-content">
+            <div class="tab-pane active" id="tab_general">
+                <div class="form-body">
+                    <div class="form-group" ng-show="NewAccountCtrl.isAdmin()" ng-class="{'has-error' : NewAccountCtrl.isSubmitted && NewAccountCtrl.form.bookingPerson.$invalid}">
+                        <label class="col-md-3 control-label">Company name:
+                            <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-9">
+                            <select class="form-control" name="companyName" id="repeatSelect" ng-model="NewAccountCtrl.accountObj.companyId" ng-required="NewAccountCtrl.isAdmin()">
+                                <option ng-repeat="company in NewAccountCtrl.companies" value="{{company.id}}">{{company.companyName}}</option>
+                            </select>
+                            <span for="packageName" ng-show=" NewAccountCtrl.isSubmitted && NewAccountCtrl.form.companyName.$error.required" class="help-block">Company name is required.</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group"  ng-class="{'has-error' : NewAccountCtrl.isSubmitted && NewAccountCtrl.form.bookingPerson.$invalid}">
+                        <label class="col-md-3 control-label">Booking Person:
+                            <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control" name="bookingPerson" placeholder="Booking Person" ng-model="NewAccountCtrl.accountObj.bookingPerson" required>
+                            <span for="packageName" ng-show=" NewAccountCtrl.isSubmitted && NewAccountCtrl.form.bookingPerson.$error.required" class="help-block">Booking person is required.</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group"  ng-class="{'has-error' : NewAccountCtrl.isSubmitted && NewAccountCtrl.form.contactNumber.$invalid}">
+                        <label class="col-md-3 control-label">Contact Number:
+                            <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control" name="contactNumber" placeholder="Contact Number" ng-model="NewAccountCtrl.accountObj.contactNumber" required>
+                            <span for="packageName" ng-show=" NewAccountCtrl.isSubmitted && NewAccountCtrl.form.contactNumber.$error.required" class="help-block">Booking person is required.</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group"  ng-class="{'has-error' : NewAccountCtrl.isSubmitted && NewAccountCtrl.form.contactEmail.$invalid}">
+                        <label class="col-md-3 control-label">Contact Email:
+                            <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-9">
+                            <input type="email" class="form-control" name="contactEmail" placeholder="Email" ng-model="NewAccountCtrl.accountObj.contactEmail" required ng-change="NewAccountCtrl.emailChanged(NewAccountCtrl.accountObj.contactEmail)">
+                            <span for="contactEmail" ng-show=" NewAccountCtrl.isSubmitted && NewAccountCtrl.form.contactEmail.$error.required" class="help-block">Email is required.</span>
+                            <span for="contactEmail" ng-show=" NewAccountCtrl.isSubmitted && NewAccountCtrl.form.contactEmail.$error.email" class="help-block">Email is invalid format.</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group"  ng-class="{'has-error' : NewAccountCtrl.isSubmitted && NewAccountCtrl.form.email.$invalid}">
+                        <label class="col-md-3 control-label">Account Email(Unique):
+                            <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-9">
+                            <input type="email" class="form-control" name="email" placeholder="Email Account" ng-model="NewAccountCtrl.accountObj.email" required>
+                            <span for="contactEmail" ng-show=" NewAccountCtrl.isSubmitted && NewAccountCtrl.form.email.$error.required" class="help-block">Email is required.</span>
+                            <span for="contactEmail" ng-show=" NewAccountCtrl.isSubmitted && NewAccountCtrl.form.email.$error.email" class="help-block">Email is invalid format.</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group"  ng-class="{'has-error' : NewAccountCtrl.isSubmitted && NewAccountCtrl.form.invoiceemail.$invalid}">
+                        <label class="col-md-3 control-label">Invoice Email:
+                            <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-9">
+                            <input type="email" class="form-control" name="invoiceemail" placeholder="Invoice Email" ng-model="NewAccountCtrl.accountObj.invoiceemail" required>
+                            <span for="invoiceemail" ng-show=" NewAccountCtrl.isSubmitted && NewAccountCtrl.form.invoiceemail.$error.required" class="help-block">Invoice Email is required.</span>
+                            <span for="invoiceemail" ng-show=" NewAccountCtrl.isSubmitted && NewAccountCtrl.form.invoiceemail.$error.email" class="help-block">Invoice Email is invalid format.</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group"  ng-class="{'has-error' : NewAccountCtrl.isSubmitted && NewAccountCtrl.form.resultEmail.$invalid}">
+                        <label class="col-md-3 control-label">Result Email:
+                            <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-9">
+                            <input type="email" class="form-control" name="resultEmail" placeholder="Result Email" ng-model="NewAccountCtrl.accountObj.resultEmail" required>
+                            <span for="resultEmail" ng-show=" NewAccountCtrl.isSubmitted && NewAccountCtrl.form.resultEmail.$error.required" class="help-block">Result Email is required.</span>
+                            <span for="resultEmail" ng-show=" NewAccountCtrl.isSubmitted && NewAccountCtrl.form.resultEmail.$error.email" class="help-block">Result Email is invalid format.</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group"  ng-class="{'has-error' : NewAccountCtrl.isSubmitted && NewAccountCtrl.form.username.$invalid}">
+                        <label class="col-md-3 control-label">User Name:
+                            <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control" name="username" placeholder="User Name" ng-model="NewAccountCtrl.accountObj.username" required>
+                            <span for="packageName" ng-show=" NewAccountCtrl.isSubmitted && NewAccountCtrl.form.username.$error.required" class="help-block">Booking person is required.</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group"  ng-class="{'has-error' : NewAccountCtrl.isSubmitted && NewAccountCtrl.form.password.$invalid}">
+                        <label class="col-md-3 control-label">Password:
+                            <span class="required" ng-show="NewAccountCtrl.isPassRequire()"> * </span>
+                        </label>
+                        <div class="col-md-9">
+                            <input type="password" class="form-control" name="password" placeholder="Password" ng-model="NewAccountCtrl.accountObj.password" ng-required="NewAccountCtrl.isPassRequire()">
+                            <span for="packageName" ng-show=" NewAccountCtrl.isSubmitted && NewAccountCtrl.form.password.$error.required" class="help-block">Booking person is required.</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group" ng-show="NewAccountCtrl.isOpenCheckBoxControl()">
+                        <label class="col-md-3 control-label">Enable:
+                        </label>
+                        <div class="col-md-1">
+                            <input
+                                    bs-switch
+                                    ng-model="NewAccountCtrl.accountObj.isenable"
+                                    type="checkbox"
+                                    switch-active="{{ isActive }}"
+                                    switch-readonly="{{ isReadonly }}"
+                                    switch-size="{{ size }}"
+                                    switch-animate="{{ animate }}"
+                                    switch-label="{{ label }}"
+                                    switch-icon="{{ icon }}"
+                                    switch-on-text="{{ onLabel }}"
+                                    switch-off-text="{{ offLabel }}"
+                                    switch-on-color="{{ on }}"
+                                    switch-off-color="{{ off }}"
+                                    switch-radio-off="{{ radioOff }}"
+                                    switch-label-width="{{ labelWidth }}"
+                                    switch-handle-width="{{ handleWidth }}"
+                                    switch-inverse="{{ inverse }}"
+                                    ng-true-value="1"
+                                    ng-false-value="0">
+                        </div>
+
+                        <label class="col-md-2 control-label">All functions:
+                        </label>
+                        <div class="col-md-1">
+                            <input
+                                    bs-switch
+                                    ng-model="NewAccountCtrl.accountObj.isall"
+                                    type="checkbox"
+                                    switch-active="{{ isActive }}"
+                                    switch-readonly="{{ isReadonly }}"
+                                    switch-size="{{ size }}"
+                                    switch-animate="{{ animate }}"
+                                    switch-label="{{ label }}"
+                                    switch-icon="{{ icon }}"
+                                    switch-on-text="{{ onLabel }}"
+                                    switch-off-text="{{ offLabel }}"
+                                    switch-on-color="{{ on }}"
+                                    switch-off-color="{{ off }}"
+                                    switch-radio-off="{{ radioOff }}"
+                                    switch-label-width="{{ labelWidth }}"
+                                    switch-handle-width="{{ handleWidth }}"
+                                    switch-inverse="{{ inverse }}"
+                                    ng-true-value="1"
+                                    ng-false-value="0">
+                        </div>
+
+                        <label class="col-md-2 control-label">Booking list:
+                        </label>
+                        <div class="col-md-1">
+                            <input
+                                    bs-switch
+                                    ng-model="NewAccountCtrl.accountObj.isbooking"
+                                    type="checkbox"
+                                    switch-active="{{ isActive }}"
+                                    switch-readonly="{{ isReadonly }}"
+                                    switch-size="{{ size }}"
+                                    switch-animate="{{ animate }}"
+                                    switch-label="{{ label }}"
+                                    switch-icon="{{ icon }}"
+                                    switch-on-text="{{ onLabel }}"
+                                    switch-off-text="{{ offLabel }}"
+                                    switch-on-color="{{ on }}"
+                                    switch-off-color="{{ off }}"
+                                    switch-radio-off="{{ radioOff }}"
+                                    switch-label-width="{{ labelWidth }}"
+                                    switch-handle-width="{{ handleWidth }}"
+                                    switch-inverse="{{ inverse }}"
+                                    ng-true-value="1"
+                                    ng-false-value="0">
+                        </div>
+                    </div>
+
+                    <div class="form-group" ng-show="NewAccountCtrl.isOpenCheckBoxControl()">
+                        <label class="col-md-3 control-label">Make booking:
+                        </label>
+                        <div class="col-md-1">
+                            <input
+                                    bs-switch
+                                    ng-model="NewAccountCtrl.accountObj.ismakebooking"
+                                    type="checkbox"
+                                    switch-active="{{ isActive }}"
+                                    switch-readonly="{{ isReadonly }}"
+                                    switch-size="{{ size }}"
+                                    switch-animate="{{ animate }}"
+                                    switch-label="{{ label }}"
+                                    switch-icon="{{ icon }}"
+                                    switch-on-text="{{ onLabel }}"
+                                    switch-off-text="{{ offLabel }}"
+                                    switch-on-color="{{ on }}"
+                                    switch-off-color="{{ off }}"
+                                    switch-radio-off="{{ radioOff }}"
+                                    switch-label-width="{{ labelWidth }}"
+                                    switch-handle-width="{{ handleWidth }}"
+                                    switch-inverse="{{ inverse }}"
+                                    ng-true-value="1"
+                                    ng-false-value="0">
+                        </div>
+
+                        <label class="col-md-2 control-label">Package list:
+                        </label>
+                        <div class="col-md-1">
+                            <input
+                                    bs-switch
+                                    ng-model="NewAccountCtrl.accountObj.ispackage"
+                                    type="checkbox"
+                                    switch-active="{{ isActive }}"
+                                    switch-readonly="{{ isReadonly }}"
+                                    switch-size="{{ size }}"
+                                    switch-animate="{{ animate }}"
+                                    switch-label="{{ label }}"
+                                    switch-icon="{{ icon }}"
+                                    switch-on-text="{{ onLabel }}"
+                                    switch-off-text="{{ offLabel }}"
+                                    switch-on-color="{{ on }}"
+                                    switch-off-color="{{ off }}"
+                                    switch-radio-off="{{ radioOff }}"
+                                    switch-label-width="{{ labelWidth }}"
+                                    switch-handle-width="{{ handleWidth }}"
+                                    switch-inverse="{{ inverse }}"
+                                    ng-true-value="1"
+                                    ng-false-value="0">
+                        </div>
+
+                        <label class="col-md-2 control-label">Position list:
+                        </label>
+                        <div class="col-md-1">
+                            <input
+                                    bs-switch
+                                    ng-model="NewAccountCtrl.accountObj.isposition"
+                                    type="checkbox"
+                                    switch-active="{{ isActive }}"
+                                    switch-readonly="{{ isReadonly }}"
+                                    switch-size="{{ size }}"
+                                    switch-animate="{{ animate }}"
+                                    switch-label="{{ label }}"
+                                    switch-icon="{{ icon }}"
+                                    switch-on-text="{{ onLabel }}"
+                                    switch-off-text="{{ offLabel }}"
+                                    switch-on-color="{{ on }}"
+                                    switch-off-color="{{ off }}"
+                                    switch-radio-off="{{ radioOff }}"
+                                    switch-label-width="{{ labelWidth }}"
+                                    switch-handle-width="{{ handleWidth }}"
+                                    switch-inverse="{{ inverse }}"
+                                    ng-true-value="1"
+                                    ng-false-value="0">
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="form-group" ng-show="NewAccountCtrl.isOpenCheckBoxControl()">
+                        <label class="col-md-3 control-label">Setting:
+                        </label>
+                        <div class="col-md-1">
+                            <input
+                                    bs-switch
+                                    ng-model="NewAccountCtrl.accountObj.issetting"
+                                    type="checkbox"
+                                    switch-active="{{ isActive }}"
+                                    switch-readonly="{{ isReadonly }}"
+                                    switch-size="{{ size }}"
+                                    switch-animate="{{ animate }}"
+                                    switch-label="{{ label }}"
+                                    switch-icon="{{ icon }}"
+                                    switch-on-text="{{ onLabel }}"
+                                    switch-off-text="{{ offLabel }}"
+                                    switch-on-color="{{ on }}"
+                                    switch-off-color="{{ off }}"
+                                    switch-radio-off="{{ radioOff }}"
+                                    switch-label-width="{{ labelWidth }}"
+                                    switch-handle-width="{{ handleWidth }}"
+                                    switch-inverse="{{ inverse }}"
+                                    ng-true-value="1"
+                                    ng-false-value="0">
+                        </div>
+
+                        <label class="col-md-2 control-label">View all data:
+                        </label>
+                        <div class="col-md-1">
+                            <input
+                                    bs-switch
+                                    ng-model="NewAccountCtrl.accountObj.isallcompanydata"
+                                    type="checkbox"
+                                    switch-active="{{ isActive }}"
+                                    switch-readonly="{{ isReadonly }}"
+                                    switch-size="{{ size }}"
+                                    switch-animate="{{ animate }}"
+                                    switch-label="{{ label }}"
+                                    switch-icon="{{ icon }}"
+                                    switch-on-text="{{ onLabel }}"
+                                    switch-off-text="{{ offLabel }}"
+                                    switch-on-color="{{ on }}"
+                                    switch-off-color="{{ off }}"
+                                    switch-radio-off="{{ radioOff }}"
+                                    switch-label-width="{{ labelWidth }}"
+                                    switch-handle-width="{{ handleWidth }}"
+                                    switch-inverse="{{ inverse }}"
+                                    ng-true-value="1"
+                                    ng-false-value="0">
+                        </div>
+
+                        <label class="col-md-2 control-label">Telehealth Booking:
+                        </label>
+                        <div class="col-md-1">
+                            <input
+                                    bs-switch
+                                    ng-model="NewAccountCtrl.accountObj.istelehealthBooking"
+                                    type="checkbox"
+                                    switch-active="{{ isActive }}"
+                                    switch-readonly="{{ isReadonly }}"
+                                    switch-size="{{ size }}"
+                                    switch-animate="{{ animate }}"
+                                    switch-label="{{ label }}"
+                                    switch-icon="{{ icon }}"
+                                    switch-on-text="{{ onLabel }}"
+                                    switch-off-text="{{ offLabel }}"
+                                    switch-on-color="{{ on }}"
+                                    switch-off-color="{{ off }}"
+                                    switch-radio-off="{{ radioOff }}"
+                                    switch-label-width="{{ labelWidth }}"
+                                    switch-handle-width="{{ handleWidth }}"
+                                    switch-inverse="{{ inverse }}"
+                                    ng-true-value="1"
+                                    ng-false-value="0">
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+
+<div class="modal-footer">
+    <button class="btn btn-primary" type="button" ng-click="NewAccountCtrl.ok()">Save</button>
+    <button class="btn btn-warning" type="button" ng-click="NewAccountCtrl.cancel()">Cancel</button>
+</div>

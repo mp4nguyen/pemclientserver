@@ -1,0 +1,75 @@
+<div class="page-content">
+    <div class="container">
+        <div class="page-content-inner">
+            <div class="row">
+                <div class="col-md-12">
+                    <form name ="MakePEMPhoneBookingMainCtrl.form" class="form-horizontal form-row-seperated" action="#">
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="tab_general">
+                                <div class="form-body">
+                                    <div class="form-group"  ng-class="{'has-error' : MakePEMPhoneBookingMainCtrl.isSubmitted && MakePEMPhoneBookingMainCtrl.form.company.$invalid}">
+                                        <label class="col-md-4 control-label">Company:
+                                            <span class="required"> * </span>
+                                        </label>
+                                        <div class="col-md-6">
+                                            <ui-select name="company"  ng-model="MakePEMPhoneBookingMainCtrl.company" theme="bootstrap" style="width:300px;" ng-change="MakePEMPhoneBookingMainCtrl.selectedSubsidiary(MakePEMPhoneBookingMainCtrl.company)">
+                                                <ui-select-match placeholder="Select or search a company in the list...">{{$select.selected.companyName}}</ui-select-match>
+                                                <ui-select-choices repeat="item in MakePEMPhoneBookingMainCtrl.companyObject.subsidiaries | filter: $select.search">
+                                                    <span ng-bind-html="item.companyName | highlight: $select.search"></span>
+                                                </ui-select-choices>
+                                            </ui-select>
+                                            <span for="bookingPerson" ng-show=" MakePEMPhoneBookingMainCtrl.isSubmitted && MakePEMPhoneBookingMainCtrl.form.bookingPerson.$error.required" class="help-block">Booking person is required.</span>
+                                        </div>
+                                        <div class="col-md-2" ng-show="MakePEMPhoneBookingMainCtrl.isAdminLogin()" ><a ng-click="MakePEMPhoneBookingMainCtrl.newCompany()">New Company</a></div>
+                                    </div>
+                                    <div class="form-group" ng-show="MakePEMPhoneBookingMainCtrl.isShowSubsidiary2()">
+                                        <label class="col-md-4 control-label">Subsidiary:</label>
+                                        <div class="col-md-8">
+                                            <select name="package" class="table-group-action-input form-control input-medium" ng-options="package as package.companyName for package in MakePEMPhoneBookingMainCtrl.newBooking.subsidiary.subsidiaries" ng-model="MakePEMPhoneBookingMainCtrl.newBooking.subsidiary2" ></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" ng-class="{'has-error' : MakePEMPhoneBookingMainCtrl.isSubmitted && MakePEMPhoneBookingMainCtrl.form.bookingPerson.$invalid}" ng-show="MakePEMPhoneBookingMainCtrl.isAdminLogin()">
+                                        <label class="col-md-4 control-label">Booking person:
+                                            <span class="required"> * </span>
+                                        </label>
+                                        <div class="col-md-8">
+                                            <input type="text" class="form-control" name="bookingPerson" placeholder="Booking person" ng-model="MakePEMPhoneBookingMainCtrl.newBooking.bookingPerson" required>
+                                            <span for="bookingPerson" ng-show=" MakePEMPhoneBookingMainCtrl.isSubmitted && MakePEMPhoneBookingMainCtrl.form.bookingPerson.$error.required" class="help-block">Booking person is required.</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" ng-class="{'has-error' : MakePEMPhoneBookingMainCtrl.isSubmitted && MakePEMPhoneBookingMainCtrl.form.contactNunber.$invalid}" ng-show="MakePEMPhoneBookingMainCtrl.isAdminLogin()">
+                                        <label class="col-md-4 control-label">Contact number:
+                                            <span class="required"> * </span>
+                                        </label>
+                                        <div class="col-md-8">
+                                            <input type="text" class="form-control" name="contactNunber" placeholder="Contact number" ng-model="MakePEMPhoneBookingMainCtrl.newBooking.contactNumber" required>
+                                            <span for="contactNunber" ng-show=" MakePEMPhoneBookingMainCtrl.isSubmitted && MakePEMPhoneBookingMainCtrl.form.contactNunber.$error.required" class="help-block">Contact number is required.</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" ng-class="{'has-error' : MakePEMPhoneBookingMainCtrl.isSubmitted && MakePEMPhoneBookingMainCtrl.form.email.$invalid}">
+                                        <label class="col-md-4 control-label">Email:
+                                            <span class="required"> * </span>
+                                        </label>
+                                        <div class="col-md-8">
+                                            <input type="text" class="form-control" name="email" placeholder="Email" ng-model="MakePEMPhoneBookingMainCtrl.newBooking.email" required>
+                                            <span for="email" ng-show=" MakePEMPhoneBookingMainCtrl.isSubmitted && MakePEMPhoneBookingMainCtrl.form.email.$error.required" class="help-block">Booking person email is required.</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                      <div class="col-md-4">
+                                      </div>
+                                      <div class="col-md-8">
+                                        <a ng-click="MakePEMPhoneBookingMainCtrl.emailBookingForm()" class="btn btn-outline btn-circle dark btn-sm green">
+                                            <i class="fa fa-floppy-o"></i> Email booking form to client
+                                        </a>
+                                      </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

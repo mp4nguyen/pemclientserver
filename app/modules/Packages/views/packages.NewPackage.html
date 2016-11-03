@@ -1,0 +1,33 @@
+<div class="modal-header">
+    <h3 class="modal-title">New Position</h3>
+</div>
+<div class="modal-body">
+    <form name="NewPackageCtrl.form" class="form-horizontal form-row-seperated" action="#">
+        <div class="tab-content">
+            <div class="tab-pane active" id="tab_general">
+                <div class="form-body">
+                    <div class="form-group"  ng-class="{'has-error' : NewPackageCtrl.isSubmitted && NewPackageCtrl.form.positionName.$invalid}">
+                        <label class="col-md-2 control-label">Package Name:
+                            <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-10">
+                            <input type="text" class="form-control" name="packageName" placeholder="Candidate Name" ng-model="NewPackageCtrl.packageName" required>
+                            <span for="packageName" ng-show=" NewPackageCtrl.isSubmitted && NewPackageCtrl.form.packageName.$error.required" class="help-block">Package Name is required.</span>
+                        </div>
+                    </div>
+                    <div ng-repeat="header in NewPackageCtrl.companyObject.assessments">
+                        <h4>{{header.assName}}</h4>
+                        <div ng-repeat=" ass in header.assessments ">
+                            <input type="checkbox" checklist-model="NewPackageCtrl.assessments" checklist-value="ass.id" >
+                            <label>{{ass.assName}}</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" type="button" ng-click="NewPackageCtrl.ok()">Save</button>
+    <button class="btn btn-warning" type="button" ng-click="NewPackageCtrl.cancel()">Cancel</button>
+</div>

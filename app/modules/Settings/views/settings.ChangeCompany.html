@@ -1,0 +1,28 @@
+<div class="modal-header">
+    <h3 class="modal-title">Change Company</h3>
+</div>
+<div class="modal-body">
+        <div class="portlet light portlet-fit">
+                  <div class="mt-element-list">
+                    <div class="mt-list-container list-simple">
+                      <ul>
+                          <li class="mt-list-item"  ng-repeat="company in ChangeCompanyCtrl.companies">
+                            <div class="list-icon-container done">
+                                <i class="icon-check" ng-show="company.isCurrent"></i>
+                                <i class="icon-close" ng-show="!company.isCurrent" style="color:black"></i>
+                            </div>
+                            <div class="list-item-content">
+                                <h3 class="uppercase">
+                                    <a ng-click="ChangeCompanyCtrl.selectCompany(company.Companies)" ng-style="{ 'color' : company.isCurrent ? '#26C281' : 'black' }" >{{company.Companies.companyName}}</a>
+                                </h3>
+                            </div>
+                          </li>
+                      </ul>
+                    </div>
+            </div>
+        </div>
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-primary" type="button" ng-click="ChangeCompanyCtrl.cancel()">Close</button>
+</div>

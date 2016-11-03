@@ -1,0 +1,253 @@
+/**
+ * Created by phuongnguyen on 27/11/15.
+ */
+angular.module('ocsApp.MakeBooking')
+    .controller('MakeBookingMainCtrl',['CompanyFactory','$scope','$cookieStore','$uibModal','$log','toastr','mysqlDate','MakeBookingFactory','mySharedService', function (CompanyFactory,$scope,$cookieStore,$uibModal,$log,toastr,mysqlDate,MakeBookingFactory,sharedService) {
+        $log = $log.getInstance("ocsApp.MakeBooking.MakeBookingMainCtrl");
+        $log.debug("I am make booking controller.");
+        var user = CompanyFactory.getCurrentUser();
+        this.user = CompanyFactory.getCurrentUser();
+        this.companyObject = null;
+        this.newBooking = {};
+        this.newBooking.poNumber = "";
+        this.newBooking.newCandidates = [];
+        this.subsidiary = {};
+        this.subsidiary2 = {};
+        this.viewPackage = "";
+        this.form = {};
+        this.isSubmitted = false;
+        this.isSubmitingToTheServer = false;
+        this.isSubsidiary2 = false;
+        this.isNoCandidate = false;//to display err if no candidate when submit the form
+        this.paperworkList = ["Redimed","Gorgon","BP","Company Specific","CPPC","Rail","Wheatstone","MACA Mining","Aerison paperwork","Newmont","Shell"];
+        this.newBooking.paperwork = "Redimed";
+        var that = this;
+
+        var initData = function(){
+          CompanyFactory.getCompany(function(data){
+              that.companyObject = data;
+              updateUI(that.companyObject,that.companyObject);
+              $log.debug("Make booking, get company info");
+          });
+        }
+
+        initData();
+
+        $scope.$on('handleBroadcast', function() {
+            var msg = sharedService.message;
+            $log.debug("Received a message from ChangeCompanyCtrl = " + msg);
+            if( msg.indexOf("Refresh make booking") >= 0 ){
+              initData();
+            }
+        });
+
+        this.getAllSubsidiaries = function (callback) {
+            $log.debug("getAllSubsidiaries.Loading subsidiaries......",that.companyObject.subsidiaries);
+            callback(that.companyObject.subsidiaries);
+        };
+
+        this.isAdminLogin = function(){
+            return user.userType.indexOf("RediMed")>=0 ? true:false;
+        };
+
+        this.newCompany = function(){
+            // add new sub company for Redimed when admin make a booking on behalf
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'modules/MakeBooking/views/makeBooking.NewCompany.html',
+                controller: 'NewCompanyCtrl',
+                controllerAs: 'NewCompanyCtrl',
+                size: 'md'
+            });
+
+            modalInstance.result.then(function (newCompany) {
+                //$scope.selected = selectedItem;
+                $log.debug("newCompany = ",newCompany);
+                MakeBookingFactory.newSubsidiaryForRedimed(newCompany).then(function(succ){
+                    $log.debug("created new company sucessfully = ",succ);
+                    that.newBooking.subsidiary = succ;
+                    that.subsidiary = succ;
+                    that.companyObject.subsidiaries.push(succ);
+                });
+            }, function () {
+                $log.debug('Modal New company dismissed at: ' + new Date());
+            });
+        };
+
+        this.submitForm = function(){
+
+            that.isSubmitted = true;
+
+            if(!that.newBooking.subsidiary && that.isAdminLogin()){
+                that.form.company.$invalid = true;
+            }
+
+            if(that.newBooking.newCandidates.length > 0){
+                that.isNoCandidate = false;
+            }else{
+                that.isNoCandidate = true;
+                toastr.error('Please enter candidate information', 'Error');
+                $log.error('Please enter candidate information');
+                that.newCandidate();
+            }
+
+            if(that.form.$invalid || that.form.company.$invalid ){
+                toastr.error('Please enter all required fields of booking information', 'Error');
+                $log.error('Please enter all required fields of booking information',that.form.$error);
+            }else{
+                that.isSubmitingToTheServer = true;
+                MakeBookingFactory.submitBooking(that.newBooking,that.companyObject,user).then(
+                    function(succ){
+                        that.isSubmitingToTheServer = false;
+                        $log.debug("Submit booking successfully",succ);
+                        toastr.success('Successfully submitted');
+                        toastr.success('The booking list will be updated shortly. Please wait !');
+                        //clear all data
+                        that.newBooking = {};
+                        that.newBooking.newCandidates = [];
+                        that.isSubmitted = false;
+
+                    },
+                    function(err){
+                        that.isSubmitingToTheServer = false;
+                        $log.error("Fail to submit booking",err);
+
+                    });
+            }
+        }
+
+        this.selectedSubsidiary = function(value){
+            $log.debug("selectedSubsidiary = ",value);
+            that.newBooking.subsidiary = value;
+            that.subsidiary2 = {};
+            if(that.newBooking.subsidiary.subsidiaries){
+                this.isSubsidiary2 = that.newBooking.subsidiary.subsidiaries.length > 0 ? true:false;
+            }else{
+                this.isSubsidiary2 = false;
+            }
+            updateUI(that.companyObject,that.newBooking.subsidiary);
+        };
+
+        this.isShowSubsidiary2 = function(){
+            return this.isSubsidiary2;
+        }
+
+        this.selectedPackage = function(){
+            $log.debug("Package =",that.newBooking.package);
+
+            if(that.newBooking.package.packageName.indexOf("Custom") >= 0 ){
+                that.viewPackage = "";
+                //open modal to select assessments
+                var modalInstance = $uibModal.open({
+                    animation: true,
+                    templateUrl: 'modules/MakeBooking/views/makeBooking.CustomPackage.html',
+                    controller: 'CustomPackageCtrl',
+                    controllerAs: 'CustomPackageCtrl',
+                    size: 'lg'
+                });
+
+                modalInstance.result.then(function (selectedItem) {
+                    //$scope.selected = selectedItem;
+                    that.newBooking.customPackage = selectedItem;
+                    that.newCandidate();
+
+                }, function () {
+                    $log.debug('Modal Package dismissed at: ' + new Date());
+                });
+            }else{
+                that.viewPackage = "";
+                for(var i in that.newBooking.package.AssessmentHeaders){
+                    that.viewPackage = that.viewPackage +"<br><b>"+  that.newBooking.package.AssessmentHeaders[i].headerName + "</b>";
+                    for(var j in that.newBooking.package.AssessmentHeaders[i].Assessments){
+                        that.viewPackage = that.viewPackage +"<br> - "+  that.newBooking.package.AssessmentHeaders[i].Assessments[j].assName + "";
+                    }
+                }
+                $log.debug("View package:",that.viewPackage);
+                that.newCandidate();
+            }
+
+        };
+
+        this.isPO = function(){
+            return that.companyObject.ispo == 1 ? true:false;
+        };
+
+        this.isProjectIdentification = function(){
+            return that.companyObject.isproject == 1 ? true:false;
+        };
+
+        this.deleteCandidate = function(index,candidate){
+            $log.debug("Remove candidate at " + index,candidate);
+            that.newBooking.newCandidates.splice(index, 1);
+        }
+
+        this.newCandidate = function(index,candidate){
+            //if edit the new candidate, we must have the index of the candidate in the array, so we can replace the old value with the new one
+            $log.debug("New/replace candidate ",candidate," index = ",index);
+            //open modal to enter new candidate
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'modules/MakeBooking/views/makeBooking.NewCandidate.html',
+                controller: 'NewCandidateCtrl',
+                controllerAs: 'NewCandidateCtrl',
+                size: 'lg',
+                resolve: {
+                    candidate: function () {
+                        return candidate;
+                    },
+                    indexOfCandidate: function(){
+                        return index;
+                    }
+                }
+            });
+
+            modalInstance.result.then(function (obj) {
+                //$scope.selected = selectedItem;
+                //if edit the new candidate, we must have the index of the candidate in the array, so we can replace the old value with the new one
+                var index = obj.index;
+                var candidate = obj.candidate;
+                if(index >= 0){
+                    $log.debug("repleace the candidate in the array with index = "+index,candidate);
+                    that.newBooking.newCandidates[index] = candidate;
+                }else{
+                    $log.debug("add candidate into array",candidate);
+                    that.newBooking.newCandidates.push(candidate);
+                }
+            }, function () {
+                $log.debug('Modal Candidate dismissed at: ' + new Date());
+            });
+        };
+
+        function updateUI(conditionOnCompany,companyOrSubsidiary){
+
+            $log.debug("Update PO,Emails,...");
+
+            if(companyOrSubsidiary.poNumber){
+                that.newBooking.poNumber = companyOrSubsidiary.poNumber;
+            }
+
+            if(companyOrSubsidiary.invoiceEmail){
+                if(conditionOnCompany.isinvoiceemailtouser == 1){
+                    that.newBooking.invoiceEmail = companyOrSubsidiary.invoiceEmail;+"; "+that.user.contactEmail;
+                }else{
+                    that.newBooking.invoiceEmail = companyOrSubsidiary.invoiceEmail;
+                }
+            }else{
+                if(conditionOnCompany.isinvoiceemailtouser == 1){
+                    that.newBooking.invoiceEmail = that.user.contactEmail;
+                }
+            }
+
+            if(companyOrSubsidiary.resultEmail){
+                if(conditionOnCompany.isaddcontactemailtoresult == 1){
+                    that.newBooking.resultEmail = companyOrSubsidiary.resultEmail+"; "+that.user.contactEmail;
+                }else{
+                    that.newBooking.resultEmail = companyOrSubsidiary.resultEmail;
+                }
+            }else{
+                if(conditionOnCompany.isaddcontactemailtoresult == 1){
+                    that.newBooking.resultEmail = that.user.contactEmail;
+                }
+            }
+        };
+    }]);

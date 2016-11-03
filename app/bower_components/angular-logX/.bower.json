@@ -1,0 +1,32 @@
+{
+  "name": "angular-logX",
+  "version": "0.1.5",
+  "main": "./release/amd/angular-logX.js",
+  "ignore": [
+    "demos",
+    "src",
+    "build",
+    "node_modules",
+    ".gitignore",
+    "bower.json",
+    "Gruntfile.js",
+    "package.json"
+  ],
+  "dependencies": {
+    "requirejs": "~2.1.8"
+  },
+  "devDependencies": {
+    "requirejs": "~2.1.8"
+  },
+  "homepage": "https://github.com/ThomasBurleson/angularjs-logDecorator",
+  "_release": "0.1.5",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.1.5",
+    "commit": "d51b86b3fc9ed23d6e88faf92ec54f735fd9983b"
+  },
+  "_source": "git://github.com/ThomasBurleson/angularjs-logDecorator.git",
+  "_target": "~0.1.5",
+  "_originalSource": "angular-logX",
+  "_direct": true
+}

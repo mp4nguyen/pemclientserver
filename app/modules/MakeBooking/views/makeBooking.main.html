@@ -1,0 +1,194 @@
+<div class="loading-page" ng-show="MakeBookingMainCtrl.isSubmitingToTheServer"></div>
+<div class="page-content">
+    <div class="container">
+        <div class="page-content-inner">
+            <div class="row">
+                <div class="col-md-12">
+                    <form name ="MakeBookingMainCtrl.form" class="form-horizontal form-row-seperated" action="#">
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="tab_general">
+                                <div class="form-body">
+                                    <div class="form-group">
+                                        <label class="col-md-4 control-label">Company Name:</label>
+                                        <div class="col-md-8">
+                                            {{MakeBookingMainCtrl.companyObject.companyName}}
+                                        </div>
+
+                                    </div>
+                                    <div class="form-group"  ng-class="{'has-error' : MakeBookingMainCtrl.isSubmitted && MakeBookingMainCtrl.form.company.$invalid}">
+                                        <label class="col-md-4 control-label" ng-show="!MakeBookingMainCtrl.isAdminLogin()">Subsidiary:</label>
+                                        <label class="col-md-4 control-label" ng-show="MakeBookingMainCtrl.isAdminLogin()">Company:
+                                            <span class="required"> * </span>
+                                        </label>
+                                        <div class="col-md-6">
+                                            <ui-select name="company"  ng-model="MakeBookingMainCtrl.subsidiary" theme="bootstrap" style="width:300px;" ng-change="MakeBookingMainCtrl.selectedSubsidiary(MakeBookingMainCtrl.subsidiary)">
+                                                <ui-select-match placeholder="Select or search a person in the list...">{{$select.selected.companyName}}</ui-select-match>
+                                                <ui-select-choices repeat="item in MakeBookingMainCtrl.companyObject.subsidiaries | filter: $select.search">
+                                                    <span ng-bind-html="item.companyName | highlight: $select.search"></span>
+                                                </ui-select-choices>
+                                            </ui-select>
+                                            <span for="bookingPerson" ng-show=" MakeBookingMainCtrl.isSubmitted && MakeBookingMainCtrl.form.bookingPerson.$error.required" class="help-block">Booking person is required.</span>
+                                        </div>
+                                        <div class="col-md-2" ng-show="MakeBookingMainCtrl.isAdminLogin()" ><a ng-click="MakeBookingMainCtrl.newCompany()">New Company</a></div>
+                                    </div>
+                                    <div class="form-group" ng-show="MakeBookingMainCtrl.isShowSubsidiary2()">
+                                        <label class="col-md-4 control-label" ng-show="MakeBookingMainCtrl.isAdminLogin()">Subsidiary:</label>
+                                        <div class="col-md-8">
+                                            <select name="package" class="table-group-action-input form-control input-medium" ng-options="package as package.companyName for package in MakeBookingMainCtrl.newBooking.subsidiary.subsidiaries" ng-model="MakeBookingMainCtrl.newBooking.subsidiary2" ></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" ng-class="{'has-error' : MakeBookingMainCtrl.isSubmitted && MakeBookingMainCtrl.form.bookingPerson.$invalid}" ng-show="MakeBookingMainCtrl.isAdminLogin()">
+                                        <label class="col-md-4 control-label">Booking person:
+                                            <span class="required"> * </span>
+                                        </label>
+                                        <div class="col-md-8">
+                                            <input type="text" class="form-control" name="bookingPerson" placeholder="Booking person" ng-model="MakeBookingMainCtrl.newBooking.bookingPerson" ng-required="MakeBookingMainCtrl.isAdminLogin()">
+                                            <span for="bookingPerson" ng-show=" MakeBookingMainCtrl.isSubmitted && MakeBookingMainCtrl.form.bookingPerson.$error.required" class="help-block">Booking person is required.</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" ng-class="{'has-error' : MakeBookingMainCtrl.isSubmitted && MakeBookingMainCtrl.form.contactNunber.$invalid}" ng-show="MakeBookingMainCtrl.isAdminLogin()">
+                                        <label class="col-md-4 control-label">Contact number:
+                                            <span class="required"> * </span>
+                                        </label>
+                                        <div class="col-md-8">
+                                            <input type="text" class="form-control" name="contactNunber" placeholder="Contact number" ng-model="MakeBookingMainCtrl.newBooking.contactNunber" ng-required="MakeBookingMainCtrl.isAdminLogin()">
+                                            <span for="contactNunber" ng-show=" MakeBookingMainCtrl.isSubmitted && MakeBookingMainCtrl.form.contactNunber.$error.required" class="help-block">Contact number is required.</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" ng-class="{'has-error' : MakeBookingMainCtrl.isSubmitted && MakeBookingMainCtrl.form.poNumber.$invalid}">
+                                        <label class="col-md-4 control-label">Purchase Order Number:
+                                            <span class="required" ng-show="MakeBookingMainCtrl.isPO()"> * </span>
+                                        </label>
+                                        <div class="col-md-8">
+                                            <input type="text" class="form-control" name="poNumber" placeholder="PO Number" ng-model="MakeBookingMainCtrl.newBooking.poNumber" ng-required="MakeBookingMainCtrl.isPO()">
+                                            <span for="poNumber" ng-show=" MakeBookingMainCtrl.isSubmitted && MakeBookingMainCtrl.form.poNumber.$error.required" class="help-block">PO number is required.</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group"  ng-class="{'has-error' : MakeBookingMainCtrl.isSubmitted && MakeBookingMainCtrl.form.resultEmail.$invalid}">
+                                        <label class="col-md-4 control-label">Email For Receiving Results:
+                                            <span class="required"> * </span>
+                                        </label>
+                                        <div class="col-md-8">
+                                            <input type="text" class="form-control" name="resultEmail" placeholder="Result Email" ng-model="MakeBookingMainCtrl.newBooking.resultEmail" required>
+                                            <span for="poNumber" ng-show=" MakeBookingMainCtrl.isSubmitted && MakeBookingMainCtrl.form.resultEmail.$error.required" class="help-block">Result email is required.</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" ng-class="{'has-error' : MakeBookingMainCtrl.isSubmitted && MakeBookingMainCtrl.form.invoiceEmail.$invalid}">
+                                        <label class="col-md-4 control-label">Email For Receiving Invoices:
+                                            <span class="required"> * </span>
+                                        </label>
+                                        <div class="col-md-8">
+                                            <input type="text" class="form-control" name="invoiceEmail" placeholder="Invoice Email" ng-model="MakeBookingMainCtrl.newBooking.invoiceEmail" required>
+                                            <span for="poNumber" ng-show=" MakeBookingMainCtrl.isSubmitted && MakeBookingMainCtrl.form.invoiceEmail.$error.required" class="help-block">Invoice email is required.</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" ng-class="{'has-error' : MakeBookingMainCtrl.isSubmitted && MakeBookingMainCtrl.form.projectIden.$invalid}">
+                                        <label class="col-md-4 control-label">Project Identification:
+                                            <span class="required" ng-show="MakeBookingMainCtrl.isProjectIdentification()"> * </span>
+                                        </label>
+                                        <div class="col-md-8">
+                                            <input type="text" class="form-control" name="projectIden" placeholder="Project Identification" ng-model="MakeBookingMainCtrl.newBooking.projectIdentification" ng-required="MakeBookingMainCtrl.isProjectIdentification()">
+                                            <span for="poNumber" ng-show=" MakeBookingMainCtrl.isSubmitted && MakeBookingMainCtrl.form.projectIden.$error.required" class="help-block">Project identification is required.</span>
+                                        </div>
+                                     </div>
+
+                                    <div class="form-group">
+                                        <label class="col-md-4 control-label">Comments:
+                                        </label>
+                                        <div class="col-md-8">
+                                            <textarea class="form-control" name="product[description]" ng-model="MakeBookingMainCtrl.newBooking.comments"></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" ng-class="{'has-error' : MakeBookingMainCtrl.isSubmitted && MakeBookingMainCtrl.form.paperwork.$invalid}">
+                                        <label class="col-md-4 control-label">Select Paperwork:
+                                            <span class="required"> * </span>
+                                        </label>
+                                        <div class="col-md-8">
+                                            <select name="paperwork" class="table-group-action-input form-control input-medium" ng-options="paperwork for paperwork in MakeBookingMainCtrl.paperworkList" ng-model="MakeBookingMainCtrl.newBooking.paperwork" required ></select>
+                                            <span for="poNumber" ng-show=" MakeBookingMainCtrl.isSubmitted && MakeBookingMainCtrl.form.paperwork.$error.required" class="help-block">Paperwork is required.</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" ng-class="{'has-error' : MakeBookingMainCtrl.isSubmitted && MakeBookingMainCtrl.form.package.$invalid}">
+                                        <label class="col-md-4 control-label">Select Package:
+                                            <span class="required"> * </span>
+                                        </label>
+                                        <div class="col-md-8">
+                                            <select name="package" class="table-group-action-input form-control input-medium" ng-options="package as package.packageName for package in MakeBookingMainCtrl.companyObject.packages" ng-model="MakeBookingMainCtrl.newBooking.package" required ng-change="MakeBookingMainCtrl.selectedPackage()"></select>
+                                            <span for="poNumber" ng-show=" MakeBookingMainCtrl.isSubmitted && MakeBookingMainCtrl.form.package.$error.required" class="help-block">Package is required.</span>
+                                            <p ng-bind-html="MakeBookingMainCtrl.viewPackage"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- BEGIN SAMPLE TABLE PORTLET-->
+<div class="portlet" >
+    <div class="portlet-body">
+        <div class="table-scrollable">
+            <table class="table table-striped table-bordered table-advance table-hover" >
+                <thead>
+                <tr>
+                    <th>Candidate Name</th>
+                    <th>DOB</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Position</th>
+                    <th>Preferred Site</th>
+                    <th>Preferred Date From</th>
+                    <th>Preferred Date To</th>
+                    <th>Appointment time</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="candidate in MakeBookingMainCtrl.newBooking.newCandidates">
+                    <td class="highlight">
+                        <div class="success"></div>
+                        <a ng-click="MakeBookingMainCtrl.newCandidate($index,candidate)" > {{candidate.candidateName}} </a>
+                    </td>
+                    <td> {{candidate.dob|date:"dd/MM/yyyy"}} </td>
+                    <td> {{candidate.phone}}</td>
+                    <td> {{candidate.email}}</td>
+                    <td> {{candidate.position}}</td>
+                    <td> {{candidate.site.siteName}}</td>
+                    <td> {{candidate.preferredFromDate|date:"dd/MM/yyyy"}}</td>
+                    <td> {{candidate.preferredToDate|date:"dd/MM/yyyy"}}</td>
+                    <td> {{candidate.calendar.fromTime|dateFilter|date:"dd/MM/yyyy HH:mm" }}</td>
+                    <td>
+                        <a ng-click="MakeBookingMainCtrl.newCandidate($index,candidate)" class="btn btn-outline btn-circle btn-sm purple">
+                            <i class="fa fa-edit"></i> Edit </a>
+                        <a ng-click="MakeBookingMainCtrl.deleteCandidate($index,candidate)" class="btn btn-outline btn-circle dark btn-sm black">
+                            <i class="fa fa-trash-o"></i> Delete </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="form-actions">
+    <div class="row">
+        <div class="col-md-offset-4 col-md-8">
+            <a ng-click="MakeBookingMainCtrl.newCandidate()" class="btn btn-outline btn-circle dark btn-sm green">
+                <i class="fa fa-user-plus"></i> New Candidate
+            </a>
+            <a ng-click="MakeBookingMainCtrl.submitForm()" class="btn btn-outline btn-circle dark btn-sm green">
+                <i class="fa fa-floppy-o"></i> Submit
+            </a>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- END SAMPLE TABLE PORTLET-->

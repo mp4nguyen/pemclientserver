@@ -1,0 +1,46 @@
+<div class="login">
+    <!-- BEGIN FORGOT PASSWORD FORM -->
+    <form class="content forget-form" name="forgotPasswordCtrl.form">
+        <div class="form-title">
+            <span class="form-title">Forget Password ?</span>
+            <span class="form-subtitle">Enter your username and e-mail to reset the password.</span>
+        </div>
+
+        <!--UserName-->
+        <div class="form-group" ng-class="{'has-error':forgotPasswordCtrl.showClickedValidation && forgotPasswordCtrl.form.username.$invalid}">
+            <!--ie8, ie9 does not support html5 placeholder, so we just show field title for that-->
+            <label class="control-label visible-ie8 visible-ie9">Username</label>
+            <div class="input-icon">
+                <i class="fa fa-user"></i>
+                <input class="form-control form-control-solid placeholder-no-fix" type="text" autocomplete="off" placeholder="Username" name="username" required ng-pattern="/^\s*\S+\s*$/" ng-model="forgotPasswordCtrl.username"/>
+            </div>
+            <!-- ERROR -->
+            <span ng-show="forgotPasswordCtrl.showClickedValidation">
+                <span for="username" ng-show="forgotPasswordCtrl.form.username.$error.required" class="help-block">Username is required.</span>
+                <span for="username" ng-show="forgotPasswordCtrl.form.username.$error.pattern" class="help-block">Username cannot contains whitespace.</span>
+            </span>
+            <!-- ERROR -->
+        </div>
+        <!--Email-->
+        <div class="form-group" ng-class="{'has-error':forgotPasswordCtrl.showClickedValidation && forgotPasswordCtrl.form.username.$invalid}">
+            <!--ie8, ie9 does not support html5 placeholder, so we just show field title for that-->
+            <label class="control-label visible-ie8 visible-ie9">Username</label>
+            <div class="input-icon">
+                <i class="fa fa-user"></i>
+                <input class="form-control form-control-solid placeholder-no-fix" type="text" autocomplete="off" placeholder="Email" name="email" required ng-pattern="/^\s*\S+\s*$/" ng-model="forgotPasswordCtrl.email"/>
+            </div>
+            <!-- ERROR -->
+            <span ng-show="forgotPasswordCtrl.showClickedValidation">
+                <span for="username" ng-show="forgotPasswordCtrl.form.username.$error.required" class="help-block">Username is required.</span>
+                <span for="username" ng-show="forgotPasswordCtrl.form.username.$error.pattern" class="help-block">Username cannot contains whitespace.</span>
+            </span>
+            <!-- ERROR -->
+        </div>
+
+        <div class="form-actions">
+            <button type="button" id="back-btn" class="btn btn-default" ng-click="forgotPasswordCtrl.goBackLogin()">Back</button>
+            <button type="button" class="btn btn-primary uppercase pull-right" ng-click="forgotPasswordCtrl.forgotPassword()">Submit</button>
+        </div>
+    </form>
+    <!-- END FORGOT PASSWORD FORM -->
+</div>

@@ -1,0 +1,51 @@
+<div class="modal-header">
+    <h3 class="modal-title">New Company</h3>
+</div>
+<div class="modal-body">
+    <form name="NewPEMPhoneCompanyCtrl.form" class="form-horizontal form-row-seperated" action="#">
+        <div class="tab-content">
+            <div class="tab-pane active" id="tab_general">
+                <div class="form-body">
+                    <div class="form-group" ng-class="{'has-error' : NewPEMPhoneCompanyCtrl.isSubmitted && NewPEMPhoneCompanyCtrl.form.companyName2.$invalid}">
+                        <label class="col-md-4 control-label">Employer name:
+                            <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" name="companyName2" placeholder="Employer name" ng-model="NewPEMPhoneCompanyCtrl.company.companyName" required>
+                            <span for="companyName2" ng-show="NewPEMPhoneCompanyCtrl.isSubmitted && NewPEMPhoneCompanyCtrl.form.companyName2.$error.required" class="help-block">Employer Name is required.</span>
+                        </div>
+                    </div>
+                    <div class="form-group"  >
+                        <label class="col-md-4 control-label">Description:
+                        </label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" name="description" placeholder="Description" ng-model="NewPEMPhoneCompanyCtrl.company.description">
+                        </div>
+                    </div>
+                    <div class="form-group"  ng-class="{'has-error' : NewPEMPhoneCompanyCtrl.isSubmitted && NewPEMPhoneCompanyCtrl.form.resultEmail.$invalid}">
+                        <label class="col-md-4 control-label">Result email:
+                          <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-8"  >
+                            <input type="email" class="form-control" name="resultEmail" placeholder="Result email" ng-model="NewPEMPhoneCompanyCtrl.company.resultEmail" required>
+                            <span for="resultEmail" ng-show=" NewPEMPhoneCompanyCtrl.isSubmitted && NewPEMPhoneCompanyCtrl.form.resultEmail.$error.email" class="help-block">Email is invalid format.</span>
+                            <span for="resultEmail" ng-show="NewPEMPhoneCompanyCtrl.isSubmitted && NewPEMPhoneCompanyCtrl.form.resultEmail.$error.required" class="help-block">Result email is required.</span>
+                        </div>
+                    </div>
+                    <div class="form-group"   ng-class="{'has-error' : NewPEMPhoneCompanyCtrl.isSubmitted && NewPEMPhoneCompanyCtrl.form.invoiceEmail.$invalid}">
+                        <label class="col-md-4 control-label">Invoice email:
+                        </label>
+                        <div class="col-md-8">
+                            <input type="email" class="form-control" name="invoiceEmail" placeholder="Invoice email" ng-model="NewPEMPhoneCompanyCtrl.company.invoiceEmail">
+                            <span for="invoiceEmail" ng-show=" NewPEMPhoneCompanyCtrl.isSubmitted && NewPEMPhoneCompanyCtrl.form.invoiceEmail.$error.email" class="help-block">Email is invalid format.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" type="button" ng-click="NewPEMPhoneCompanyCtrl.ok()">OK</button>
+    <button class="btn btn-warning" type="button" ng-click="NewPEMPhoneCompanyCtrl.cancel()">Cancel</button>
+</div>

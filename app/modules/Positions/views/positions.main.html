@@ -1,0 +1,39 @@
+<div class="row">
+    <div class="col-lg-3">
+    </div>
+    <div class="col-lg-6">
+        <div class="portlet light portlet-fit ">
+            <div class="portlet-body">
+                <div class="mt-element-list">
+
+                    <div class="mt-list-head list-news ext-1 font-white bg-green-sharp">
+                        <div class="list-head-title-container">
+                            <h3 class="list-title">Positions</h3>
+                        </div>
+                        <div class="list-count pull-right bg-green">
+                            <a ng-click="PositionsMainCtrl.newOrEditPosition()">
+                                <i class="fa fa-plus"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="mt-list-container list-simple ext-1">
+                        <ul ng-repeat="position in PositionsMainCtrl.positions">
+                            <li class="mt-list-item done">
+                                <div class="list-icon-container">
+                                    <a ng-click="PositionsMainCtrl.deletePosition(position.id)"><i class="icon-close"></i></a>
+                                </div>
+                                <div class="list-item-content">
+                                    <h3 class="">
+                                        <a ng-click="PositionsMainCtrl.newOrEditPosition(position)">{{position.positionName}}</a>
+                                    </h3>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

@@ -1,0 +1,282 @@
+<div class="loading-page" ng-show="BookingFormCtrl.isGettingAssessments"></div>
+<div>
+    <!-- BEGIN FORGOT PASSWORD FORM -->
+  <div class="container" >
+
+    <h2 ng-show="BookingFormCtrl.isShowNotice  && !BookingFormCtrl.isSubmitBookingSuccess""> You session was expired or the booking form was made</h2>
+    <h2 ng-show="BookingFormCtrl.isShowNotice  && !BookingFormCtrl.isSubmitBookingSuccess""> Please contact Redimed to receive the new booking form </h2>
+
+    <h2 ng-show="BookingFormCtrl.isSubmitBookingSuccess""> Your booking request has been successfully submitted. Please note that your booking is NOT confirmed until you have received a confirmation email from the REDIMED healthscreening team confirming the booking request and the time of the appointment. REDIMED will endeavour to make appointments for preferred times wherever possible, however where this is not possible, the next available time/date will be made available for your candidate. </h2>
+    
+
+    <form class="form-row-seperated" name="BookingFormCtrl.form" ng-show="BookingFormCtrl.isAuth && !BookingFormCtrl.isSubmitBookingSuccess">
+
+      <legend>
+          Booking details
+      </legend>
+      <p>
+        *Fields marked are essential information and must be completed before submitting the booking form.
+      </p>
+      <div class="row">
+
+          <div class="col-md-6">
+              <label class="control-label">Date of booking</label>
+              <input
+                  type="text"
+                  name = "bookingDate"
+                  class="form-control"
+                  uib-datepicker-popup="{{BookingFormCtrl.format}}"
+                  ng-model="BookingFormCtrl.BookingCandidate.bookingDate"
+                  datepicker-options="dateOptions"
+                  date-disabled="disabled(date, mode)"
+                  disabled="true"
+                  close-text="Close" />
+          </div>
+          <div class="col-md-6">
+              <label class="control-label">Company</label>
+              <input class="form-control" name="companyName" ng-model="BookingFormCtrl.BookingCandidate.companyName" disabled="true"/>
+          </div>
+      </div>
+
+      <div class="row">
+          <div class="col-xs-6">
+              <label class="control-label">Booking Person<span class="required"> * </span></label>
+              <input class="form-control" placeholder="Booking date" name="bookingDate" ng-model="BookingFormCtrl.BookingCandidate.bookingPerson" disabled="true"/>
+          </div>
+          <div class="col-xs-6">
+              <label class="control-label">Phone number<span class="required"> * </span></label>
+              <input class="form-control" placeholder="Booking date" name="bookingPersonNumber" ng-model="BookingFormCtrl.BookingCandidate.bookingPersonNumber" disabled="true"/>
+          </div>
+      </div>
+
+      <div class="row">
+          <div class="col-xs-6">
+              <label class="control-label">Email address<span class="required"> * </span></label>
+              <input class="form-control" placeholder="Booking date" name="bookingPersonEmail" ng-model="BookingFormCtrl.BookingCandidate.bookingPersonEmail" disabled="true"/>
+          </div>
+          <div class="col-xs-6">
+              <label class="control-label">Email address results are to be sent <span class="required"> * </span></label>
+              <div class="form-group" ng-class="{'has-error':BookingFormCtrl.isSubmitted && BookingFormCtrl.form.resultEmail.$invalid}">
+                  <input class="form-control" name="resultEmail" required ng-model="BookingFormCtrl.BookingCandidate.resultEmail"/>
+                  <span for="resultEmail" ng-show=" BookingFormCtrl.isSubmitted && BookingFormCtrl.form.resultEmail.$error.required" class="help-block">Result email is required.</span>
+              </div>
+          </div>
+
+      </div>
+
+      <div class="row">
+          <div class="col-xs-6">
+              <label class="control-label">Comment</label>
+              <input class="form-control" name="comment"  ng-model="BookingFormCtrl.BookingCandidate.comment"/>
+          </div>
+          <div class="col-xs-6">
+              <label class="control-label">Purchase Order/Requisition number</label>
+              <input class="form-control" name="comment"  ng-model="BookingFormCtrl.BookingCandidate.po"/>          </div>
+      </div>
+
+      <legend>
+          Candidate (Worker) Details
+      </legend>
+
+      <div class="row">
+          <div class="col-xs-4">
+              <label class="control-label">Name <span class="required"> * </span></label>
+              <div class="form-group" ng-class="{'has-error':BookingFormCtrl.isSubmitted && BookingFormCtrl.form.candidateName.$invalid}">
+                  <input class="form-control" placeholder="Candidate Name" name="candidateName" required ng-model="BookingFormCtrl.BookingCandidate.candidateName"/>
+                  <span for="candidateName" ng-show=" BookingFormCtrl.isSubmitted && BookingFormCtrl.form.candidateName.$error.required" class="help-block">Candidate Name is required.</span>              </div>
+          </div>
+          <div class="col-xs-4">
+              <label class="control-label">Date of birth<span class="required"> * </span></label>
+              <div class="input-group input-medium date date-picker" ng-class="{'has-error':BookingFormCtrl.isSubmitted && BookingFormCtrl.form.dob.$invalid}">
+                  <input
+                      type="text"
+                      name = "dob"
+                      class="form-control"
+                      uib-datepicker-popup="{{BookingFormCtrl.format}}"
+                      ng-model="BookingFormCtrl.BookingCandidate.dob"
+                      is-open="BookingFormCtrl.dateStatus.dobOpened"
+                      min-date="minDate"
+                      max-date="maxDate"
+                      datepicker-options="dateOptions"
+                      date-disabled="disabled(date, mode)"
+                      ng-required="true"
+                      close-text="Close" />
+                  <span class="input-group-btn">
+                      <button type="button" class="btn btn-default" ng-click="BookingFormCtrl.openDOB($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                  </span>
+                  <span for="dob" ng-show=" BookingFormCtrl.isSubmitted && BookingFormCtrl.form.dob.$error.required" class="help-block">DOB is required.</span>
+              </div>
+          </div>
+          <div class="col-xs-4">
+              <label class="control-label">Contact Number<span class="required"> * </span></label>
+              <div class="form-group" ng-class="{'has-error':BookingFormCtrl.isSubmitted && BookingFormCtrl.form.contactNumber.$invalid}">
+                <input class="form-control" name="contactNumber" required ng-model="BookingFormCtrl.BookingCandidate.contactNumber"/>
+                <span for="contactNumber" ng-show=" BookingFormCtrl.isSubmitted && BookingFormCtrl.form.contactNumber.$error.required" class="help-block">Contact number is required.</span>
+              </div>
+          </div>
+      </div>
+
+      <div class="row">
+          <div class="col-xs-4">
+              <label class="control-label">Email <span class="required"> * </span></label>
+              <div class="form-group" ng-class="{'has-error':BookingFormCtrl.isSubmitted && BookingFormCtrl.form.email.$invalid}">
+                <input type="email" class="form-control" name="email" placeholder="Email" ng-model="BookingFormCtrl.BookingCandidate.email" required>
+                <span for="candidateName" ng-show=" BookingFormCtrl.isSubmitted && BookingFormCtrl.form.email.$error.required" class="help-block">Email is required.</span>
+                <span for="candidateName" ng-show=" BookingFormCtrl.isSubmitted && BookingFormCtrl.form.email.$error.email" class="help-block">Email is invalid format.</span>
+              </div>
+          </div>
+          <div class="col-xs-4">
+              <label class="control-label">Position Applied For<span class="required"> * </span></label>
+              <div class="form-group" ng-class="{'has-error':BookingFormCtrl.isSubmitted && BookingFormCtrl.form.position.$invalid}">
+                  <input class="form-control" name="position" required ng-model="BookingFormCtrl.BookingCandidate.position"/>
+                  <span for="position" ng-show=" BookingFormCtrl.isSubmitted && BookingFormCtrl.form.position.$error.required" class="help-block">Position is required.</span>
+              </div>
+          </div>
+          <div class="col-xs-4">
+              <label class="control-label">Select Paperwork<span class="required"> * </span></label>
+              <div class="form-group" ng-class="{'has-error':BookingFormCtrl.isSubmitted && BookingFormCtrl.form.position.$invalid}">
+                  <select
+                      name="paperwork"
+                      class="table-group-action-input form-control input-medium"
+                      ng-options="paperwork for paperwork in BookingFormCtrl.paperworkList"
+                      ng-model="BookingFormCtrl.BookingCandidate.paperwork" required ></select>
+                  <span for="paperwork" ng-show=" BookingFormCtrl.isSubmitted && BookingFormCtrl.form.paperwork.$error.required" class="help-block">Paperwork is required.</span>
+              </div>
+          </div>
+      </div>
+
+      <div class="row">
+          <div class="col-xs-4">
+              <label class="control-label">Address <span class="required"> * </span></label>
+              <div class="form-group" ng-class="{'has-error':BookingFormCtrl.isSubmitted && BookingFormCtrl.form.address.$invalid}">
+                  <input class="form-control" placeholder="Address" name="address" required ng-model="BookingFormCtrl.BookingCandidate.address"/>
+                  <span for="postcode" ng-show=" BookingFormCtrl.isSubmitted && BookingFormCtrl.form.address.$error.required" class="help-block">Address is required.</span>
+              </div>
+          </div>
+          <div class="col-xs-4">
+              <label class="control-label">Suburb<span class="required"> * </span></label>
+              <div class="form-group" ng-class="{'has-error':BookingFormCtrl.isSubmitted && BookingFormCtrl.form.suburb.$invalid}">
+                  <input class="form-control" placeholder="Suburb" name="suburb" required ng-model="BookingFormCtrl.BookingCandidate.suburb"/>
+                  <span for="suburb" ng-show=" BookingFormCtrl.isSubmitted && BookingFormCtrl.form.suburb.$error.required" class="help-block">Suburb is required.</span>
+              </div>
+          </div>
+          <div class="col-xs-4">
+              <label class="control-label">Postcode<span class="required"> * </span></label>
+              <div class="form-group" ng-class="{'has-error':BookingFormCtrl.isSubmitted && BookingFormCtrl.form.postcode.$invalid}">
+                  <input class="form-control" placeholder="Postcode" name="postcode" required ng-model="BookingFormCtrl.BookingCandidate.postcode"/>
+                  <span for="postcode" ng-show=" BookingFormCtrl.isSubmitted && BookingFormCtrl.form.postcode.$error.required" class="help-block">Postcode is required.</span>
+              </div>
+          </div>
+      </div>
+
+      <div class="row">
+          <div class="col-xs-4">
+              <label class="control-label">Preferred Location <span class="required"> * </span></label>
+          </div>
+      </div>
+      <div class="row">
+          <div class="col-md-4"   ng-class="{'has-error' : BookingFormCtrl.isSubmitted && BookingFormCtrl.form.site.$invalid}">
+                  <select name = "site" class="form-control" ng-options="site as site.siteName for site in BookingFormCtrl.allSites" ng-model="BookingFormCtrl.BookingCandidate.site" ng-change="BookingFormCtrl.selectedSite()" required></select>
+                  <span for="site" ng-show=" BookingFormCtrl.isSubmitted && BookingFormCtrl.form.site.$error.required" class="help-block">Preferred site is required.</span>
+          </div>
+          <div class="col-md-4" ng-show="BookingFormCtrl.isStates()"   ng-class="{'has-error' : BookingFormCtrl.isSubmitted && BookingFormCtrl.form.preferredState.$invalid}">
+              <select name ="preferredState" class="form-control" ng-options="state as state.stateName for state in BookingFormCtrl.states" ng-model="BookingFormCtrl.BookingCandidate.preferredState" ng-change="BookingFormCtrl.selectedState()" ng-required="BookingFormCtrl.isStates()"></select>
+              <span for="state" ng-show=" BookingFormCtrl.isSubmitted && NewCandidateCtrl.newCandidateForm.preferredState.$error.required" class="help-block">Preferred site is required.</span>
+          </div>
+          <div class="col-md-4"  ng-show="BookingFormCtrl.isSuburbs()"   ng-class="{'has-error' : BookingFormCtrl.isSubmitted && BookingFormCtrl.form.preferredSuburb.$invalid}">
+              <select name="preferredSuburb" class="form-control"  ng-options="suburb as suburb.suburbName for suburb in BookingFormCtrl.suburbs" ng-model="BookingFormCtrl.BookingCandidate.preferredSuburb" ng-required="BookingFormCtrl.isSuburbs()"></select>
+              <span for="preferredSuburb" ng-show=" BookingFormCtrl.isSubmitted && BookingFormCtrl.form.preferredSuburb.$error.required" class="help-block">Preferred suburb is required.</span>
+          </div>
+      </div>
+
+      <div class="row">
+          <div class="col-xs-4">
+              <label class="control-label">Preferred from Date<span class="required"> * </span></label>
+              <div class="input-group input-medium date date-picker" ng-class="{'has-error':BookingFormCtrl.isSubmitted && BookingFormCtrl.form.dob.$invalid}">
+                  <input
+                      type="text"
+                      name = "preferredFromDate"
+                      class="form-control"
+                      uib-datepicker-popup="{{BookingFormCtrl.format}}"
+                      ng-model="BookingFormCtrl.BookingCandidate.preferredFromDate"
+                      is-open="BookingFormCtrl.dateStatus.fromDateOpened"
+                      min-date="minDate"
+                      max-date="maxDate"
+                      datepicker-options="dateOptions"
+                      date-disabled="disabled(date, mode)"
+                      ng-required="true"
+                      close-text="Close" />
+                  <span class="input-group-btn">
+                      <button type="button" class="btn btn-default" ng-click="BookingFormCtrl.openFromDate($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                  </span>
+                  <span for="preferredFromDate" ng-show=" BookingFormCtrl.isSubmitted && BookingFormCtrl.form.preferredFromDate.$error.required" class="help-block">preferredFromDate is required.</span>
+              </div>
+          </div>
+          <div class="col-xs-4">
+              <label class="control-label">Preferred to Date<span class="required"> * </span></label>
+              <div class="input-group input-medium date date-picker" ng-class="{'has-error':BookingFormCtrl.isSubmitted && BookingFormCtrl.form.preferredToDate.$invalid}">
+                  <input
+                      type="text"
+                      name = "preferredToDate"
+                      class="form-control"
+                      uib-datepicker-popup="{{BookingFormCtrl.format}}"
+                      ng-model="BookingFormCtrl.BookingCandidate.preferredToDate"
+                      is-open="BookingFormCtrl.dateStatus.toDateOpened"
+                      min-date="minDate"
+                      max-date="maxDate"
+                      datepicker-options="dateOptions"
+                      date-disabled="disabled(date, mode)"
+                      ng-required="true"
+                      close-text="Close" />
+                  <span class="input-group-btn">
+                      <button type="button" class="btn btn-default" ng-click="BookingFormCtrl.openToDate($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                  </span>
+                  <span for="dob" ng-show=" BookingFormCtrl.isSubmitted && BookingFormCtrl.form.preferredToDate.$error.required" class="help-block">DOB is required.</span>
+              </div>
+          </div>
+          <div class="col-xs-4">
+              <label class="control-label">Preferred Time<span class="required"> * </span></label>
+              <div class="form-group">
+                  <select
+                      name="preferredTime"
+                      class="table-group-action-input form-control input-medium"
+                      ng-options="preferredTime for preferredTime in BookingFormCtrl.timeList"
+                      ng-model="BookingFormCtrl.BookingCandidate.preferredTime" required ></select>
+              </div>
+          </div>
+      </div>
+
+      <div class="row">
+          <div class="col-xs-8">
+              <input type="checkbox" ng-model="BookingFormCtrl.BookingCandidate.isRedimedCallCandidate" ng-true-value="'1'" ng-false-value="'0'">
+              <span>Redimed calls the cadidate to confirm the appointment</span>
+          </div>
+      </div>
+
+
+      <legend>
+          Assessment Requirements (please tick and indicate details where appropriate)
+      </legend>
+      <div ng-repeat="header in BookingFormCtrl.allAssessments">
+          <h4><b>{{header.assName}}</b></h4>
+          <div ng-repeat=" ass in header.assessments ">
+            <div class="row" ng-if="$even">
+              <div class="col-xs-5">
+                   <input type="checkbox" checklist-model="BookingFormCtrl.assessments"  checklist-value="header.assessments[$index  ].id">&nbsp;
+                   <span>{{header.assessments[$index  ].assName}}</span>
+               </div>
+               <div class="col-xs-5" ng-if=" ($index + 1) < header.assessments.length">
+                 <input type="checkbox" checklist-model="BookingFormCtrl.assessments"  checklist-value="header.assessments[$index+1].id">&nbsp;
+                 <span>{{header.assessments[$index+1].assName}}</span>
+               </div>
+            </div>
+          </div>
+      </div>
+
+      <div class="form-actions">
+          <button type="button" class="btn btn-primary uppercase pull-right" ng-click="BookingFormCtrl.submit()">Submit</button>
+      </div>
+
+    </form>
+  </div>
+</div>

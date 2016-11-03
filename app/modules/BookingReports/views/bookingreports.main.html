@@ -1,0 +1,85 @@
+<div class="row list-separated">
+  <div class="portlet box green portlet-datatable">
+      <div class="portlet-title">
+          <div class="caption bold uppercase">
+              <h4>Online Users</h4>
+              <span class="caption-subject ng-binding"></span>
+              <!-- <span class="caption-helper font-yellow-lemon"></span> -->
+          </div>
+      </div>
+      <div class="portlet-body">
+      <div class="grid" ui-grid="BookingReportsMainCtrl.gridOptions" ui-grid-resize-columns ui-grid-selection ui-grid-exporter>
+      </div>
+      </div>
+  </div>
+</div>
+<div class="portlet light ">
+    <div class="portlet-title">
+        <div class="caption caption-md">
+            <i class="icon-bar-chart font-green"></i>
+            <span class="caption-subject font-green uppercase bold">Bookings Summary</span>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="input-group input-medium date date-picker">
+                        <input name="fromDate" type="text" class="form-control" uib-datepicker-popup="{{BookingReportsMainCtrl.format}}" ng-change="BookingReportsMainCtrl.fromOrToDateChanged()" ng-model="BookingReportsMainCtrl.fromDate" is-open="BookingReportsMainCtrl.dateStatus.fromDateOpened" min-date="minDate" max-date="maxDate" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" required/>
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default" ng-click="BookingReportsMainCtrl.openFromDate($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                                    </span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="input-group input-medium date date-picker">
+                        <input name="toDate" type="text" class="form-control" uib-datepicker-popup="{{BookingReportsMainCtrl.format}}" ng-change="BookingReportsMainCtrl.fromOrToDateChanged()" ng-model="BookingReportsMainCtrl.toDate" is-open="BookingReportsMainCtrl.dateStatus.toDateOpened" min-date="minDate" max-date="maxDate" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" required/>
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default" ng-click="BookingReportsMainCtrl.openToDate($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                                    </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="actions">
+            <div class="btn-group btn-group-devided" data-toggle="buttons">
+
+            </div>
+        </div>
+    </div>
+    <div class="portlet-body">
+
+        <div class="row list-separated">
+            <div class="col-md-2">
+                <div class="font-grey-mint font-sm">Patients Attending Today</div>
+                <div class="uppercase font-hg font-red-flamingo">{{BookingReportsMainCtrl.totalApptToday}}</div>
+            </div>
+            <div ng-repeat="appt in BookingReportsMainCtrl.apptSumary">
+                <div class="col-md-2">
+                    <div class="font-grey-mint font-sm"> {{appt.site}} </div>
+                    <div class="uppercase font-hg theme-font">{{appt.quantity}}</div>
+                </div>
+            </div>
+        </div>
+        <div class="row list-separated">
+            <div class="col-md-2">
+                <div class="font-grey-mint font-sm">New Booking Today</div>
+                <div class="uppercase font-hg font-red-flamingo">{{BookingReportsMainCtrl.totalBookingToday}}</div>
+            </div>
+            <div ng-repeat="appt in BookingReportsMainCtrl.bookingTodaySumary">
+                <div class="col-md-2">
+                    <div class="font-grey-mint font-sm"> {{appt.site}} </div>
+                    <div class="uppercase font-hg theme-font">{{appt.quantity}}</div>
+                </div>
+            </div>
+        </div>
+        <div class="row list-separated">
+            <div class="col-md-6">
+                <zingchart id="myChart" zc-json="BookingReportsMainCtrl.myJson" zc-height=500 zc-width=600></zingchart>
+            </div>
+            <div class="col-md-6">
+                <zingchart id="myChart2" zc-json="BookingReportsMainCtrl.myJson2" zc-height=500 zc-width=600></zingchart>
+            </div>
+        </div>
+
+    </div>
+</div>
+</div>

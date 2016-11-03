@@ -1,0 +1,124 @@
+<div class="modal-header">
+    <h3 class="modal-title">New Candidate</h3>
+</div>
+<div class="modal-body">
+    <form name="NewCandidateCtrl.newCandidateForm" class="form-horizontal form-row-seperated" action="#">
+        <div class="tab-content">
+            <div class="tab-pane active" id="tab_general">
+                <div class="form-body">
+                    <div class="form-group"  ng-class="{'has-error' : NewCandidateCtrl.isSubmitted && NewCandidateCtrl.newCandidateForm.candidateName.$invalid}">
+                        <label class="col-md-4 control-label">Candidate Name:
+                            <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" name="candidateName" placeholder="Candidate Name" ng-model="NewCandidateCtrl.BookingCandidate.candidateName" required>
+                            <span for="candidateName" ng-show=" NewCandidateCtrl.isSubmitted && NewCandidateCtrl.newCandidateForm.candidateName.$error.required" class="help-block">Candidate Name is required.</span>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-class="{'has-error' : NewCandidateCtrl.isSubmitted && NewCandidateCtrl.newCandidateForm.dob.$invalid}">
+                        <div class="row">
+                            <label class="col-md-4 control-label">DOB:
+                                <span class="required"> * </span>
+                            </label>
+                            <div class="col-md-8">
+                                <div class="input-group input-medium date date-picker">
+                                    <input type="text" name = "dob" class="form-control" uib-datepicker-popup="{{NewCandidateCtrl.format}}" ng-model="NewCandidateCtrl.BookingCandidate.dob" is-open="NewCandidateCtrl.dateStatus.dobOpened" min-date="minDate" max-date="maxDate" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default" ng-click="NewCandidateCtrl.openDOB($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                                    </span>
+                                </div>
+                                <span for="candidateName" ng-show=" NewCandidateCtrl.isSubmitted && NewCandidateCtrl.newCandidateForm.dob.$error.required" class="help-block">DOB is required.</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-class="{'has-error' : NewCandidateCtrl.isSubmitted && NewCandidateCtrl.newCandidateForm.position.$invalid}">
+                        <label class="col-md-4 control-label">Position:
+                            <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-8">
+                            <select name = "position" class="table-group-action-input form-control input-medium" name="product[tax_class]" ng-model="NewCandidateCtrl.BookingCandidate.position" required>
+                                <option ng-repeat="position in NewCandidateCtrl.companyObject.positions" value="{{position.positionName}}">{{position.positionName}}</option>
+                            </select>
+                            <span for="candidateName" ng-show=" NewCandidateCtrl.isSubmitted && NewCandidateCtrl.newCandidateForm.position.$error.required" class="help-block">Position is required.</span>
+                        </div>
+                    </div>
+                    <div class="form-group"  ng-class="{'has-error' : NewCandidateCtrl.isSubmitted && NewCandidateCtrl.newCandidateForm.phone.$invalid}">
+                        <label class="col-md-4 control-label">Phone:
+                            <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-8">
+                            <input name = "phone" type="text" class="form-control" name="phone" placeholder="Phone" ng-model="NewCandidateCtrl.BookingCandidate.phone" required>
+                            <span for="candidateName" ng-show=" NewCandidateCtrl.isSubmitted && NewCandidateCtrl.newCandidateForm.phone.$error.required" class="help-block">Phone is required.</span>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-class="{'has-error' : NewCandidateCtrl.isSubmitted && NewCandidateCtrl.newCandidateForm.email.$invalid}">
+                        <label class="col-md-4 control-label">Email:
+                            <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-8">
+                            <input type="email" class="form-control" name="email" placeholder="Email" ng-model="NewCandidateCtrl.BookingCandidate.email" required>
+                            <span for="candidateName" ng-show=" NewCandidateCtrl.isSubmitted && NewCandidateCtrl.newCandidateForm.email.$error.required" class="help-block">Email is required.</span>
+                            <span for="candidateName" ng-show=" NewCandidateCtrl.isSubmitted && NewCandidateCtrl.newCandidateForm.email.$error.email" class="help-block">Email is invalid format.</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-4 control-label">Preferred Site:
+                            <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-2"   ng-class="{'has-error' : NewCandidateCtrl.isSubmitted && NewCandidateCtrl.newCandidateForm.site.$invalid}">
+                                <select name = "site" class="form-control" ng-options="site as site.siteName for site in NewCandidateCtrl.sites" ng-model="NewCandidateCtrl.BookingCandidate.site" ng-change="NewCandidateCtrl.selectedSite()" required></select>
+                                <span for="site" ng-show=" NewCandidateCtrl.isSubmitted && NewCandidateCtrl.newCandidateForm.site.$error.required" class="help-block">Preferred site is required.</span>
+                        </div>
+                        <div class="col-md-2" ng-show="NewCandidateCtrl.isStates()"   ng-class="{'has-error' : NewCandidateCtrl.isSubmitted && NewCandidateCtrl.newCandidateForm.state.$invalid}">
+                            <select name ="state" class="form-control" ng-options="state as state.stateName for state in NewCandidateCtrl.states" ng-model="NewCandidateCtrl.BookingCandidate.state" ng-change="NewCandidateCtrl.selectedState()" ng-required="NewCandidateCtrl.isStates()"></select>
+                            <span for="state" ng-show=" NewCandidateCtrl.isSubmitted && NewCandidateCtrl.newCandidateForm.state.$error.required" class="help-block">Preferred site is required.</span>
+                        </div>
+                        <div class="col-md-2"  ng-show="NewCandidateCtrl.isSuburbs()"   ng-class="{'has-error' : NewCandidateCtrl.isSubmitted && NewCandidateCtrl.newCandidateForm.suburb.$invalid}">
+                            <select name="suburb" class="form-control"  ng-options="suburb as suburb.suburbName for suburb in NewCandidateCtrl.suburbs" ng-model="NewCandidateCtrl.BookingCandidate.suburb" ng-required="NewCandidateCtrl.isSuburbs()"></select>
+                            <span for="suburb" ng-show=" NewCandidateCtrl.isSubmitted && NewCandidateCtrl.newCandidateForm.suburb.$error.required" class="help-block">Preferred suburb is required.</span>
+                        </div>
+                    </div>
+                    <div class="form-group"   ng-class="{'has-error' : NewCandidateCtrl.isSubmitted && (NewCandidateCtrl.newCandidateForm.fromDate.$invalid||NewCandidateCtrl.newCandidateForm.toDate.$invalid)}">
+                        <div class="row">
+                            <label class="col-md-4 control-label">Preferred Date:
+                                <span class="required"> * </span>
+                            </label>
+                            <div class="col-md-4">
+                                <div class="input-group input-medium date date-picker">
+                                        <input name="fromDate" type="text" class="form-control" uib-datepicker-popup="{{NewCandidateCtrl.format}}" ng-change="NewCandidateCtrl.fromOrToDateChanged()" ng-model="NewCandidateCtrl.BookingCandidate.preferredFromDate" is-open="NewCandidateCtrl.dateStatus.fromDateOpened" min-date="minDate" max-date="maxDate" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" required/>
+                                        <span class="input-group-btn">
+                                            <button type="button" class="btn btn-default" ng-click="NewCandidateCtrl.openFromDate($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                                        </span>
+                                </div>
+                                <span for="suburb" ng-show=" NewCandidateCtrl.isSubmitted && NewCandidateCtrl.newCandidateForm.fromDate.$error.required" class="help-block">Preferred suburb is required.</span>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="input-group input-medium date date-picker">
+                                        <input name="toDate" type="text" class="form-control" uib-datepicker-popup="{{NewCandidateCtrl.format}}" ng-change="NewCandidateCtrl.fromOrToDateChanged()" ng-model="NewCandidateCtrl.BookingCandidate.preferredToDate" is-open="NewCandidateCtrl.dateStatus.toDateOpened" min-date="minDate" max-date="maxDate" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" required/>
+                                        <span class="input-group-btn">
+                                            <button type="button" class="btn btn-default" ng-click="NewCandidateCtrl.openToDate($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                                        </span>
+                                </div>
+                                <span for="suburb" ng-show=" NewCandidateCtrl.isSubmitted && NewCandidateCtrl.newCandidateForm.toDate.$error.required" class="help-block">Preferred suburb is required.</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-4 control-label">Appointment Time:
+                        </label>
+                        <div class="col-md-8">
+                            <select class="form-control" ng-model="NewCandidateCtrl.BookingCandidate.calendar" ng-options="( calendar.fromTime |dateFilter| date:'dd/MM/yyyy HH:mm' ) + '  '+ calendar.available for calendar in NewCandidateCtrl.calendars" ng-change="NewCandidateCtrl.calendarChanged()">
+                            </select>
+                            <input type="hidden" name="my_hero" value="{{NewCandidateCtrl.BookingCandidate.calendar}}" />
+                            {{ NewCandidateCtrl.BookingCandidate.calendar.fromTime |dateFilter| date:'dd/MM/yyyy HH:mm'}}   {{NewCandidateCtrl.BookingCandidate.calendar.available}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" type="button" ng-click="NewCandidateCtrl.ok()">OK</button>
+    <button class="btn btn-warning" type="button" ng-click="NewCandidateCtrl.cancel()">Cancel</button>
+</div>

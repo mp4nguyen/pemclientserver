@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+
+    <title>Booking Form</title>
+    <script src="../../../bower_components/jquery/dist/jquery.js"></script>
+    <link rel="stylesheet" href="../../../bower_components/bootstrap/dist/css/bootstrap.css" />               
+    <link rel="stylesheet" href="../../../common/css/font-awesome-4.5.0/css/font-awesome.min.css" />
+    <link rel="shortcut icon" href="../../../redimed.ico" /> 
+
+    <script type="text/javascript" charset="utf-8">
+        var dataFromParent;
+        var Parent = window.opener;
+        var counting = 0;
+        var loadFunc = function(){
+            console.log(2);   
+            window.setTimeout(function() {                
+                //alert(dataFromParent);
+                counting++;
+                console.log("counting = ",counting);   
+                console.log('dataFromParent=',dataFromParent);   
+                if(counting >= 100){
+                    document.write("");
+                    document.write('<div style="position:fixed;top:50%;left:50%;transform: translate(-50%, -50%);"> Cannot print the booking form. Please try again ! </div>');
+                }else{
+                    if(dataFromParent == undefined){
+                        console.log(4);   
+                        loadFunc();    
+                    }else{
+                        console.log(5);   
+                        document.write("");
+                        document.write(dataFromParent);
+                    }
+
+                }
+            }, 10);          
+        };
+
+        document.write('<div style="position:fixed;top:50%;left:50%;transform: translate(-50%, -50%);"> <i class="fa fa-spinner fa-spin fa-5x"></i> </div>');
+        console.log(1);        
+        loadFunc();
+        /*
+        window.setTimeout(function() {                
+            //alert(dataFromParent);
+            document.write("");
+            document.write(dataFromParent);
+            if(dataFromParent == undefined){
+                        window.setTimeout(function() {                
+                            //alert(dataFromParent);
+                            document.write("");
+                            document.write(dataFromParent);
+                
+                        }, 1000);                
+            }    
+        }, 1000);
+        */
+    </script>
+</head>
+<body>
+
+</body>
+</html>

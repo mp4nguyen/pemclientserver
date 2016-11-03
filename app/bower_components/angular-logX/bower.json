@@ -1,0 +1,21 @@
+{
+    "name": "angular-logX",
+    "version": "0.1.5",
+    "main": "./release/amd/angular-logX.js",
+    "ignore": [
+          "demos"
+        , "src"
+        , "build"
+        , "node_modules"
+        , ".gitignore"
+        , "bower.json"
+        , "Gruntfile.js"
+        , "package.json"
+    ],
+    "dependencies": {
+        "requirejs": "~2.1.8"
+    },
+    "devDependencies": {
+        "requirejs": "~2.1.8"
+    }
+}

@@ -1,0 +1,28 @@
+
+<div class="portlet box green portlet-datatable">
+    <div class="portlet-title">
+        <div class="caption bold uppercase">
+            <h4>Telehealth Booking list</h4>
+            <span class="caption-subject ng-binding"></span>
+            <!-- <span class="caption-helper font-yellow-lemon"></span> -->
+        </div>
+        <div class="actions">
+            <a class="btn red-thunderbird btn-sm" ng-click="TelehealthBookingsMainCtrl.refreshBooking()">
+                <i class="fa fa-refresh"></i> Refresh list
+            </a>
+            <!-- <a class="btn btn-circle btn-icon-only btn-default fullscreen" href="javascript:;" data-original-title="" title=""></a> -->
+        </div>
+    </div>
+    <div class="portlet-body">
+		<div class="grid" ui-grid="TelehealthBookingsMainCtrl.gridOptions" ui-grid-resize-columns ui-grid-selection ui-grid-exporter>
+		    <div class="grid-msg-overlay" ng-hide="!TelehealthBookingsMainCtrl.loading">
+		        <div class="msg">
+		            <span>
+		              Loading Data...
+		              <i class="fa fa-spinner fa-spin"></i>
+		            </span>
+		        </div>
+		    </div>
+		</div>
+    </div>
+</div>

@@ -1,0 +1,28 @@
+<div  class="modal-dialog">
+		<div class="modal-header">
+		    <h3 class="modal-title">Appointment List</h3>
+		</div>
+		<div class="modal-body">
+				<div  class="col-xs-12">
+						<div ng-repeat="date in SelectApptSlotCtrl.calendars">
+								<div class="col-md-12 col-sm-12" style="padding-left: 0px;">
+										<label class="control-label bold">{{date.date}}</label>
+								</div>
+								<div class="col-md-12 col-sm-12" style="padding-left: 0px;"  >
+										<input
+												class="btn btn-default margin-top-5 ng-scope"
+												ng-class="{'btn-success': slot.calId == SelectApptSlotCtrl.slot.calId}"
+												style="margin-right: 5px; width: 80px;"
+												ng-repeat="slot in date.slots"
+												ng-click="SelectApptSlotCtrl.selectedSlot(slot)"
+												type="button"
+												value = "{{slot.calendarTime}}" >
+								</div>
+						</div>
+				</div>
+		</div>
+		<div class="modal-footer">
+		    <button class="btn btn-primary" type="button" ng-click="SelectApptSlotCtrl.ok()">OK</button>
+		    <button class="btn btn-warning" type="button" ng-click="SelectApptSlotCtrl.cancel()">Cancel</button>
+		</div>
+</div>

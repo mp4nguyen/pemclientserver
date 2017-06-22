@@ -2,47 +2,47 @@
     <h3 class="modal-title">New Company</h3>
 </div>
 <div class="modal-body">
-    <form name="NewCompanyCtrl.form" class="form-horizontal form-row-seperated" action="#">
+    <form name="NewCompanyAtMakingBookingCtrl.form" class="form-horizontal form-row-seperated" action="#">
         <div class="tab-content">
             <div class="tab-pane active" id="tab_general">
                 <div class="form-body">
-                    <div class="form-group" ng-class="{'has-error' : NewCompanyCtrl.isSubmitted && NewCompanyCtrl.form.companyName2.$invalid}">
+                    <div class="form-group" ng-class="{'has-error' : NewCompanyAtMakingBookingCtrl.isSubmitted && NewCompanyAtMakingBookingCtrl.form.companyName2.$invalid}">
                         <label class="col-md-4 control-label">Company name:
                             <span class="required"> * </span>
                         </label>
                         <div class="col-md-8">
-                            <input type="text" class="form-control" name="companyName2" placeholder="Company Name" ng-model="NewCompanyCtrl.company.companyName" required>
-                            <span for="companyName2" ng-show="NewCompanyCtrl.isSubmitted && NewCompanyCtrl.form.companyName2.$error.required" class="help-block">Company Name is required.</span>
+                            <input type="text" class="form-control" name="companyName2" placeholder="Company Name" ng-model="NewCompanyAtMakingBookingCtrl.company.companyName" required>
+                            <span for="companyName2" ng-show="NewCompanyAtMakingBookingCtrl.isSubmitted && NewCompanyAtMakingBookingCtrl.form.companyName2.$error.required" class="help-block">Company Name is required.</span>
                         </div>
                     </div>
                     <div class="form-group"  >
                         <label class="col-md-4 control-label">Description:
                         </label>
                         <div class="col-md-8">
-                            <input type="text" class="form-control" name="description" placeholder="Description" ng-model="NewCompanyCtrl.company.description">
+                            <input type="text" class="form-control" name="description" placeholder="Description" ng-model="NewCompanyAtMakingBookingCtrl.company.description">
                         </div>
                     </div>
-                    <div class="form-group"  ng-class="{'has-error' : NewCompanyCtrl.isSubmitted && NewCompanyCtrl.form.resultEmail.$invalid}">
+                    <div class="form-group"  ng-class="{'has-error' : NewCompanyAtMakingBookingCtrl.isSubmitted && NewCompanyAtMakingBookingCtrl.form.resultEmail.$invalid}">
                         <label class="col-md-4 control-label">Result email:
                         </label>
                         <div class="col-md-8"  >
-                            <input type="email" class="form-control" name="resultEmail" placeholder="Result email" ng-model="NewCompanyCtrl.company.resultEmail">
-                            <span for="resultEmail" ng-show=" NewCompanyCtrl.isSubmitted && NewCompanyCtrl.form.resultEmail.$error.email" class="help-block">Email is invalid format.</span>
+                            <input type="email" class="form-control" name="resultEmail" placeholder="Result email" ng-model="NewCompanyAtMakingBookingCtrl.company.resultEmail">
+                            <span for="resultEmail" ng-show=" NewCompanyAtMakingBookingCtrl.isSubmitted && NewCompanyAtMakingBookingCtrl.form.resultEmail.$error.email" class="help-block">Email is invalid format.</span>
                         </div>
                     </div>
-                    <div class="form-group"   ng-class="{'has-error' : NewCompanyCtrl.isSubmitted && NewCompanyCtrl.form.invoiceEmail.$invalid}">
+                    <div class="form-group"   ng-class="{'has-error' : NewCompanyAtMakingBookingCtrl.isSubmitted && NewCompanyAtMakingBookingCtrl.form.invoiceEmail.$invalid}">
                         <label class="col-md-4 control-label">Invoice email:
                         </label>
                         <div class="col-md-8">
-                            <input type="email" class="form-control" name="invoiceEmail" placeholder="Invoice email" ng-model="NewCompanyCtrl.company.invoiceEmail">
-                            <span for="invoiceEmail" ng-show=" NewCompanyCtrl.isSubmitted && NewCompanyCtrl.form.invoiceEmail.$error.email" class="help-block">Email is invalid format.</span>
+                            <input type="email" class="form-control" name="invoiceEmail" placeholder="Invoice email" ng-model="NewCompanyAtMakingBookingCtrl.company.invoiceEmail">
+                            <span for="invoiceEmail" ng-show=" NewCompanyAtMakingBookingCtrl.isSubmitted && NewCompanyAtMakingBookingCtrl.form.invoiceEmail.$error.email" class="help-block">Email is invalid format.</span>
                         </div>
                     </div>
                     <div class="form-group"  >
                         <label class="col-md-4 control-label">PO number:
                         </label>
                         <div class="col-md-8">
-                            <input type="text" class="form-control" name="companyName" placeholder="PO Number" ng-model="NewCompanyCtrl.company.poNumber">
+                            <input type="text" class="form-control" name="companyName" placeholder="PO Number" ng-model="NewCompanyAtMakingBookingCtrl.company.poNumber">
                         </div>
                     </div>
                 </div>
@@ -51,6 +51,6 @@
     </form>
 </div>
 <div class="modal-footer">
-    <button class="btn btn-primary" type="button" ng-click="NewCompanyCtrl.ok()">OK</button>
-    <button class="btn btn-warning" type="button" ng-click="NewCompanyCtrl.cancel()">Cancel</button>
+    <button class="btn btn-primary" type="button" ng-click="NewCompanyAtMakingBookingCtrl.ok()">OK</button>
+    <button class="btn btn-warning" type="button" ng-click="NewCompanyAtMakingBookingCtrl.cancel()">Cancel</button>
 </div>

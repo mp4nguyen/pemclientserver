@@ -1,0 +1,52 @@
+<div class="modal-header">
+    <h3 class="modal-title">{{EditRosterCtrl.header}}</h3>
+</div>
+<div class="modal-body">
+    <h3>{{EditRosterCtrl.title}}</h3>
+    <div class="form-group">
+        <div class="row">
+            <label class="col-md-1">
+                <h4>from</h4>
+            </label>
+            <div class="col-md-5">
+              <div class="input-group input-medium date date-picker">
+                  <input
+                          type="text" name = "dob" class="form-control"
+                          uib-datepicker-popup="{{EditRosterCtrl.format}}"
+                          ng-model="EditRosterCtrl.fromTime"
+                          is-open="EditRosterCtrl.dateStatus.fromTimeOpened"
+                          min-date="minDate" max-date="maxDate" datepicker-options="dateOptions"
+                          date-disabled="disabled(date, mode)"
+                          ng-required="true"
+                          close-text="Close" />
+                  <span class="input-group-btn">
+                      <button type="button" class="btn btn-default" ng-click="EditRosterCtrl.openFromTime($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                  </span>
+              </div>
+            </div>
+            <label class="col-md-1">
+                <h4>to</h4>
+            </label>
+            <div class="col-md-5">
+              <div class="input-group input-medium date date-picker">
+                  <input
+                          type="text" name = "dob" class="form-control"
+                          uib-datepicker-popup="{{EditRosterCtrl.format}}"
+                          ng-model="EditRosterCtrl.toTime"
+                          is-open="EditRosterCtrl.dateStatus.toTimeOpened"
+                          min-date="minDate" max-date="maxDate" datepicker-options="dateOptions"
+                          date-disabled="disabled(date, mode)"
+                          ng-required="true"
+                          close-text="Close" />
+                  <span class="input-group-btn">
+                      <button type="button" class="btn btn-default" ng-click="EditRosterCtrl.openToTime($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                  </span>
+              </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" type="button" ng-click="EditRosterCtrl.ok()">Save</button>
+    <button class="btn btn-warning" type="button" ng-click="EditRosterCtrl.cancel()">Cancel</button>
+</div>

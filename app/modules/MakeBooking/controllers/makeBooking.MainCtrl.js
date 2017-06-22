@@ -19,8 +19,9 @@ angular.module('ocsApp.MakeBooking')
         this.isSubmitingToTheServer = false;
         this.isSubsidiary2 = false;
         this.isNoCandidate = false;//to display err if no candidate when submit the form
-        this.paperworkList = ["Redimed","Gorgon","BP","Company Specific","CPPC","Rail","Wheatstone","MACA Mining","Aerison paperwork","Newmont","Shell"];
+        this.paperworkList = ["Redimed","Gorgon","BP","Company Specific","CPPC","Rail","Wheatstone","MACA Mining","Aerison paperwork","Newmont","Shell","Woodside Offshore","Boral Paperwork"];
         this.newBooking.paperwork = "Redimed";
+        this.maxPeriod = 15;
         var that = this;
 
         var initData = function(){
@@ -42,7 +43,7 @@ angular.module('ocsApp.MakeBooking')
         });
 
         this.getAllSubsidiaries = function (callback) {
-            $log.debug("getAllSubsidiaries.Loading subsidiaries......",that.companyObject.subsidiaries);
+            $log.debug("getAllSubsidiaries.Loading subsidiaries......");
             callback(that.companyObject.subsidiaries);
         };
 
@@ -51,12 +52,13 @@ angular.module('ocsApp.MakeBooking')
         };
 
         this.newCompany = function(){
+            $log.debug("newCompany is running....... ");
             // add new sub company for Redimed when admin make a booking on behalf
             var modalInstance = $uibModal.open({
                 animation: true,
                 templateUrl: 'modules/MakeBooking/views/makeBooking.NewCompany.html',
-                controller: 'NewCompanyCtrl',
-                controllerAs: 'NewCompanyCtrl',
+                controller: 'NewCompanyAtMakingBookingCtrl',
+                controllerAs: 'NewCompanyAtMakingBookingCtrl',
                 size: 'md'
             });
 
@@ -132,8 +134,13 @@ angular.module('ocsApp.MakeBooking')
             return this.isSubsidiary2;
         }
 
+        this.isEditPackage = function(){
+            return this.newBooking.newCandidates.length > 0 ? false : true;
+        }
+
         this.selectedPackage = function(){
-            $log.debug("Package =",that.newBooking.package);
+            that.maxPeriod = 15;
+            $log.debug(" selected Package ");
 
             if(that.newBooking.package.packageName.indexOf("Custom") >= 0 ){
                 that.viewPackage = "";
@@ -148,9 +155,17 @@ angular.module('ocsApp.MakeBooking')
 
                 modalInstance.result.then(function (selectedItem) {
                     //$scope.selected = selectedItem;
-                    that.newBooking.customPackage = selectedItem;
+                    $log.debug('customPackage = ',selectedItem);
+                    var assIDs = [];
+                    selectedItem.forEach(function(ass){
+                      assIDs.push(ass.id);
+                      var p = ass.period;
+                      if(p > that.maxPeriod){
+                        that.maxPeriod = p;
+                      }
+                    });
+                    that.newBooking.customPackage = assIDs;
                     that.newCandidate();
-
                 }, function () {
                     $log.debug('Modal Package dismissed at: ' + new Date());
                 });
@@ -159,6 +174,10 @@ angular.module('ocsApp.MakeBooking')
                 for(var i in that.newBooking.package.AssessmentHeaders){
                     that.viewPackage = that.viewPackage +"<br><b>"+  that.newBooking.package.AssessmentHeaders[i].headerName + "</b>";
                     for(var j in that.newBooking.package.AssessmentHeaders[i].Assessments){
+                        var p = that.newBooking.package.AssessmentHeaders[i].Assessments[j].period;
+                        if(p > that.maxPeriod){
+                          that.maxPeriod = p;
+                        }
                         that.viewPackage = that.viewPackage +"<br> - "+  that.newBooking.package.AssessmentHeaders[i].Assessments[j].assName + "";
                     }
                 }
@@ -176,54 +195,75 @@ angular.module('ocsApp.MakeBooking')
             return that.companyObject.isproject == 1 ? true:false;
         };
 
+        this.isNotEditInvoiceAndResultEmails = function(){
+            return that.user.isnoteditemailsheader == 1 ? true:false;
+        };
+
         this.deleteCandidate = function(index,candidate){
             $log.debug("Remove candidate at " + index,candidate);
             that.newBooking.newCandidates.splice(index, 1);
         }
 
         this.newCandidate = function(index,candidate){
-            //if edit the new candidate, we must have the index of the candidate in the array, so we can replace the old value with the new one
-            $log.debug("New/replace candidate ",candidate," index = ",index);
-            //open modal to enter new candidate
-            var modalInstance = $uibModal.open({
-                animation: true,
-                templateUrl: 'modules/MakeBooking/views/makeBooking.NewCandidate.html',
-                controller: 'NewCandidateCtrl',
-                controllerAs: 'NewCandidateCtrl',
-                size: 'lg',
-                resolve: {
-                    candidate: function () {
-                        return candidate;
-                    },
-                    indexOfCandidate: function(){
-                        return index;
-                    }
-                }
-            });
+            if(that.newBooking.package||that.newBooking.customPackagepackage){
+              //if edit the new candidate, we must have the index of the candidate in the array, so we can replace the old value with the new one
+              $log.debug("New/replace candidate ",candidate," index = ",index);
+              //open modal to enter new candidate
+              var modalInstance = $uibModal.open({
+                  animation: true,
+                  backdrop: 'static',
+                  templateUrl: 'modules/MakeBooking/views/makeBooking.NewCandidate.html',
+                  controller: 'NewCandidateCtrl',
+                  controllerAs: 'NewCandidateCtrl',
+                  size: 'lg',
+                  resolve: {
+                      candidate: function () {
+                          return candidate;
+                      },
+                      indexOfCandidate: function(){
+                          return index;
+                      },
+                      maxPeriod: function(){
+                          return that.maxPeriod;
+                      }
+                  }
+              });
 
-            modalInstance.result.then(function (obj) {
-                //$scope.selected = selectedItem;
-                //if edit the new candidate, we must have the index of the candidate in the array, so we can replace the old value with the new one
-                var index = obj.index;
-                var candidate = obj.candidate;
-                if(index >= 0){
-                    $log.debug("repleace the candidate in the array with index = "+index,candidate);
-                    that.newBooking.newCandidates[index] = candidate;
-                }else{
-                    $log.debug("add candidate into array",candidate);
-                    that.newBooking.newCandidates.push(candidate);
-                }
-            }, function () {
-                $log.debug('Modal Candidate dismissed at: ' + new Date());
-            });
+              modalInstance.result.then(function (obj) {
+                  //$scope.selected = selectedItem;
+                  //if edit the new candidate, we must have the index of the candidate in the array, so we can replace the old value with the new one
+                  var index = obj.index;
+                  var candidate = obj.candidate;
+                  if(index >= 0){
+                      $log.debug("repleace the candidate in the array with index = "+index,candidate);
+                      that.newBooking.newCandidates[index] = candidate;
+                  }else{
+                      $log.debug("add candidate into array",candidate);
+                      that.newBooking.newCandidates.push(candidate);
+                  }
+              }, function (data) {
+                  $log.debug('Modal Candidate dismissed at: ' + new Date(),data);
+              });
+            }else{
+                toastr.error('Please select a package', 'Error');
+            }
         };
 
         function updateUI(conditionOnCompany,companyOrSubsidiary){
 
             $log.debug("Update PO,Emails,...");
 
+            if(companyOrSubsidiary.defaultNote){
+                that.newBooking.comments = companyOrSubsidiary.defaultNote;
+            }
+
+
             if(companyOrSubsidiary.poNumber){
                 that.newBooking.poNumber = companyOrSubsidiary.poNumber;
+            }
+
+            if(companyOrSubsidiary.projectIdentification){
+                that.newBooking.projectIdentification = companyOrSubsidiary.projectIdentification;
             }
 
             if(companyOrSubsidiary.invoiceEmail){
@@ -249,5 +289,6 @@ angular.module('ocsApp.MakeBooking')
                     that.newBooking.resultEmail = that.user.contactEmail;
                 }
             }
+
         };
     }]);

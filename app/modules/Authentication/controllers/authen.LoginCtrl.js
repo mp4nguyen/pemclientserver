@@ -4,12 +4,11 @@
  */
 angular.module('ocsApp.Authentication').controller('LoginCtrl',['$state','Accounts','toastr','$cookieStore','CompanyFactory','RedimedSiteFactory','$log','mySharedService','storeToken','mySocket',function ($state,Accounts,toastr,$cookieStore,CompanyFactory,RedimedSiteFactory, $log,sharedService,storeToken,mySocket) {
     $log = $log.getInstance("ocsApp.Authentication.LoginCtrl");
-    $log.debug( "Starting main application");
-    $log.debug("Hello, I am login controller");
 
     var that = this;
     this.loading1 = false;
     this.loading2 = false;
+
 
     this.showClickedValidation = false;
 
@@ -43,7 +42,6 @@ angular.module('ocsApp.Authentication').controller('LoginCtrl',['$state','Accoun
 
                 //Loading all need information for the user
                 CompanyFactory.init(function(data){
-                    $log.debug("After login, get company info = ");
                     that.loading1 = false;
                     mySocket.emit('login',{message: 'Login successfully',userName: succ.user.username,userId: succ.user.id,companyId:succ.user.companyId,companyName: data.companyName});
                     RedimedSiteFactory.getSite(function(data){

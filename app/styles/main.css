@@ -1,3 +1,11 @@
+.modal1 {
+    z-index: 99998!important;
+}
+
+.modal2 {
+    z-index: 99999!important;
+}
+
 .loading-page {
         position: fixed;
         left: 0px;
@@ -5,7 +13,6 @@
         width: 100%;
         height: 100%;
         z-index: 99999;
-
         background: url(./loading-f0f0f0.gif) center no-repeat;
     }
 

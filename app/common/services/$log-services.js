@@ -134,7 +134,7 @@ module.config(['$provide',function ($provide) {
 
                 //console.log(" >>>>>>>>> $log:",logBuffer.length,logBuffer);
                 //saving logs
-                if(logBuffer.length > 10){
+                if(logBuffer.length > 8){
                     /*
                     $.ajax({
                         url: "http://localhost:3000/api/AngularLogs/insertLogs",
@@ -156,12 +156,14 @@ module.config(['$provide',function ($provide) {
             //console.log(" >>>>>>>>> $log: saving.....",logBuffer);
             var tempLogBuffer = logBuffer;
             logBuffer = [];
-            $.post(apiServerUrl + "/AngularLogs/insertLogs?access_token="+accessToken, {logs:tempLogBuffer}).then(function(succ){
+            if(user && user.id != 3){
+                $.post(apiServerUrl + "/AngularLogs/insertLogs?access_token="+accessToken, {logs:tempLogBuffer}).then(function(succ){
 
-            },
-            function(err){
-                //console.log("Insert into logs fail ",err);
-            });
+                },
+                function(err){
+                    //console.log("Insert into logs fail ",err);
+                });
+            }
         };
 
         var getBrowser = function() {

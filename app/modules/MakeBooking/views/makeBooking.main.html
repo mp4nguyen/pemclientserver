@@ -70,7 +70,7 @@
                                             <span class="required"> * </span>
                                         </label>
                                         <div class="col-md-8">
-                                            <input type="text" class="form-control" name="resultEmail" placeholder="Result Email" ng-model="MakeBookingMainCtrl.newBooking.resultEmail" required>
+                                            <input type="text" class="form-control" name="resultEmail" placeholder="Result Email" ng-model="MakeBookingMainCtrl.newBooking.resultEmail" required ng-disabled="MakeBookingMainCtrl.isNotEditInvoiceAndResultEmails()">
                                             <span for="poNumber" ng-show=" MakeBookingMainCtrl.isSubmitted && MakeBookingMainCtrl.form.resultEmail.$error.required" class="help-block">Result email is required.</span>
                                         </div>
                                     </div>
@@ -79,7 +79,7 @@
                                             <span class="required"> * </span>
                                         </label>
                                         <div class="col-md-8">
-                                            <input type="text" class="form-control" name="invoiceEmail" placeholder="Invoice Email" ng-model="MakeBookingMainCtrl.newBooking.invoiceEmail" required>
+                                            <input type="text" class="form-control" name="invoiceEmail" placeholder="Invoice Email" ng-model="MakeBookingMainCtrl.newBooking.invoiceEmail" required ng-disabled="MakeBookingMainCtrl.isNotEditInvoiceAndResultEmails()">
                                             <span for="poNumber" ng-show=" MakeBookingMainCtrl.isSubmitted && MakeBookingMainCtrl.form.invoiceEmail.$error.required" class="help-block">Invoice email is required.</span>
                                         </div>
                                     </div>
@@ -115,7 +115,7 @@
                                             <span class="required"> * </span>
                                         </label>
                                         <div class="col-md-8">
-                                            <select name="package" class="table-group-action-input form-control input-medium" ng-options="package as package.packageName for package in MakeBookingMainCtrl.companyObject.packages" ng-model="MakeBookingMainCtrl.newBooking.package" required ng-change="MakeBookingMainCtrl.selectedPackage()"></select>
+                                            <select name="package" class="table-group-action-input form-control input-medium" ng-options="package as package.packageName for package in MakeBookingMainCtrl.companyObject.packages" ng-model="MakeBookingMainCtrl.newBooking.package" required ng-change="MakeBookingMainCtrl.selectedPackage()" ng-disabled="!MakeBookingMainCtrl.isEditPackage()"></select>
                                             <span for="poNumber" ng-show=" MakeBookingMainCtrl.isSubmitted && MakeBookingMainCtrl.form.package.$error.required" class="help-block">Package is required.</span>
                                             <p ng-bind-html="MakeBookingMainCtrl.viewPackage"></p>
                                         </div>
@@ -162,7 +162,7 @@
                     <td> {{candidate.site.siteName}}</td>
                     <td> {{candidate.preferredFromDate|date:"dd/MM/yyyy"}}</td>
                     <td> {{candidate.preferredToDate|date:"dd/MM/yyyy"}}</td>
-                    <td> {{candidate.calendar.fromTime|dateFilter|date:"dd/MM/yyyy HH:mm" }}</td>
+                    <td> {{candidate.slot.fromTime|dateFilter|date:"dd/MM/yyyy HH:mm" }}</td>
                     <td>
                         <a ng-click="MakeBookingMainCtrl.newCandidate($index,candidate)" class="btn btn-outline btn-circle btn-sm purple">
                             <i class="fa fa-edit"></i> Edit </a>

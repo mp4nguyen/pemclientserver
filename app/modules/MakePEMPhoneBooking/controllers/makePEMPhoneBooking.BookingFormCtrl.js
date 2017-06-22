@@ -84,7 +84,7 @@ angular.module('ocsApp.MakePEMPhoneBooking').controller('BookingFormCtrl',['$sta
 
     MakePEMPhoneBookingFactory.getAssessments().then(function(succ){
         that.allAssessments = succ.assessments;
-        $log.debug("assessments = ",that.allAssessments);
+        $log.debug("assessments");
         that.isAuth = true;
         that.isGettingAssessments = false;
 

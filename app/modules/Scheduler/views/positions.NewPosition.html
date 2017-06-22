@@ -1,0 +1,26 @@
+<div class="modal-header">
+    <h3 class="modal-title">New Position</h3>
+</div>
+<div class="modal-body">
+    <form name="NewPositionCtrl.form" class="form-horizontal form-row-seperated" action="#">
+        <div class="tab-content">
+            <div class="tab-pane active" id="tab_general">
+                <div class="form-body">
+                    <div class="form-group"  ng-class="{'has-error' : NewPositionCtrl.isSubmitted && NewPositionCtrl.form.positionName.$invalid}">
+                        <label class="col-md-4 control-label">Position Name:
+                            <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" name="positionName" placeholder="Candidate Name" ng-model="NewPositionCtrl.positionName" required>
+                            <span for="candidateName" ng-show=" NewPositionCtrl.isSubmitted && NewPositionCtrl.form.positionName.$error.required" class="help-block">Position Name is required.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" type="button" ng-click="NewPositionCtrl.ok()">Save</button>
+    <button class="btn btn-warning" type="button" ng-click="NewPositionCtrl.cancel()">Cancel</button>
+</div>

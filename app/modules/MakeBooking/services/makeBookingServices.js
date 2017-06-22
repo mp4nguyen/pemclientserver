@@ -3,10 +3,16 @@
  */
 angular.module('ocsApp.MakeBooking')
 .factory('MakeBookingFactory', ['BookingHeaders','toastr','BookingCandidates','$q','CompanyFactory','mysqlDate','Companies','$log','mySharedService', function (BookingHeaders,toastr,BookingCandidates,$q,CompanyFactory,mysqlDate,Companies,$log,sharedService) {
+    var candidateTempId = 0;
     $log = $log.getInstance("ocsApp.MakeBooking.MakeBookingFactory");
+    $log.save();
     return {
+        getCandidateTempId: function(){
+            candidateTempId++;
+            return candidateTempId;
+        },
         submitBooking:function(newBookingObj,companyObject,user){
-             $log.debug("will submit the booking");   
+             $log.debug("will submit the booking");
             ///submit the online booking is here !
             var deferred = $q.defer();
             var bookingHeader = {};
@@ -56,7 +62,7 @@ angular.module('ocsApp.MakeBooking')
             bookingHeader.lastUpdatedBy = null;
             bookingHeader.lastUpdateDate = null;
 
-            
+
 
             var candidates = [];
             for(var i in newBookingObj.newCandidates){
@@ -64,10 +70,15 @@ angular.module('ocsApp.MakeBooking')
                 candidates[i].bookingId = 0;
                 candidates[i].candidateId = 0;
                 candidates[i].candidatesName  = newBookingObj.newCandidates[i].candidateName;
+                candidates[i].gender  = newBookingObj.newCandidates[i].gender;
                 candidates[i].dob = moment(newBookingObj.newCandidates[i].dob).format("YYYY-MM-DD");
+                if(candidates[i].dob=="Invalid date"){
+                  candidates[i].dob=null
+                }
                 candidates[i].phone = newBookingObj.newCandidates[i].phone;
                 candidates[i].email = newBookingObj.newCandidates[i].email;
                 candidates[i].position = newBookingObj.newCandidates[i].position;
+                candidates[i].period  = newBookingObj.newCandidates[i].period;
                 //If have Appointment time + date => appt status = 'confirmed' otherwise: 'pending': so send diffirent email template and receiver
                 candidates[i].appointmentStatus = "Pending";//companyObject.defaultStatus;
                 candidates[i].fromDate = moment(newBookingObj.newCandidates[i].preferredFromDate).format("YYYY-MM-DD");
@@ -78,11 +89,28 @@ angular.module('ocsApp.MakeBooking')
                 candidates[i].siteId = newBookingObj.newCandidates[i].site.id;
                 candidates[i].siteName = newBookingObj.newCandidates[i].site.siteName;
 
-                if(newBookingObj.newCandidates[i].calendar){
-                    candidates[i].calendarId = newBookingObj.newCandidates[i].calendar.calId;
-                    candidates[i].appointmentTime = moment(mysqlDate(newBookingObj.newCandidates[i].calendar.fromTime)).format("YYYY-MM-DD HH:mm ");
+                candidates[i].slots = [];
+                if(newBookingObj.newCandidates[i].slot){
+                    newBookingObj.newCandidates[i].slot.followingSlots.forEach(function(slot,index){
+                        candidates[i].slots.push(slot.calId);
+                        var calIndex = index + 2;
+                        if(calIndex <= 5){
+                            candidates[i]["calendarId"+calIndex] = slot.calId;
+                        }
+                    });
+
+                    var apptSlot = newBookingObj.newCandidates[i].slot;
+                    candidates[i].calendarId = apptSlot.calId;
+                    candidates[i].practitionerId = apptSlot.doctorId;
+                    candidates[i].redimedNote = apptSlot.doctorName;
+                    candidates[i].appointmentTime = moment(mysqlDate(apptSlot.fromTime)).format("YYYY-MM-DD HH:mm ");
+                    candidates[i].appointmentFromTime = moment(mysqlDate(apptSlot.fromTime)).format("YYYY-MM-DD HH:mm ");
+                    candidates[i].appointmentToTime = moment(mysqlDate(apptSlot.toTime)).format("YYYY-MM-DD HH:mm ");
                     candidates[i].appointmentStatus = "Confirmed";
                     candidates[i].holdingId = newBookingObj.newCandidates[i].holdingId;
+
+                }else{
+                    candidates[i].appointmentStatus = "Pending";
                 }
 
                 if (newBookingObj.newCandidates[i].state){
@@ -103,13 +131,9 @@ angular.module('ocsApp.MakeBooking')
                 //after submit the booking, refresh the booking list
                 CompanyFactory.refreshBookingList(function(data){
                     $log.debug("refresh bookinglist successfully");
-                   
+
                     sharedService.prepForBroadcast("Refresh booking list successfully");
                 });
-                CompanyFactory.refreshAllPackageList(function(data){
-
-                });
-
 
                 for(var i in data.booking.bookingCandidates){
                     var candidate = data.booking.bookingCandidates[i];
@@ -132,8 +156,12 @@ angular.module('ocsApp.MakeBooking')
             },
             function(err){
                 $log.error("Fail to Submit the booking",err);
-                toastr.error("Fail to submit the booking, please contact Redimed to assit", 'Error');
-                deferred.reject("Created Booking");                
+                if(err.data.error.code == "SLOT_NOT_AVAILABLE"){
+                    toastr.error(err.data.error.message, 'Error');
+                }else{
+                    toastr.error('Fail to submit the booking [' + err.data.error.message + ']', 'Error');
+                }
+                deferred.reject("Created Booking");
             });
 
             return deferred.promise;

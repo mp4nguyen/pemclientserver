@@ -25,7 +25,14 @@ gulp.task('mybower', function() {
     return gulp.src([
             "bower_components/socket.io-client/socket.io.js",
             "bower_components/jquery/dist/jquery.js",
+            "bower_components/moment/moment.js",
             "bower_components/angular/angular.js",
+
+            "bower_components/angular-ui-calendar/src/calendar.js",
+            "bower_components/fullcalendar-scheduler/lib/fullcalendar.min.js",
+            "bower_components/fullcalendar-scheduler/lib/gcal.js",
+            "bower_components/fullcalendar-scheduler/scheduler.js",
+
             "bower_components/angular-animate/angular-animate.js",
             "bower_components/angular-cookies/angular-cookies.js",
             "bower_components/angular-resource/angular-resource.js",
@@ -37,7 +44,7 @@ gulp.task('mybower', function() {
             "bower_components/angular-toastr/dist/angular-toastr.tpls.js",
             "bower_components/lodash/lodash.js",
             "bower_components/fingerprint/fingerprint.js",
-            "bower_components/moment/moment.js",
+
             "bower_components/angular-ui-grid/ui-grid.js",
             "bower_components/pdfmake/build/pdfmake.js",
             "bower_components/pdfmake/build/vfs_fonts.js",

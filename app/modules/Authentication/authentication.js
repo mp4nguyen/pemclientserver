@@ -15,7 +15,8 @@ angular.module('ocsApp.Authentication',
                 views:{
                     "root":{
                         templateUrl: "modules/Authentication/views/authen.main.html",
-                        controller: "AuthenMainCtrl"
+                        controller: "AuthenMainCtrl",
+                        controllerAs: "AuthenMainCtrl"
                     }
                 }
             })

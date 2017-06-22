@@ -1,168 +1,166 @@
 <div class="">
+    <div class="modal-header">
+        <h3 class="modal-title">Update Appointment</h3>
+    </div>
+    <div class="modal-body">
+        <form name="AdminEditBookingCtrl.form" class="form-horizontal form-row-seperated" action="#">
+            <div class="page-container">
+                <!-- BEGIN CONTENT -->
+                <div class="page-content-wrapper">
+                    <div class="page-content">
+                        <div class="container">
+                            <!-- BEGIN PAGE CONTENT INNER -->
+                            <div class="page-content-inner">
+                                <div class="invoice-content-2 ">
+                                    <div class="row invoice-head">
+                                        <div class="col-md-7 col-xs-6">
+                                            <div class="invoice-logo">
+                                                <h2 class="uppercase">Booking Details</h2>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-5 col-xs-6">
+                                            <div class="company-address">
+                                                <h2 class="bold uppercase">{{AdminEditBookingCtrl.candidate.companyName}}</h2>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row invoice-cust-add">
+                                        <div class="col-xs-4">
+                                            <h3 class="invoice-title ">Candidate</h3>
+                                            <p class="invoice-desc">{{AdminEditBookingCtrl.candidate.candidatesName}}</p>
+                                        </div>
+                                        <div class="col-xs-4">
+                                            <h3 class="invoice-title ">DOB</h3>
+                                            <p class="invoice-desc">{{AdminEditBookingCtrl.candidate.dob|dateFilter|date : 'dd/MM/yyyy'}}</p>
+                                        </div>
+                                        <div class="col-xs-4">
+                                            <h3 class="invoice-title ">Phone</h3>
+                                            <p class="invoice-desc inv-address">{{AdminEditBookingCtrl.candidate.phone}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="row invoice-cust-add">
+                                        <div class="col-xs-4">
+                                            <h3 class="invoice-title ">Position</h3>
+                                            <p class="invoice-desc">{{AdminEditBookingCtrl.candidate.position}}</p>
+                                        </div>
+                                        <div class="col-xs-8">
+                                            <h3 class="invoice-title ">Comments</h3>
+                                            <p class="invoice-desc">{{AdminEditBookingCtrl.candidate.comments}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="row invoice-cust-add">
+                                        <div class="col-xs-4">
+                                            <h3 class="invoice-title ">Booking Person</h3>
+                                            <p class="invoice-desc">{{AdminEditBookingCtrl.candidate.bookingPerson}}</p>
+                                        </div>
+                                        <div class="col-xs-4">
+                                            <h3 class="invoice-title ">Contact Number</h3>
+                                            <p class="invoice-desc">{{AdminEditBookingCtrl.candidate.contactNumber}}</p>
+                                        </div>
+                                        <div class="col-xs-4">
+                                        </div>
+                                    </div>
+                                    <div class="row invoice-cust-add">
+                                        <div class="col-xs-4">
+                                            <h3 class="invoice-title ">Appt Status</h3>
+                                            <div  class="col-xs-12">
+                                                <select class="form-control" name="" id="" ng-model="AdminEditBookingCtrl.candidate.appointmentStatus" ng-disabled="!AdminEditBookingCtrl.isAdmin()">
+                                                    <option ng-repeat="status in AdminEditBookingCtrl.statuses" value="{{status.bookingStatus}}">{{status.bookingStatus}}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-4">
+                                            <h3 class="invoice-title ">Paperwork</h3>
+                                            <p class="invoice-desc">{{AdminEditBookingCtrl.candidate.paperwork}}</p>
+                                        </div>
+                                        <div class="col-xs-4">
+                                            <h3>&nbsp;</h3>
+                                            <input type="checkbox" ng-model="AdminEditBookingCtrl.candidate.isRedimedCallCandidate" ng-true-value="1" ng-false-value="0" disabled="true">
+                                            <span>Redimed calls the cadidate to confirm the appointment</span>
+                                        </div>
+                                    </div>
+                                    <div class="row invoice-cust-add">
+                                        <div class="col-xs-4">
+                                            <h3 class="invoice-title ">Preferred From</h3>
+                                            <p class="invoice-desc">{{AdminEditBookingCtrl.candidate.fromDate|dateFilter|date : 'dd/MM/yyyy'}}</p>
+                                        </div>
+                                        <div class="col-xs-4">
+                                            <h3 class="invoice-title ">To</h3>
+                                            <p class="invoice-desc inv-address">{{AdminEditBookingCtrl.candidate.toDate|dateFilter|date : 'dd/MM/yyyy'}}</p>
+                                        </div>
+                                        <div class="col-xs-4">
+                                            <h3>Preferred Time</h3>
+                                            <p class="invoice-desc inv-address">{{AdminEditBookingCtrl.candidate.preferredTime}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="row invoice-cust-add">
+                                        <div class="col-xs-12">
+                                            <h3 class="invoice-title ">Preferred Site</h3>
+                                            <div  class="col-xs-4">
+                                                <select name = "site" class="form-control" ng-options="site as site.siteName for site in AdminEditBookingCtrl.sites" ng-model="AdminEditBookingCtrl.site" ng-change="AdminEditBookingCtrl.selectedSite()" required></select>
+                                            </div>
+                                            <div class="col-xs-4" ng-show="AdminEditBookingCtrl.isChangeBookingTime()">
+                                                <button class="btn btn-warning" type="button" ng-click="AdminEditBookingCtrl.SelectApptSlot()">Change Booking Time</button>
+                                            </div>
+                                            <div class="col-xs-4" ng-show="AdminEditBookingCtrl.isStates()">
+                                                <select name ="state" class="form-control" ng-options="state as state.stateName for state in AdminEditBookingCtrl.states" ng-model="AdminEditBookingCtrl.state" ng-change="AdminEditBookingCtrl.selectedState()" ng-required="AdminEditBookingCtrl.isStates()"></select>
+                                            </div>
+                                            <div class="col-xs-4" ng-show="AdminEditBookingCtrl.isSuburbs()">
+                                                <select name="suburb" class="form-control"  ng-options="suburb as suburb.suburbName for suburb in AdminEditBookingCtrl.suburbs" ng-model="AdminEditBookingCtrl.suburb" ng-required="AdminEditBookingCtrl.isSuburbs()"></select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row invoice-cust-add">
+                                        <div class="col-xs-12">
+                                            <h3 class="invoice-title ">Appointment time: {{AdminEditBookingCtrl.candidate.appointmentTime|dateFilter|date : 'dd/MM/yyyy HH:mm'}}</h3>
 
-<div class="modal-header">
-    <h3 class="modal-title">Update Appointment</h3>
-</div>
-<div class="modal-body">
-    <form name="AdminEditBookingCtrl.form" class="form-horizontal form-row-seperated" action="#">
-        <div class="page-container">
-            <!-- BEGIN CONTENT -->
-            <div class="page-content-wrapper">
-                <div class="page-content">
-                    <div class="container">
-                        <!-- BEGIN PAGE CONTENT INNER -->
-                        <div class="page-content-inner">
-                            <div class="invoice-content-2 ">
-                                <div class="row invoice-head">
-                                    <div class="col-md-7 col-xs-6">
-                                        <div class="invoice-logo">
-                                            <h2 class="uppercase">Booking Details</h2>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-5 col-xs-6">
-                                        <div class="company-address">
-                                            <h2 class="bold uppercase">{{AdminEditBookingCtrl.candidate.companyName}}</h2>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row invoice-cust-add">
-                                    <div class="col-xs-4">
-                                        <h3 class="invoice-title ">Candidate</h3>
-                                        <p class="invoice-desc">{{AdminEditBookingCtrl.candidate.candidatesName}}</p>
-                                    </div>
-                                    <div class="col-xs-4">
-                                        <h3 class="invoice-title ">DOB</h3>
-                                        <p class="invoice-desc">{{AdminEditBookingCtrl.candidate.dob|dateFilter|date : 'dd/MM/yyyy'}}</p>
-                                    </div>
-                                    <div class="col-xs-4">
-                                        <h3 class="invoice-title ">Phone</h3>
-                                        <p class="invoice-desc inv-address">{{AdminEditBookingCtrl.candidate.phone}}</p>
-                                    </div>
-                                </div>
-                                <div class="row invoice-cust-add">
-                                    <div class="col-xs-4">
-                                        <h3 class="invoice-title ">Position</h3>
-                                        <p class="invoice-desc">{{AdminEditBookingCtrl.candidate.position}}</p>
-                                    </div>
-                                    <div class="col-xs-8">
-                                        <h3 class="invoice-title ">Comments</h3>
-                                        <p class="invoice-desc">{{AdminEditBookingCtrl.candidate.comments}}</p>
-                                    </div>
-                                </div>
-                                <div class="row invoice-cust-add">
-                                    <div class="col-xs-4">
-                                        <h3 class="invoice-title ">Booking Person</h3>
-                                        <p class="invoice-desc">{{AdminEditBookingCtrl.candidate.bookingPerson}}</p>
-                                    </div>
-                                    <div class="col-xs-4">
-                                        <h3 class="invoice-title ">Contact Number</h3>
-                                        <p class="invoice-desc">{{AdminEditBookingCtrl.candidate.contactNumber}}</p>
-                                    </div>
-                                    <div class="col-xs-4">
-                                    </div>
-                                </div>
-                                <div class="row invoice-cust-add">
-                                    <div class="col-xs-4">
-                                        <h3 class="invoice-title ">Appt Status</h3>
-                                        <div  class="col-xs-12">
-                                            <select class="form-control" name="" id="" ng-model="AdminEditBookingCtrl.candidate.appointmentStatus" ng-disabled="!AdminEditBookingCtrl.isAdmin()">
-                                                <option ng-repeat="status in AdminEditBookingCtrl.statuses" value="{{status.bookingStatus}}">{{status.bookingStatus}}</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-4">
-                                        <h3 class="invoice-title ">Paperwork</h3>
-                                        <p class="invoice-desc">{{AdminEditBookingCtrl.candidate.paperwork}}</p>
-                                    </div>
-                                    <div class="col-xs-4">
-                                        <h3>&nbsp;</h3>
-                                        <input type="checkbox" ng-model="AdminEditBookingCtrl.candidate.isRedimedCallCandidate" ng-true-value="1" ng-false-value="0" disabled="true">
-                                        <span>Redimed calls the cadidate to confirm the appointment</span>
-                                    </div>
-                                </div>
-                                <div class="row invoice-cust-add">
-                                    <div class="col-xs-4">
-                                        <h3 class="invoice-title ">Preferred From</h3>
-                                        <p class="invoice-desc">{{AdminEditBookingCtrl.candidate.fromDate|dateFilter|date : 'dd/MM/yyyy'}}</p>
-                                    </div>
-                                    <div class="col-xs-4">
-                                        <h3 class="invoice-title ">To</h3>
-                                        <p class="invoice-desc inv-address">{{AdminEditBookingCtrl.candidate.toDate|dateFilter|date : 'dd/MM/yyyy'}}</p>
-                                    </div>
-                                    <div class="col-xs-4">
-                                        <h3>Preferred Time</h3>
-                                        <p class="invoice-desc inv-address">{{AdminEditBookingCtrl.candidate.preferredTime}}</p>
-                                    </div>
-                                </div>
-                                <div class="row invoice-cust-add">
-                                    <div class="col-xs-12">
-                                        <h3 class="invoice-title ">Preferred Site</h3>
-                                        <div  class="col-xs-4">
-                                            <select name = "site" class="form-control" ng-options="site as site.siteName for site in AdminEditBookingCtrl.sites" ng-model="AdminEditBookingCtrl.site" ng-change="AdminEditBookingCtrl.selectedSite()" required></select>
-                                        </div>
-                                        <div class="col-xs-4" ng-show="AdminEditBookingCtrl.isStates()">
-                                            <select name ="state" class="form-control" ng-options="state as state.stateName for state in AdminEditBookingCtrl.states" ng-model="AdminEditBookingCtrl.state" ng-change="AdminEditBookingCtrl.selectedState()" ng-required="AdminEditBookingCtrl.isStates()"></select>
-                                        </div>
-                                        <div class="col-xs-4" ng-show="AdminEditBookingCtrl.isSuburbs()">
-                                            <select name="suburb" class="form-control"  ng-options="suburb as suburb.suburbName for suburb in AdminEditBookingCtrl.suburbs" ng-model="AdminEditBookingCtrl.suburb" ng-required="AdminEditBookingCtrl.isSuburbs()"></select>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row invoice-cust-add">
-                                    <div class="col-xs-12">
-                                        <h3 class="invoice-title ">Appointment time: {{AdminEditBookingCtrl.candidate.appointmentTime|dateFilter|date : 'dd/MM/yyyy HH:mm'}}</h3>
-                                        <div  class="col-xs-5" ng-show="AdminEditBookingCtrl.isCalendarList">
-                                            <select class="form-control" ng-options="(calendar.fromTime|dateFilter|date:'dd/MM/yyyy HH:mm') + '  ' + calendar.available for calendar in AdminEditBookingCtrl.calendars" ng-model="AdminEditBookingCtrl.calendar" ng-change="NewCandidateCtrl.calendarChanged()">
-                                            </select>
-                                            <input type="hidden" name="my_hero" value="{{AdminEditBookingCtrl.calendar}}" />
-                                        </div>
-                                        <div class="row" ng-show="AdminEditBookingCtrl.isAppointmentTime">
-                                            <div class="col-xs-6">
-                                                <div class="input-group">
-                                                    <input name="fromDate" type="text" class="form-control" datetime-picker="dd/MM/yyyy" ng-model="AdminEditBookingCtrl.apptDateAfterConvert" is-open="AdminEditBookingCtrl.dateStatus.fromDateOpened" close-text="Close"  enable-time="false" ng-change="AdminEditBookingCtrl.appointmentTimeChanged()"/>
-                                                    <span class="input-group-btn">
-                                                        <button type="button" class="btn btn-default" ng-click="AdminEditBookingCtrl.openFromDate($event)">
-                                                            <i class="glyphicon glyphicon-calendar"></i>
-                                                        </button>
-                                                    </span>
+                                            <div class="row" ng-show="AdminEditBookingCtrl.isAppointmentTime">
+                                                <div class="col-xs-6">
+                                                    <div class="input-group">
+                                                        <input name="fromDate" type="text" class="form-control" datetime-picker="dd/MM/yyyy" ng-model="AdminEditBookingCtrl.apptDateAfterConvert" is-open="AdminEditBookingCtrl.dateStatus.fromDateOpened" close-text="Close"  enable-time="false" ng-change="AdminEditBookingCtrl.appointmentTimeChanged()"/>
+                                                        <span class="input-group-btn">
+                                                            <button type="button" class="btn btn-default" ng-click="AdminEditBookingCtrl.openFromDate($event)">
+                                                                <i class="glyphicon glyphicon-calendar"></i>
+                                                            </button>
+                                                        </span>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-xs-6">
-                                                <div class="input-group">
-                                                    <input type="text" class="form-control" datetime-picker="hh:mm" ng-model="AdminEditBookingCtrl.apptTimeAfterConvert" is-open="AdminEditBookingCtrl.dateStatus.timeOpened" enable-date="false" ng-change="AdminEditBookingCtrl.appointmentTimeChanged()"/>
-                                                    <span class="input-group-btn">
-                                                        <button type="button" class="btn btn-default" ng-click="AdminEditBookingCtrl.openTime()"><i class="fa fa-clock-o"></i></button>
-                                                    </span>
+                                                <div class="col-xs-6">
+                                                    <div class="input-group">
+                                                        <input type="text" class="form-control" datetime-picker="hh:mm" ng-model="AdminEditBookingCtrl.apptTimeAfterConvert" is-open="AdminEditBookingCtrl.dateStatus.timeOpened" enable-date="false" ng-change="AdminEditBookingCtrl.appointmentTimeChanged()"/>
+                                                        <span class="input-group-btn">
+                                                            <button type="button" class="btn btn-default" ng-click="AdminEditBookingCtrl.openTime()"><i class="fa fa-clock-o"></i></button>
+                                                        </span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="row invoice-cust-add">
-                                    <div class="col-xs-12">
-                                        <h3 class="invoice-title ">Appointment notes</h3>
-                                        <div  class="col-xs-12">
-                                            <input type="text" class="form-control" ng-model="AdminEditBookingCtrl.candidate.appointmentNotes"/>
+                                    <div class="row invoice-cust-add">
+                                        <div class="col-xs-12">
+                                            <h3 class="invoice-title ">Appointment notes</h3>
+                                            <div  class="col-xs-12">
+                                                <input type="text" class="form-control" ng-model="AdminEditBookingCtrl.candidate.appointmentNotes"/>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            <!-- END PAGE CONTENT INNER -->
                         </div>
-                        <!-- END PAGE CONTENT INNER -->
                     </div>
                 </div>
             </div>
-        </div>
-    </form>
-</div>
-<div class="modal-footer">
-    <button class="btn btn-danger" type="button" ng-click="AdminEditBookingCtrl.cancelAppt()" ng-disabled="!AdminEditBookingCtrl.canCancelAppt()">Cancel Appointment</button>
-    <button class="btn btn-primary" type="button" ng-click="AdminEditBookingCtrl.attended()" ng-disabled="!AdminEditBookingCtrl.isAttended()" ng-show="AdminEditBookingCtrl.isShowAttendedButton()">Attended</button>
-    <button class="btn btn-primary" type="button" ng-click="AdminEditBookingCtrl.save(true)" ng-disabled="AdminEditBookingCtrl.isNotSave()">Save And Send Email</button>
-    <button class="btn btn-primary" type="button" ng-click="AdminEditBookingCtrl.save(false)" ng-disabled="AdminEditBookingCtrl.isNotSave()">Save Only</button>
-    <button class="btn btn-primary" type="button" ng-click="AdminEditBookingCtrl.sendConfirmationEmail()"
-    ng-disabled="AdminEditBookingCtrl.isSendEmailDisabled()">Send confirmation email</button>
-    <button class="btn btn-warning" type="button" ng-click="AdminEditBookingCtrl.cancel()">Close</button>
-</div>
-
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" type="button" ng-click="AdminEditBookingCtrl.eform()" ng-disabled="!AdminEditBookingCtrl.isEform()">Eform</button>
+        <button class="btn btn-danger" type="button" ng-click="AdminEditBookingCtrl.cancelAppt()" ng-disabled="!AdminEditBookingCtrl.canCancelAppt()">Cancel Appointment</button>
+        <button class="btn btn-primary" type="button" ng-click="AdminEditBookingCtrl.attended()" ng-disabled="!AdminEditBookingCtrl.isAttended()" ng-show="AdminEditBookingCtrl.isShowAttendedButton()">Attended</button>
+        <button class="btn btn-primary" type="button" ng-click="AdminEditBookingCtrl.save(true)" ng-disabled="AdminEditBookingCtrl.isNotSave()">Save And Send Email</button>
+        <button class="btn btn-primary" type="button" ng-click="AdminEditBookingCtrl.save(false)" ng-disabled="AdminEditBookingCtrl.isNotSave()">Save Only</button>
+        <button class="btn btn-primary" type="button" ng-click="AdminEditBookingCtrl.sendConfirmationEmail()"
+        ng-disabled="AdminEditBookingCtrl.isSendEmailDisabled()">Send confirmation email</button>
+        <button class="btn btn-warning" type="button" ng-click="AdminEditBookingCtrl.cancel()">Close</button>
+    </div>
 </div>

@@ -2,7 +2,7 @@
  * Created by phuongnguyen on 27/11/15.
  */
 angular.module('ocsApp.BookingReports')
-    .controller('BookingReportsMainCtrl',['BookingCandidateByApptDateV','BookingCandidateByBookingDateV','mysqlDate','mySocket', function (BookingCandidateByApptDateV,BookingCandidateByBookingDateV,mysqlDate,mySocket) {
+    .controller('BookingReportsMainCtrl',['Companies','BookingCandidateByApptDateV','BookingCandidateByBookingDateV','mysqlDate','mySocket','$scope', function (Companies,BookingCandidateByApptDateV,BookingCandidateByBookingDateV,mysqlDate,mySocket,$scope) {
 
         console.log("I am booking report controller.");
         var that = this;
@@ -58,6 +58,11 @@ angular.module('ocsApp.BookingReports')
         mySocket.emit('GetOnlineUsers');
         //////Online Users End/////
 
+        $scope.$on('$destroy', function () {
+            $log.debug('remove socket.io listener.....................');
+            mySocket.removeListener('OnlineUsersData');
+        });
+
         getDataForReports();
 
         this.openFromDate = function($event) {
@@ -73,9 +78,15 @@ angular.module('ocsApp.BookingReports')
             getDataForReports();
         };
 
+        this.synSites = function(){
+            Companies.synSites();
+        }
+
+        this.synRosters = function(){
+            Companies.synCalendars();
+        }
+
         function dateformat(date,format){
-
-
             var dateAfterFormat = moment(mysqlDate(date)).format(format);
             if(dateAfterFormat =="Invalid date")
                 return "";

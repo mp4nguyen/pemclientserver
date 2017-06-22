@@ -15,14 +15,24 @@
                             <span for="candidateName" ng-show=" NewCandidateCtrl.isSubmitted && NewCandidateCtrl.newCandidateForm.candidateName.$error.required" class="help-block">Candidate Name is required.</span>
                         </div>
                     </div>
+                    <div class="form-group" ng-class="{'has-error' : NewCandidateCtrl.isSubmitted && NewCandidateCtrl.newCandidateForm.gender.$invalid}">
+                        <label class="col-md-4 control-label">Gender:
+                            <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-8">
+                            <select name="gender" class="table-group-action-input form-control input-medium" ng-options="gender for gender in NewCandidateCtrl.genderList" ng-model="NewCandidateCtrl.BookingCandidate.gender" required ></select>
+                            <span for="gender" ng-show="  NewCandidateCtrl.isSubmitted && NewCandidateCtrl.newCandidateForm.gender.$error.required" class="help-block">Gender is required.</span>
+                        </div>
+                    </div>
+
                     <div class="form-group" ng-class="{'has-error' : NewCandidateCtrl.isSubmitted && NewCandidateCtrl.newCandidateForm.dob.$invalid}">
                         <div class="row">
                             <label class="col-md-4 control-label">DOB:
-                                <span class="required"> * </span>
+
                             </label>
                             <div class="col-md-8">
                                 <div class="input-group input-medium date date-picker">
-                                    <input type="text" name = "dob" class="form-control" uib-datepicker-popup="{{NewCandidateCtrl.format}}" ng-model="NewCandidateCtrl.BookingCandidate.dob" is-open="NewCandidateCtrl.dateStatus.dobOpened" min-date="minDate" max-date="maxDate" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+                                    <input type="text" name = "dob" class="form-control" uib-datepicker-popup="{{NewCandidateCtrl.format}}" ng-model="NewCandidateCtrl.BookingCandidate.dob" is-open="NewCandidateCtrl.dateStatus.dobOpened" min-date="minDate" max-date="maxDate" datepicker-options="dateOptions" date-disabled="disabled(date, mode)"  close-text="Close" />
                                     <span class="input-group-btn">
                                         <button type="button" class="btn btn-default" ng-click="NewCandidateCtrl.openDOB($event)"><i class="glyphicon glyphicon-calendar"></i></button>
                                     </span>
@@ -104,15 +114,28 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-md-4 control-label">Appointment Time:
-                        </label>
-                        <div class="col-md-8">
-                            <select class="form-control" ng-model="NewCandidateCtrl.BookingCandidate.calendar" ng-options="( calendar.fromTime |dateFilter| date:'dd/MM/yyyy HH:mm' ) + '  '+ calendar.available for calendar in NewCandidateCtrl.calendars" ng-change="NewCandidateCtrl.calendarChanged()">
-                            </select>
-                            <input type="hidden" name="my_hero" value="{{NewCandidateCtrl.BookingCandidate.calendar}}" />
-                            {{ NewCandidateCtrl.BookingCandidate.calendar.fromTime |dateFilter| date:'dd/MM/yyyy HH:mm'}}   {{NewCandidateCtrl.BookingCandidate.calendar.available}}
+                        <div class="col-md-4 col-sm-4">
+                        </div>
+                        <div class="col-md-8 col-sm-8">
+                            <div ng-repeat="date in NewCandidateCtrl.calendars">
+                                <div class="col-md-12 col-sm-12" style="padding-left: 0px;">
+                                    <label class="control-label bold">{{date.date}}</label>
+                                </div>
+                                <div class="col-md-12 col-sm-12" style="padding-left: 0px;"  >
+                                    <input
+                                        class="btn btn-default margin-top-5 ng-scope"
+                                        ng-class="{'btn-success': slot.calId == NewCandidateCtrl.BookingCandidate.slot.calId}"
+                                        style="margin-right: 5px; width: 80px;"
+                                        ng-repeat="slot in date.slots"
+                                        ng-click="NewCandidateCtrl.selectedSlot(slot)"
+                                        type="button"
+                                        value = "{{slot.calendarTime}}" >
+
+                                </div>
+                            </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>

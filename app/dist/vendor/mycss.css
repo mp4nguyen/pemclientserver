@@ -916,15 +916,22 @@ td.ac-select-add {
     cursor: pointer;
     padding-left: 12px;
 }
+.modal1 {
+    z-index: 99998!important;
+}
+
+.modal2 {
+    z-index: 99999!important;
+}
+
 .loading-page {
         position: fixed;
         left: 0px;
         top: 0px;
         width: 100%;
         height: 100%;
-        z-index: 99999;       
-
-        background: url(./loading-f0f0f0.gif) center no-repeat;        
+        z-index: 99999;
+        background: url(./loading-f0f0f0.gif) center no-repeat;
     }
 
 .mymodal {
@@ -1069,6 +1076,26 @@ body {
   .jumbotron {
     border-bottom: 0;
   }
+}
+
+
+.my-style-1 {
+  background-color: #ff0000 !important;
+}
+.my-style-2 {
+  background-color: #ffffff !important;
+}
+.my-style-3 {
+  background-color: #0000ff !important;
+}
+
+
+.blue {
+  color: #153ff0;
+}
+
+.red {
+  color: red;
 }
 
 .checkbox {

@@ -1,18 +1,7 @@
 (function(window, angular, undefined) {'use strict';
 
-var getPort = function(){
-    console.log("Current length port is : " +(window.location.port.length   + ""));
-    if(window.location.port.length ==0)
-    {
-        console.log('api port = 443');
-        return 443;
-    }else{
-        console.log('api port = 2000');
-        return 2000;
-    }
-};
 
-var urlBase = "https://medicalbookings.redimed.com.au:" + getPort() + "/api";
+var urlBase = apiUrl + ":" + getPort() + "/api";
 var authHeader = 'authorization';
 
 /**
@@ -3886,6 +3875,20 @@ module.factory(
          */
         "submitBooking": {
           url: urlBase + "/BookingHeaders/submitBooking",
+          method: "POST"
+        },
+
+        "updateBooking": {
+          url: urlBase + "/BookingHeaders/updateBooking",
+          method: "POST"
+        },
+        "transferEform": {
+          url: urlBase + "/BookingHeaders/transferEform",
+          method: "POST"
+        },
+
+        "cancelBooking": {
+          url: urlBase + "/BookingHeaders/cancelBooking",
           method: "POST"
         },
 
@@ -8488,7 +8491,7 @@ module.factory(
          */
         "getPackages": {
           url: urlBase + "/Companies/getPackages",
-          method: "GET"
+          method: "POST"
         },
 
         "getAssessments": {
@@ -8682,7 +8685,38 @@ module.factory(
           url: urlBase + "/Companies/getCalendars",
           method: "POST"
         },
-
+        "getRosters": {
+          url: urlBase + "/Companies/getRosters",
+          method: "POST"
+        },
+        "getResources": {
+          url: urlBase + "/Companies/getResources",
+          method: "POST"
+        },
+        "getEvents": {
+          url: urlBase + "/Companies/getEvents",
+          method: "POST"
+        },
+        "removeSlots": {
+          url: urlBase + "/Companies/removeSlots",
+          method: "POST"
+        },
+        "unRemoveSlots": {
+          url: urlBase + "/Companies/unRemoveSlots",
+          method: "POST"
+        },
+        "synSites": {
+          url: urlBase + "/Companies/synSites",
+          method: "GET"
+        },
+        "synCalendars": {
+          url: urlBase + "/Companies/synCalendars",
+          method: "GET"
+        },
+        "getPeriod": {
+          url: urlBase + "/Companies/getPeriod",
+          method: "POST"
+        },
         /**
          * @ngdoc method
          * @name lbServices.Companies#getStatus

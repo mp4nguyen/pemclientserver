@@ -15,6 +15,7 @@ angular.module('ocsApp.Navigator',
         'ocsApp.BookingReports',
         'ocsApp.Companies',
         'ocsApp.Sites',
+        'ocsApp.Scheduler',
         'ngIdle',
         'ui.bootstrap',
     ])

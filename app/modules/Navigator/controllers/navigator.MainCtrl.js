@@ -9,6 +9,19 @@ angular.module('ocsApp.Navigator')
         Idle.watch();
         //get User information
         var that = this;
+        this.isRedimed = false;
+        this.isKaja = false;
+        var plogo = getLogo();
+        console.log(plogo);
+        if(plogo == 'REDIMED'){
+          this.isRedimed = true;
+        }
+
+        if(plogo == 'KAJA'){
+          this.isKaja = true;
+        }
+
+        
         this.user = CompanyFactory.getCurrentUser();
         this.currentCompany = null;
         $log.debug("user = ",this.user);

@@ -13,10 +13,7 @@ angular.module('ocsApp.Authentication')
             Companies.initData(function(data,responseHeaders){
                 console.log('>initData',data);
                 companyData = data.initData;
-                //console.log('>companyData',companyData);
-                $log.debug("init company data get data from server");
                 callback(companyData);
-
             },
             function(err){
                 $log.error("init company failed",err);
@@ -26,6 +23,15 @@ angular.module('ocsApp.Authentication')
         return {
             init: function (callback) {
                 init(callback);
+            },
+            getPeriod: function(packId,cb){
+                $log.debug('>WILL GET PERIOD FROM SERVER PACKID = ',packId);
+                Companies.getPeriod({packId:packId},function(data,responseHeaders){
+                    cb(data.period);
+                },
+                function(err){
+                    $log.error("get period company failed",err);
+                });
             },
             setCurrentCompany: function(company){
                 currentCompany = company;
@@ -81,33 +87,11 @@ angular.module('ocsApp.Authentication')
                 //refresh the booking list after make an appointment
                 //get bookings
                 init(callback);
-                /*
-                Companies.positions({id:0},function(data){
-                    //,filter:{where:{candidatesName:'test'}}
-                    $log.debug("refreshPositionList from server");
-                    companyData.positions = data;
-                    callback(companyData);
-                },
-                function(err){
-                    $log.error("refreshPositionList failed",err);
-                });*/
             },
             refreshPackageList : function(callback){
                 //refresh the booking list after make an appointment
                 //get bookings
                 init(callback);
-                /*
-                Companies.packages({id:0},function(data){
-                    //,filter:{where:{candidatesName:'test'}}
-                    $log.debug("refreshPackageList from server");
-                    console.log("refreshPackageList = ",data);
-                    companyData.packages = data;
-                    callback(companyData);
-                },
-                function(err){
-                    $log.error("refreshPackageList failed",err);
-                });
-                */
             },
             refreshAllPackageList : function(callback){
                 //refresh the booking list after make an appointment
@@ -173,14 +157,64 @@ angular.module('ocsApp.Authentication')
                     });
                 }
             },
-            getCalendar: function(siteID,fromDate,toDate,callback){
-                Companies.getCalendars({id:siteID,from:fromDate,to:toDate},function(data){
+            getCalendar: function(siteID,fromDate,toDate,maxPeriod,callback){
+                Companies.getCalendars({id:siteID,from:fromDate,to:toDate,maxPeriod:maxPeriod},function(data){
                     $log.debug("getCalendar from server");
+                    console.log('data = ',data);
                     callback(data.calendars);
                 },
                 function(err){
                     $log.error("getCalendar from server failed",err);
                 });
+            },
+            getRoster: function(siteID,fromDate,toDate,callback){
+                Companies.getRosters({id:siteID,from:fromDate,to:toDate},function(data){
+                    $log.debug("getRoster from server");
+                    console.log('data = ',data);
+                    callback(data.rosters);
+                },
+                function(err){
+                    $log.error("getCalendar from server failed",err);
+                });
+            },
+            getResources: function(siteID,fromDate,toDate,callback){
+                Companies.getResources({id:siteID,from:fromDate,to:toDate},function(data){
+                    $log.debug("getResources from server");
+                    console.log('data = ',data);
+                    callback(data);
+                },
+                function(err){
+                    $log.error("getResources from server failed",err);
+                });
+            },
+            getEvents: function(siteID,fromDate,toDate,callback){
+                Companies.getEvents({id:siteID,from:fromDate,to:toDate},function(data){
+                    $log.debug("getEvents from server");
+                    console.log('data = ',data);
+                    callback(data);
+                },
+                function(err){
+                    $log.error("getEvents from server failed",err);
+                });
+            },
+            removeSlots: function(resourceId,fromTime,toTime,cb){
+                Companies.removeSlots({resourceId:resourceId,fromTime:fromTime,toTime:toTime},function(data){
+                  $log.debug("removeSlots from server");
+                  console.log(' slots removed = ',data);
+                  cb();
+                },function(err){
+                  console.log(' slots removed err = ',err);
+                });
+            },
+            unRemoveSlots: function(resourceId,fromTime,toTime,cb){
+                Companies.unRemoveSlots({resourceId:resourceId,fromTime:fromTime,toTime:toTime},function(data){
+                  $log.debug("unRemoveSlots from server");
+                  console.log(' slots unRemoveSlots = ',data);
+                  cb();
+                },function(err){
+                  console.log(' slots unRemoveSlots err = ',err);
+                });
+
             },
             setHolding: function(pCalendarID,callback){
                 $log.debug("Will set holding calID = " + pCalendarID );
@@ -217,7 +251,7 @@ angular.module('ocsApp.Authentication')
                 } else {
                     //Get Sites
                     Companies.getStatus(function(data){
-                        $log.debug("getStatus from server",data);
+                        $log.debug("getStatus from server");
                         statusData = data.status;
                         callback(statusData);
                     },

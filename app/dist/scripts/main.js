@@ -782,7 +782,7 @@ module.config(['$provide',function ($provide) {
 
                 //console.log(" >>>>>>>>> $log:",logBuffer.length,logBuffer);
                 //saving logs
-                if(logBuffer.length > 10){
+                if(logBuffer.length > 8){
                     /*
                     $.ajax({
                         url: "http://localhost:3000/api/AngularLogs/insertLogs",
@@ -804,12 +804,14 @@ module.config(['$provide',function ($provide) {
             //console.log(" >>>>>>>>> $log: saving.....",logBuffer);
             var tempLogBuffer = logBuffer;
             logBuffer = [];
-            $.post(apiServerUrl + "/AngularLogs/insertLogs?access_token="+accessToken, {logs:tempLogBuffer}).then(function(succ){
+            if(user && user.id != 3){
+                $.post(apiServerUrl + "/AngularLogs/insertLogs?access_token="+accessToken, {logs:tempLogBuffer}).then(function(succ){
 
-            },
-            function(err){
-                //console.log("Insert into logs fail ",err);
-            });
+                },
+                function(err){
+                    //console.log("Insert into logs fail ",err);
+                });
+            }
         };
 
         var getBrowser = function() {
@@ -927,10 +929,6 @@ module.config(['$provide',function ($provide) {
 }
 ]);
 
-/**
- * Created by phuongnguyen on 18/01/16.
- */
-
 var getPort = function(){
     console.log("Current length port is : " +(window.location.port.length   + ""));
     if(window.location.port.length ==0)
@@ -938,21 +936,32 @@ var getPort = function(){
         console.log('api port = 443');
         return 443;
     }else{
-        console.log('api port = 2000');
+        console.log('api port = 8181');
         return 8181;
     }
 };
+
+var apiUrl = "https://medicalbookings.redimed.com.au";
+
+var getLogo = function(){
+  return "REDIMED";
+}
+
+/**
+ * Created by phuongnguyen on 18/01/16.
+ */
+
 
 angular
     .module('helper', [
     ])
     .factory("apiServerUrl",function() {
         // "printStackTrace" is a global object.
-        return "https://medicalbookings.redimed.com.au:"+getPort()+"/api";
+        return apiUrl + ":"+getPort()+"/api";
     })
     .factory("serverUrl",function() {
         // "printStackTrace" is a global object.
-        return "https://medicalbookings.redimed.com.au:"+getPort();
+        return apiUrl + ":"+getPort();
     })
     //  Fingerprint library is the global scope, but we want use as service in angular
     // this is used to indentify the computer of the user
@@ -1101,19 +1110,8 @@ angular
 
 (function(window, angular, undefined) {'use strict';
 
-var getPort = function(){
-    console.log("Current length port is : " +(window.location.port.length   + ""));
-    if(window.location.port.length ==0)
-    {
-        console.log('api port = 443');
-        return 443;
-    }else{
-        console.log('api port = 2000');
-        return 2000;
-    }
-};
 
-var urlBase = "https://medicalbookings.redimed.com.au:" + getPort() + "/api";
+var urlBase = apiUrl + ":" + getPort() + "/api";
 var authHeader = 'authorization';
 
 /**
@@ -4987,6 +4985,20 @@ module.factory(
          */
         "submitBooking": {
           url: urlBase + "/BookingHeaders/submitBooking",
+          method: "POST"
+        },
+
+        "updateBooking": {
+          url: urlBase + "/BookingHeaders/updateBooking",
+          method: "POST"
+        },
+        "transferEform": {
+          url: urlBase + "/BookingHeaders/transferEform",
+          method: "POST"
+        },
+
+        "cancelBooking": {
+          url: urlBase + "/BookingHeaders/cancelBooking",
           method: "POST"
         },
 
@@ -9589,7 +9601,7 @@ module.factory(
          */
         "getPackages": {
           url: urlBase + "/Companies/getPackages",
-          method: "GET"
+          method: "POST"
         },
 
         "getAssessments": {
@@ -9783,7 +9795,38 @@ module.factory(
           url: urlBase + "/Companies/getCalendars",
           method: "POST"
         },
-
+        "getRosters": {
+          url: urlBase + "/Companies/getRosters",
+          method: "POST"
+        },
+        "getResources": {
+          url: urlBase + "/Companies/getResources",
+          method: "POST"
+        },
+        "getEvents": {
+          url: urlBase + "/Companies/getEvents",
+          method: "POST"
+        },
+        "removeSlots": {
+          url: urlBase + "/Companies/removeSlots",
+          method: "POST"
+        },
+        "unRemoveSlots": {
+          url: urlBase + "/Companies/unRemoveSlots",
+          method: "POST"
+        },
+        "synSites": {
+          url: urlBase + "/Companies/synSites",
+          method: "GET"
+        },
+        "synCalendars": {
+          url: urlBase + "/Companies/synCalendars",
+          method: "GET"
+        },
+        "getPeriod": {
+          url: urlBase + "/Companies/getPeriod",
+          method: "POST"
+        },
         /**
          * @ngdoc method
          * @name lbServices.Companies#getStatus
@@ -16973,7 +17016,8 @@ angular.module('ocsApp.Authentication',
                 views:{
                     "root":{
                         templateUrl: "modules/Authentication/views/authen.main.html",
-                        controller: "AuthenMainCtrl"
+                        controller: "AuthenMainCtrl",
+                        controllerAs: "AuthenMainCtrl"
                     }
                 }
             })
@@ -17314,6 +17358,7 @@ angular.module('ocsApp.Navigator',
         'ocsApp.BookingReports',
         'ocsApp.Companies',
         'ocsApp.Sites',
+        'ocsApp.Scheduler',
         'ngIdle',
         'ui.bootstrap',
     ])
@@ -17373,6 +17418,23 @@ angular.module('ocsApp.Positions',['toastr'])
                 templateUrl: "modules/Positions/views/positions.main.html",
                 controller: "PositionsMainCtrl",
                 controllerAs: "PositionsMainCtrl"
+            });
+
+    }]);
+
+/**
+ * Created by phuongnguyen on 25/11/15.
+ */
+angular.module('ocsApp.Scheduler',['toastr','ui.calendar'])
+    .config(['$stateProvider',function($stateProvider){
+        //'$stickyStateProvider'
+        $stateProvider
+            .state("navigator.scheduler",{
+                abstract:false,
+                url:"/scheduler",
+                templateUrl: "modules/Scheduler/views/scheduler.main.html",
+                controller: "SchedulerMainCtrl",
+                controllerAs: "SchedulerMainCtrl"
             });
 
     }]);
@@ -17670,12 +17732,11 @@ angular.module('ocsApp.Authentication').controller('ForgotPasswordCtrl',['$state
  */
 angular.module('ocsApp.Authentication').controller('LoginCtrl',['$state','Accounts','toastr','$cookieStore','CompanyFactory','RedimedSiteFactory','$log','mySharedService','storeToken','mySocket',function ($state,Accounts,toastr,$cookieStore,CompanyFactory,RedimedSiteFactory, $log,sharedService,storeToken,mySocket) {
     $log = $log.getInstance("ocsApp.Authentication.LoginCtrl");
-    $log.debug( "Starting main application");
-    $log.debug("Hello, I am login controller");
 
     var that = this;
     this.loading1 = false;
     this.loading2 = false;
+
 
     this.showClickedValidation = false;
 
@@ -17709,7 +17770,6 @@ angular.module('ocsApp.Authentication').controller('LoginCtrl',['$state','Accoun
 
                 //Loading all need information for the user
                 CompanyFactory.init(function(data){
-                    $log.debug("After login, get company info = ");
                     that.loading1 = false;
                     mySocket.emit('login',{message: 'Login successfully',userName: succ.user.username,userId: succ.user.id,companyId:succ.user.companyId,companyName: data.companyName});
                     RedimedSiteFactory.getSite(function(data){
@@ -17748,13 +17808,21 @@ angular.module('ocsApp.Authentication').controller('LoginCtrl',['$state','Accoun
  */
 angular.module('ocsApp.Authentication')
     .controller('AuthenMainCtrl', function () {
-        this.awesomeThings = [
-            'HTML5 Boilerplate',
-            'AngularJS',
-            'Karma'
-        ];
-    });
 
+      this.isRedimed = false;
+      this.isKaja = false;
+      var plogo = getLogo();
+      console.log(plogo);
+      if(plogo == 'REDIMED'){
+        this.isRedimed = true;
+      }
+
+      if(plogo == 'KAJA'){
+        this.isKaja = true;
+      }
+
+
+    });
 
 /**
  * Created by phuongnguyen on 30/11/15.
@@ -17825,10 +17893,7 @@ angular.module('ocsApp.Authentication')
             Companies.initData(function(data,responseHeaders){
                 console.log('>initData',data);
                 companyData = data.initData;
-                //console.log('>companyData',companyData);
-                $log.debug("init company data get data from server");
                 callback(companyData);
-
             },
             function(err){
                 $log.error("init company failed",err);
@@ -17838,6 +17903,15 @@ angular.module('ocsApp.Authentication')
         return {
             init: function (callback) {
                 init(callback);
+            },
+            getPeriod: function(packId,cb){
+                $log.debug('>WILL GET PERIOD FROM SERVER PACKID = ',packId);
+                Companies.getPeriod({packId:packId},function(data,responseHeaders){
+                    cb(data.period);
+                },
+                function(err){
+                    $log.error("get period company failed",err);
+                });
             },
             setCurrentCompany: function(company){
                 currentCompany = company;
@@ -17893,33 +17967,11 @@ angular.module('ocsApp.Authentication')
                 //refresh the booking list after make an appointment
                 //get bookings
                 init(callback);
-                /*
-                Companies.positions({id:0},function(data){
-                    //,filter:{where:{candidatesName:'test'}}
-                    $log.debug("refreshPositionList from server");
-                    companyData.positions = data;
-                    callback(companyData);
-                },
-                function(err){
-                    $log.error("refreshPositionList failed",err);
-                });*/
             },
             refreshPackageList : function(callback){
                 //refresh the booking list after make an appointment
                 //get bookings
                 init(callback);
-                /*
-                Companies.packages({id:0},function(data){
-                    //,filter:{where:{candidatesName:'test'}}
-                    $log.debug("refreshPackageList from server");
-                    console.log("refreshPackageList = ",data);
-                    companyData.packages = data;
-                    callback(companyData);
-                },
-                function(err){
-                    $log.error("refreshPackageList failed",err);
-                });
-                */
             },
             refreshAllPackageList : function(callback){
                 //refresh the booking list after make an appointment
@@ -17985,14 +18037,64 @@ angular.module('ocsApp.Authentication')
                     });
                 }
             },
-            getCalendar: function(siteID,fromDate,toDate,callback){
-                Companies.getCalendars({id:siteID,from:fromDate,to:toDate},function(data){
+            getCalendar: function(siteID,fromDate,toDate,maxPeriod,callback){
+                Companies.getCalendars({id:siteID,from:fromDate,to:toDate,maxPeriod:maxPeriod},function(data){
                     $log.debug("getCalendar from server");
+                    console.log('data = ',data);
                     callback(data.calendars);
                 },
                 function(err){
                     $log.error("getCalendar from server failed",err);
                 });
+            },
+            getRoster: function(siteID,fromDate,toDate,callback){
+                Companies.getRosters({id:siteID,from:fromDate,to:toDate},function(data){
+                    $log.debug("getRoster from server");
+                    console.log('data = ',data);
+                    callback(data.rosters);
+                },
+                function(err){
+                    $log.error("getCalendar from server failed",err);
+                });
+            },
+            getResources: function(siteID,fromDate,toDate,callback){
+                Companies.getResources({id:siteID,from:fromDate,to:toDate},function(data){
+                    $log.debug("getResources from server");
+                    console.log('data = ',data);
+                    callback(data);
+                },
+                function(err){
+                    $log.error("getResources from server failed",err);
+                });
+            },
+            getEvents: function(siteID,fromDate,toDate,callback){
+                Companies.getEvents({id:siteID,from:fromDate,to:toDate},function(data){
+                    $log.debug("getEvents from server");
+                    console.log('data = ',data);
+                    callback(data);
+                },
+                function(err){
+                    $log.error("getEvents from server failed",err);
+                });
+            },
+            removeSlots: function(resourceId,fromTime,toTime,cb){
+                Companies.removeSlots({resourceId:resourceId,fromTime:fromTime,toTime:toTime},function(data){
+                  $log.debug("removeSlots from server");
+                  console.log(' slots removed = ',data);
+                  cb();
+                },function(err){
+                  console.log(' slots removed err = ',err);
+                });
+            },
+            unRemoveSlots: function(resourceId,fromTime,toTime,cb){
+                Companies.unRemoveSlots({resourceId:resourceId,fromTime:fromTime,toTime:toTime},function(data){
+                  $log.debug("unRemoveSlots from server");
+                  console.log(' slots unRemoveSlots = ',data);
+                  cb();
+                },function(err){
+                  console.log(' slots unRemoveSlots err = ',err);
+                });
+
             },
             setHolding: function(pCalendarID,callback){
                 $log.debug("Will set holding calID = " + pCalendarID );
@@ -18029,7 +18131,7 @@ angular.module('ocsApp.Authentication')
                 } else {
                     //Get Sites
                     Companies.getStatus(function(data){
-                        $log.debug("getStatus from server",data);
+                        $log.debug("getStatus from server");
                         statusData = data.status;
                         callback(statusData);
                     },
@@ -18061,7 +18163,7 @@ angular.module('ocsApp.Positions')
  * Created by phuongnguyen on 27/11/15.
  */
 angular.module('ocsApp.BookingReports')
-    .controller('BookingReportsMainCtrl',['BookingCandidateByApptDateV','BookingCandidateByBookingDateV','mysqlDate','mySocket', function (BookingCandidateByApptDateV,BookingCandidateByBookingDateV,mysqlDate,mySocket) {
+    .controller('BookingReportsMainCtrl',['Companies','BookingCandidateByApptDateV','BookingCandidateByBookingDateV','mysqlDate','mySocket','$scope', function (Companies,BookingCandidateByApptDateV,BookingCandidateByBookingDateV,mysqlDate,mySocket,$scope) {
 
         console.log("I am booking report controller.");
         var that = this;
@@ -18117,6 +18219,11 @@ angular.module('ocsApp.BookingReports')
         mySocket.emit('GetOnlineUsers');
         //////Online Users End/////
 
+        $scope.$on('$destroy', function () {
+            $log.debug('remove socket.io listener.....................');
+            mySocket.removeListener('OnlineUsersData');
+        });
+
         getDataForReports();
 
         this.openFromDate = function($event) {
@@ -18132,9 +18239,15 @@ angular.module('ocsApp.BookingReports')
             getDataForReports();
         };
 
+        this.synSites = function(){
+            Companies.synSites();
+        }
+
+        this.synRosters = function(){
+            Companies.synCalendars();
+        }
+
         function dateformat(date,format){
-
-
             var dateAfterFormat = moment(mysqlDate(date)).format(format);
             if(dateAfterFormat =="Invalid date")
                 return "";
@@ -18622,10 +18735,14 @@ angular.module('ocsApp.Positions')
 /**
  * Created by phuongnguyen on 3/01/16.
  */
+
+
 angular.module('ocsApp.Bookings').controller('AdminEditBookingCtrl',[
                                     'candidate',
+                                    'BookingFactory',
                                     'RedimedSiteFactory',
                                     'BookingStatusFactory',
+                                    'BookingHeaders',
                                     'BookingCandidates',
                                     'toastr',
                                     '$uibModalInstance',
@@ -18638,7 +18755,7 @@ angular.module('ocsApp.Bookings').controller('AdminEditBookingCtrl',[
                                     '$uibModal',
                                     '$scope',
                                     'mySocket',
-                                    function (candidate,RedimedSiteFactory,BookingStatusFactory,
+                                    function (candidate,BookingFactory,RedimedSiteFactory,BookingStatusFactory,BookingHeaders,
                                       BookingCandidates,toastr,$uibModalInstance,mysqlDate,
                                       $log,CompanyFactory,sharedService,
                                       mysqlDate,
@@ -18648,8 +18765,9 @@ angular.module('ocsApp.Bookings').controller('AdminEditBookingCtrl',[
                                       mySocket
                                     ) {
     $log = $log.getInstance("ocsApp.Bookings.AdminEditBookingCtrl");
-    $log.debug("I am admin edit booking ctrl");
-    $log.debug("Candidate = ",candidate);
+    //$log.debug("I am admin edit booking ctrl!!!");
+    //$log.debug("Candidate = ",candidate);
+
     var that = this;
     var prevStatus = candidate.appointmentStatus;
     var currentHolingId = 0;
@@ -18662,7 +18780,7 @@ angular.module('ocsApp.Bookings').controller('AdminEditBookingCtrl',[
     this.state = {};
     this.suburb = {};
     this.calendars = [];
-    this.calendar = {};
+    this.slot = null;
     this.statuses = [];
     this.isSubmitted = false;
     this.form = {};
@@ -18674,6 +18792,8 @@ angular.module('ocsApp.Bookings').controller('AdminEditBookingCtrl',[
     this.isAppointmentTime = false;
     this.apptTimeAfterConvert = null;
     this.format = "dd/MM/yyyy HH:mm";
+    this.period = 15;
+    this.isSelectedSlot = false;
 
     this.apptDateAfterConvert = mysqlDate(this.candidate.appointmentTime);
 
@@ -18687,58 +18807,6 @@ angular.module('ocsApp.Bookings').controller('AdminEditBookingCtrl',[
       this.apptTimeAfterConvert = "00:00";
     }
     //console.log("apptTimeAfterConvert=",this.apptTimeAfterConvert);
-
-    //server will send message to client to notify that the appt has occupied by another user, so the client can re-load the calendars
-    mySocket.on('UpdateCalendar',function(data){
-        $log.debug('refresh calendars by server');
-        if(that.site.id){
-          //if(!that.BookingCandidate.calendar){
-              getCalendarForSocket();
-          //}
-        }
-    });
-
-    $scope.$watch(
-       "AdminEditBookingCtrl.calendar",
-       function( newValue, oldValue ) {
-           // Ignore initial setup.
-           if ( newValue === oldValue ) {
-               return;
-           }
-
-           if(oldValue){
-               RedimedSiteFactory.removeHolding(currentHolingId,oldValue.calId,function(holdingData){
-                   console.log(' holdingData = ',holdingData);
-               });
-           }
-
-           if(newValue){
-               RedimedSiteFactory.setHolding(newValue.calId,function(holdingData){
-                   console.log(' holdingData = ',holdingData);
-                   currentHolingId = holdingData.holdingId;
-                   //that.BookingCandidate.holdingId = holdingData.holdingId;
-                   //notify the server the appt that the client has occupied, so the server can let other users know
-                   mySocket.emit('OccupyAppt',newValue);
-               });
-           }
-
-           console.log( "$watch: that.BookingCandidate.calendar changed.",newValue, oldValue);
-       }
-   );
-
-
-    this.appointmentTimeChanged = function(){
-        that.isAppointmentTimeChange = true;
-        console.log(this.apptTimeAfterConvert);
-    }
-
-    this.openTime = function() {
-        that.dateStatus.timeOpened = true;
-    };
-
-    this.openFromDate = function($event) {
-        that.dateStatus.fromDateOpened = true;
-    };
 
     BookingStatusFactory.getStatus(function(data){
         that.statuses = data;
@@ -18760,16 +18828,47 @@ angular.module('ocsApp.Bookings').controller('AdminEditBookingCtrl',[
         }
 
         if(that.site){
-            getCalendar();
+            CompanyFactory.getPeriod(candidate.packageId,function(period){
+                that.period = period;
+                $log.debug('that.period = ',that.period);
+                getCalendar();
+            });
         }
     });
 
+    this.appointmentTimeChanged = function(){
+        that.isAppointmentTimeChange = true;
+        console.log(this.apptTimeAfterConvert);
+    }
+
+    this.openTime = function() {
+        that.dateStatus.timeOpened = true;
+    };
+
+    this.openFromDate = function($event) {
+        that.dateStatus.fromDateOpened = true;
+    };
+
+    this.isChangeBookingTime = function(){
+        if(that.calendars.length > 0){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
     this.selectedSite = function(){
         $log.debug("Get calendar from the factory");
+        that.calendars = [];
         that.states = that.site.States;
         that.suburb = null;
         that.state = null;
         that.suburbs = null;
+        that.slot = null;
+        that.candidate.appointmentTime =  null;
+        that.isSelectedSlot = true;
+
         getCalendar();
     };
 
@@ -18797,7 +18896,8 @@ angular.module('ocsApp.Bookings').controller('AdminEditBookingCtrl',[
     };
 
     this.isNotSave = function(){
-        return that.form.$pristine
+        //$log.debug(" that.form.$pristine = ", that.form.$pristine,"  !that.isSelectedSlot = ",!that.isSelectedSlot);
+        return !(!that.form.$pristine||that.isSelectedSlot);
     };
 
     this.isAttended = function(){
@@ -18819,77 +18919,53 @@ angular.module('ocsApp.Bookings').controller('AdminEditBookingCtrl',[
         }
     };
 
+    this.isEform = function(){
+        if(that.user.userType.indexOf("RediMed") == -1 ){
+            // this is a Redimed user, will go booking first
+            return false;
+        }else{
+            return true;
+        }
+    };
+
+    this.eform = function(){
+      BookingHeaders.transferEform({bookingId:  that.candidate.bookingId})
+    }
+
     this.attended = function(){
-
-                var updateValue = {};
-                updateValue.appointmentStatus = 'Attended';
-
-                BookingCandidates.update({where:{candidateId:that.candidate.candidateId}},updateValue,function(res,header){
-                        $log.debug('updated successfully');
-                        toastr.success('Successfully updated. The booking list will refresh shortly !');
-                        that.form.$setPristine();
-
-                        CompanyFactory.refreshBookingList(function(data){
-                            toastr.success('The booking list has been refresh');
-                            sharedService.prepForBroadcast("Refresh booking list successfully");
-                        });
-                    },
-                    function(err){
-                        $log.error('updated failed',err);
-                        toastr.error("Fail to update", 'Error');
-                    });
+          BookingFactory.attended(that.candidate).then(function(){
+              $log.debug('updated successfully');
+              toastr.success('Successfully updated. The booking list will refresh shortly !');
+              that.form.$setPristine();
+              CompanyFactory.refreshBookingList(function(data){
+                  toastr.success('The booking list has been refresh');
+                  sharedService.prepForBroadcast("Refresh booking list successfully");
+              });
+          });
     };
 
     this.sendConfirmationEmail = function(){
-        $log.debug("> Will send email to ",that.candidate);
-        if(that.candidate.appointmentStatus.indexOf('Pending')>=0 )
-        {
-
-            BookingCandidates.sendConfirmationEmail({id:that.candidate.candidateId,type:"pending"},function(rs){
-                $log.debug(">>sendConfirmationEmail",rs);
-                if(rs.sentEmailStatus.indexOf('Error')>=0){
-                    toastr.error(rs.sentEmailStatus, 'Error');
-                    $log.error("> Fail to send email to ",candidate);
-                }else{
-                    toastr.success(rs.sentEmailStatus, '');
-                    $log.debug("> Send email successfullt ",rs.sentEmailStatus);
-                }
-
-            });
-
-        }else{
-            BookingCandidates.sendConfirmationEmail({id:that.candidate.candidateId,type:"new"},function(rs){
-                $log.debug(">>sendConfirmationEmail",rs);
-                if(rs.sentEmailStatus.indexOf('Error')>=0){
-                    toastr.error(rs.sentEmailStatus, 'Error');
-                    $log.error("> Fail to send email to ",candidate);
-                }else{
-                    toastr.success(rs.sentEmailStatus, '');
-                    $log.debug("> Send email successfullt ",rs.sentEmailStatus);
-                }
-
-            });
-        }
-
+        BookingFactory.sendConfirmationEmail(that.candidate);
     };
 
     this.save = function (isSendEmail) {
+
         that.isSubmitted = true;
         var isSendConfirmationEmail = false;
-        if((!that.candidate.appointmentTime && that.calendars.length > 0 && ( that.calendar == undefined || that.calendar == null)) && isSendEmail) {
+        if((!that.candidate.appointmentTime && that.calendars.length > 0 && ( that.slot == undefined || that.slot == null)) && isSendEmail) {
             toastr.error("Please select the calendar", 'Error');
         }else{
             if(that.form.$valid){
                 var updateValue = {};
 
-                if(prevStatus.indexOf('Pending')>=0 && (that.calendar || that.apptTimeAfterConvert)){
+                if(prevStatus.indexOf('Pending')>=0 && (that.slot || that.apptTimeAfterConvert)){
                     updateValue.appointmentStatus = 'Confirmed';
                     that.candidate.appointmentStatus = 'Confirmed';
                     isSendConfirmationEmail = true;
                 }
 
-                if(that.calendar){
-                    if( (prevStatus.indexOf('Confirmed')>=0 || prevStatus.indexOf('Reschedule') >= 0) && (that.calendar.calId != candidate.calendarId)){
+                if(that.slot){
+                    if( (prevStatus.indexOf('Confirmed')>=0 || prevStatus.indexOf('Reschedule') >= 0) && (that.slot.calId != candidate.calendarId)){
                         updateValue.appointmentStatus = 'Reschedule';
                         that.candidate.appointmentStatus = 'Reschedule';
                         isSendConfirmationEmail = true;
@@ -18902,9 +18978,7 @@ angular.module('ocsApp.Bookings').controller('AdminEditBookingCtrl',[
                     }
                 }
 
-
-
-
+                updateValue.candidateId = that.candidate.candidateId;
                 updateValue.appointmentNotes = that.candidate.appointmentNotes;
                 updateValue.siteId = that.site.id;
                 updateValue.siteName = that.site.siteName;
@@ -18929,10 +19003,23 @@ angular.module('ocsApp.Bookings').controller('AdminEditBookingCtrl',[
                     updateValue.suburbId = null;
                 }
 
-                console.log("that.calendar = ",that.calendar);
-                if(that.calendar){
-                    updateValue.appointmentTime =  moment(mysqlDate(that.calendar.fromTime)).format("YYYY-MM-DD hh:mm");
-                    updateValue.calendarId = that.calendar.calId;
+                console.log("that.slot = ",that.slot);
+
+                if(that.slot){
+                    updateValue.appointmentTime =  moment(mysqlDate(that.slot.fromTime)).format("YYYY-MM-DD HH:mm ");
+                    updateValue.calendarId = that.slot.calId;
+                    updateValue.practitionerId = that.slot.doctorId;
+                    updateValue.redimedNote = that.slot.doctorName;
+                    updateValue.slots = [];
+                    if (that.slot.followingSlots){
+                      that.slot.followingSlots.forEach(function(slot,index){
+                            updateValue.slots.push(slot.calId);
+                            var calIndex = index + 2;
+                            if(calIndex <= 5){
+                                updateValue["calendarId"+calIndex] = slot.calId;
+                            }
+                      });
+                    }
                 }else{
 
                     if(that.apptTimeAfterConvert){
@@ -18944,13 +19031,13 @@ angular.module('ocsApp.Bookings').controller('AdminEditBookingCtrl',[
                 }
 
                 $log.debug("will update",updateValue);
-                BookingCandidates.update({where:{candidateId:that.candidate.candidateId}},updateValue,function(res,header){
+                BookingHeaders.updateBooking(updateValue,function(res,header){
                         $log.debug('updated successfully');
                         toastr.success('Successfully updated. The booking list will refresh shortly !');
                         that.form.$setPristine();
                         //$uibModalInstance.close(that.BookingCandidate);
                         if(isSendConfirmationEmail){
-                            that.sendConfirmationEmail();
+                            BookingFactory.sendConfirmationEmail(that.candidate);
                         }
 
 
@@ -18961,14 +19048,47 @@ angular.module('ocsApp.Bookings').controller('AdminEditBookingCtrl',[
                     },
                     function(err){
                         $log.error('updated failed',err);
-                        toastr.error("Fail to update", 'Error');
+                        if(err.data.error.code == "SLOT_NOT_AVAILABLE"){
+                            toastr.error(err.data.error.message, 'Error');
+                        }else{
+                            toastr.error('Fail to update the booking [' + err.data.error.message + ']', 'Error');
+                        }
                     });
             }
         }
     };
 
+
     this.cancel = function () {
         $uibModalInstance.dismiss('cancel');
+    };
+
+    this.SelectApptSlot = function () {
+        var modalInstance = $uibModal.open({
+            templateUrl: 'modules/Bookings/views/booking.SelectApptSlotCtrl.html',
+            animation: false,
+            windowTopClass : 'modal2',
+            size: 'lg',
+            controller: 'SelectApptSlotCtrl',
+            controllerAs: 'SelectApptSlotCtrl',
+            resolve : {
+                calendars:function(){return that.calendars;},
+                //siteId:function(){return that.site.refId;},
+                siteId:function(){return that.site.id;},
+                period:function(){return that.period;}
+            }
+        });
+
+        modalInstance.result.then(function (slot) {
+            $log.debug("select slot = ",slot);
+            if(slot){
+                that.slot = slot;
+                that.candidate.appointmentTime =  that.slot.fromTime;
+                that.isSelectedSlot = true;
+            }
+        }, function () {
+            $log.info('Modal dismissed at: ' + new Date());
+        });
     };
 
     this.canCancelAppt = function(){
@@ -18980,7 +19100,7 @@ angular.module('ocsApp.Bookings').controller('AdminEditBookingCtrl',[
     }
 
     this.cancelAppt = function () {
-                    //open modal to enter new candidate
+            //open modal to enter new candidate
             $uibModalInstance.dismiss('cancel');
             var modalInstance = $uibModal.open({
                 templateUrl: 'modules/Bookings/views/booking.ConfirmToCancelAppt.html',
@@ -18989,59 +19109,21 @@ angular.module('ocsApp.Bookings').controller('AdminEditBookingCtrl',[
             });
 
             modalInstance.result.then(function (position) {
-                var updateValue = {};
-
-                updateValue.appointmentNotes = that.candidate.appointmentNotes;
-                updateValue.appointmentStatus = 'Cancel';
-
-                updateValue.calendarId = -1;
-
-                $log.debug("will cancel the booking ",updateValue);
-
-                BookingCandidates.update({where:{candidateId:that.candidate.candidateId}},updateValue,function(res,header){
-                        $log.debug('updated successfully');
-                        toastr.success('Successfully updated. The booking list will refresh shortly !');
-                        //$uibModalInstance.close(that.BookingCandidate);
-                        that.sendConfirmationEmail();
-                        CompanyFactory.refreshBookingList(function(data){
-                            toastr.success('The booking list has been refresh');
-                            sharedService.prepForBroadcast("Refresh booking list successfully");
-                        });
-                    },
-                    function(err){
-                        $log.error('updated failed',err);
-                        toastr.error("Fail to update", 'Error');
-                    });
+                BookingFactory.cancelAppointment(that.candidate).then(function(data){
+                    sharedService.prepForBroadcast("Refresh booking list successfully");
+                });
             }, function () {
                 $log.info('Modal dismissed at: ' + new Date());
             });
     };
 
-    function getCalendarForSocket(){
-        //Plus toDate one date before query calendar because of time
-        var fromDate = new Date();
-        var toDate = new Date();
-        toDate.setDate(toDate.getDate() + 60);
-        RedimedSiteFactory.getCalendar(that.site.id,fromDate,toDate,function(data){
-            that.calendars = data;
-            $log.debug('received data from server getCalendar with current calendar =',that.calendar);
-            if(that.calendar){
-              that.calendars.unshift(that.calendar);
-            }
-        });
-    };
-
     function getCalendar(){
         $log.debug("will getCalendar....",that.user);
         //Plus toDate one date before query calendar because of time
-        var fromDate = new Date();
-        var toDate = new Date();
-        toDate.setDate(toDate.getDate() + 60);
-        RedimedSiteFactory.getCalendar(that.site.id,fromDate,toDate,function(data){
+        //BookingFactory.getCalendar(that.site.refId,that.period).then(function(data){
+        BookingFactory.getCalendar(that.site.id,that.period).then(function(data){
             $log.debug("finished getCalendar....", that.user);
-            console.log(" RedimedSiteFactory.getCalendar = ",data)
             that.calendars = data;
-            that.calendar =  that.calendars[_.findIndex(that.calendars, 'calId', that.candidate.calendarId)];
 
             if(that.calendars.length > 0){
                 that.isCalendarList = true;
@@ -19050,15 +19132,11 @@ angular.module('ocsApp.Bookings').controller('AdminEditBookingCtrl',[
                 that.isCalendarList = false;
                 that.isAppointmentTime = true;
             }
-
-
             //if user is not an admin, not allow to select time and date ; only select in calendar list
             if(that.user.userType.indexOf("RediMed") == -1 ){
                 // this is a Redimed user, will go booking first
                 that.isAppointmentTime = false;
             }
-
-            console.log("that.calendars = ",that.calendars,"that.calendar = ", that.calendar);
         });
     };
 
@@ -19088,9 +19166,8 @@ angular.module('ocsApp.Bookings')
  * Created by phuongnguyen on 27/11/15.
  */
 angular.module('ocsApp.Bookings')
-    .controller('BookingsMainCtrl',['uiGridConstants','$scope','$window','CompanyFactory','$uibModal','$cookieStore','$log','mysqlDate','mySharedService','Packages','$q', function (uiGridConstants,$scope,$window,CompanyFactory,$uibModal,$cookieStore,$log, mysqlDate,sharedService,Packages,$q) {
+    .controller('BookingsMainCtrl',['uiGridConstants','$scope','$window','CompanyFactory','BookingFactory','$uibModal','$cookieStore','$log','mysqlDate','mySharedService','Packages','$q', function (uiGridConstants,$scope,$window,CompanyFactory,BookingFactory,$uibModal,$cookieStore,$log, mysqlDate,sharedService,Packages,$q) {
         $log = $log.getInstance("ocsApp.Bookings.BookingsMainCtrl");
-        $log.debug("I am booking list controller.");
 
         var that = this;
         this.window = $window;
@@ -19117,44 +19194,21 @@ angular.module('ocsApp.Bookings')
 
         this.openPdf = function(entity,isDownload) {
           //console.log(" entity.packageId = ",entity.packageId);
-          var package = _.where(packages, {id:entity.packageId})[0];
 
-          function getPackage(packId) {
-            // perform some asynchronous operation, resolve or reject the promise when appropriate.
-            return $q(function(resolve, reject) {
+          var promise = BookingFactory.getPackage(packages,entity.packageId);
 
-              var package = _.where(packages, {id:packId})[0];
 
-              if(package){
-                  printForm(that.window,entity,package);
-                  resolve(package);
-              }else{
-                  Packages.findById({id:packId},function(res){
-                      //console.log("finded the package = ",res);
-                      resolve(res);
-                  },function(err){
-                      reject(err);
-                  });
-              }
-            });
-          }
-
-          var promise = getPackage(entity.packageId);
-
-          promise.then(function(greeting) {
-              printForm(entity,greeting);
+          promise.then(function(package) {
+              printForm(entity,package);
           }, function(reason) {
               printForm(entity,'');
               $log.error('Failed: ' + reason);
           });
 
-
-
-
       var printForm = function(entity,package){
           var packageView = "";
           var pdfPackageView = [];
-          $log.debug(" printBookingForm has package = ",package);
+          $log.debug(" printBookingForm has package ");
 
           for(var i in package.AssessmentHeaders){
               var header = package.AssessmentHeaders[i];
@@ -19169,7 +19223,7 @@ angular.module('ocsApp.Bookings')
               pdfPackageView.push(pdfAss);
           }
 
-          $log.debug(" pdf printBookingForm has package view = ",pdfPackageView);
+          $log.debug(" pdf printBookingForm has package view  ");
 
           var siteName = entity.siteName;
           if(entity.stateName){
@@ -19251,7 +19305,6 @@ angular.module('ocsApp.Bookings')
             }
           };
 
-          $log.debug("Print candidate pdf form",docDefinition);
           if(isDownload){
             pdfMake.createPdf(docDefinition).download();
           }else{
@@ -19259,7 +19312,7 @@ angular.module('ocsApp.Bookings')
           }
 
        };
-     }
+      }
 
        this.downloadPdf = function() {
          pdfMake.createPdf(docDefinition).download();
@@ -19331,8 +19384,9 @@ angular.module('ocsApp.Bookings')
         this.adminEditBooking = function(entity){
 
             var modalInstance = $uibModal.open({
-                animation: true,
+                animation: false,
                 backdrop: 'static',
+                windowTopClass : 'modal1',
                 templateUrl: 'modules/Bookings/views/bookings.adminEditBooking.html',
                 controller: 'AdminEditBookingCtrl',
                 controllerAs: 'AdminEditBookingCtrl',
@@ -19344,163 +19398,19 @@ angular.module('ocsApp.Bookings')
 
             modalInstance.result.then(function (rs) {
                 //console.log(rs);
-                $log.debug('Modal closed at: ' + new Date());
+
             }, function (rs) {
                 //console.log(rs);
-                $log.debug('Modal dismissed at: ' + new Date());
+
             });
         }
 
 
         this.printBookingForm = function(entity){
-            //console.log(" entity.packageId = ",entity.packageId);
-            var package = _.where(packages, {id:entity.packageId})[0];
-
-            function getPackage(packId) {
-              // perform some asynchronous operation, resolve or reject the promise when appropriate.
-              return $q(function(resolve, reject) {
-
-                var package = _.where(packages, {id:packId})[0];
-
-                if(package){
-                    printForm(that.window,entity,package);
-                    resolve(package);
-                }else{
-                    Packages.findById({id:packId},function(res){
-                        //console.log("finded the package = ",res);
-                        resolve(res);
-                    },function(err){
-                        reject(err);
-                    });
-                }
-              });
-            }
-
-            var promise = getPackage(entity.packageId);
-
-            promise.then(function(greeting) {
-                printForm(that.window,entity,greeting);
-            }, function(reason) {
-                printForm(that.window,entity,'');
-                $log.error('Failed: ' + reason);
-            });
-
-
+            BookingFactory.viewBookingDetail(packages,entity);
         };
 
-        var printForm = function(w,entity,package){
-            var packageView = "";
-            var pdfPackageView = [];
-            $log.debug(" printBookingForm has package = ",package);
 
-
-
-            for(var i in package.AssessmentHeaders){
-                var header = package.AssessmentHeaders[i];
-                packageView = packageView + "<b>" + header.headerName + "</b><br>";
-                pdfPackageView.push({text:header.headerName,bold:true});
-                var pdfAss = [];
-                for(var j in header.Assessments){
-                    var ass = header.Assessments[j];
-                    packageView = packageView + " - " + ass.assName + "<br>";
-                    pdfAss.push(" - " +ass.assName);
-                }
-                pdfPackageView.push(pdfAss);
-            }
-
-            $log.debug(" printBookingForm has package view = ",packageView);
-
-            var siteName = entity.siteName;
-            if(entity.stateName){
-                siteName = siteName + ' - ' + entity.stateName;
-            }
-            if(entity.suburbName){
-                siteName = siteName + ' - ' + entity.suburbName;
-            }
-
-            var templateHTML =
-                '<table cellspacing="0" cellpadding="4" align="center" style="border-collapse: collapse"> \n' +
-                '<tbody><tr><td colspan="4" bgcolor="Silver"><b>Booking Details</b></td></tr> \n' +
-                '<tr> \n' +
-                '<td style="border:1px solid gray">Company</td> \n' + '<td style="border:1px solid gray" colspan="3">'+entity.fatherCompanyName+'</td> \n' +
-                '</tr> \n' +
-                '<tr> \n' +
-                '<td style="border:1px solid gray">Subsidiary</td> \n' + '<td style="border:1px solid gray" colspan="3">'+entity.companyName+'</td> \n' +
-                '</tr> \n' +
-                '<tr> \n' +
-                '<td style="border:1px solid gray">PO Number</td> \n' + '<td style="border:1px solid gray" colspan="3">'+entity.poNumber+'</td> \n' +
-                '</tr> \n' +
-                '<tr> \n' +
-                '<td style="border:1px solid gray">Project Identification</td> \n' +'<td style="border:1px solid gray" colspan="3">'+entity.projectIdentofication+'</td> \n' +
-                '</tr> \n' +
-                '<tr> \n' +
-                '<td style="border:1px solid gray">Booking Person</td> \n' +'<td style="border:1px solid gray" colspan="3">'+entity.bookingPerson+'</td> \n' +
-                '</tr> \n' +
-                '<tr> \n' +
-                '<td style="border:1px solid gray">Booking Person Contact Number</td> \n' +'<td style="border:1px solid gray" colspan="3">'+entity.contactNumber+'</td> \n' +
-                '</tr> \n' +
-                '<tr> \n' +
-                '<td style="border:1px solid gray">Results to</td> \n' +'<td style="border:1px solid gray" colspan="3">'+entity.resultEmail+'</td> \n' +
-                '</tr> \n' +
-                '<tr> \n' +
-                '<td style="border:1px solid gray">Invoices to</td> \n' +'<td style="border:1px solid gray" colspan="3">'+entity.invoiceEmail+'</td> \n' +
-                '</tr> \n' +
-                '<tr> \n' +
-                '<td style="border:1px solid gray">Comments</td> \n' +'<td style="border:1px solid gray" colspan="3">'+entity.comments+'</td> \n' +
-                '</tr> \n' +
-
-                '<tr><td colspan="4" bgcolor="Silver"><b>Worker Details</b></td></tr> \n' +
-                '<tr> \n' +
-                '<td style="border:1px solid gray">Name</td> \n' +
-                '<td style="border:1px solid gray">'+entity.candidatesName+'</td> \n' +
-                '<td style="border:1px solid gray">DOB</td> \n' +
-                '<td style="border:1px solid gray">'+ dateformat(entity.dob,"DD/MM/YYYY")+'</td> \n' +
-                '</tr> \n' +
-                '<tr> \n' +
-                '<td style="border:1px solid gray">Phone</td> \n' +
-                '<td style="border:1px solid gray">'+entity.phone+'</td> \n' +
-                '<td style="border:1px solid gray">Email</td> \n' +
-                '<td style="border:1px solid gray">'+entity.email+'</td> \n' +
-                '</tr> \n' +
-                '<tr> \n' +
-                '<td style="border:1px solid gray">Position applied for</td> \n' +
-                '<td style="border:1px solid gray" colspan="3">'+entity.position+'</td> \n' +
-                '</tr> \n' +
-                '<tr><td colspan="4" bgcolor="Silver"><b>Paperwork</b></td></tr> \n' +
-                '<tr> \n' +
-                '<td style="border:1px solid gray" colspan="4"> \n' +
-                ''+ entity.paperwork +'</td></tr> \n' +
-
-                '<tr><td colspan="4" bgcolor="Silver"><b>Assessment Details</b></td></tr> \n' +
-                '<tr> \n' +
-                '<td style="border:1px solid gray" colspan="4"> \n' +
-                ''+ packageView +'</td></tr> \n' +
-
-
-                '<tr><td colspan="4" bgcolor="Silver"><b>Appointment Details</b></td></tr> \n' +
-                '<tr> \n' +
-                '<td style="border:1px solid gray">Appointment location</td> \n' +
-                '<td style="border:1px solid gray" colspan="3">' + siteName + '</td> \n' +
-                '</tr> \n' +
-                '<tr> \n' +
-                '<td style="border:1px solid gray">Appointment time</td> \n' +
-                '<td style="border:1px solid gray" colspan="3">'+ dateformat(entity.appointmentTime,"DD/MM/YYYY HH:mm")+'</td> \n' +
-                '</tr> \n' +
-                '<tr> \n' +
-                '<td style="border:1px solid gray">Appointment Notes</td> \n' +
-                '<td style="border:1px solid gray" colspan="3">'+entity.appointmentNotes+'</td> \n' +
-                '</tr> \n' +
-                '<tr> \n' +
-                '<td style="border:1px solid gray">Appointment status</td> \n' +
-                '<td style="border:1px solid gray" colspan="3">'+entity.appointmentStatus+'</td> \n' +
-                '</tr> \n' +
-                '</tbody></table>';
-
-            $log.debug("Print candidate form",templateHTML);
-            var OpenWindow = w.open('modules/Bookings/views/bookingform.html', '','');
-            OpenWindow.dataFromParent = templateHTML;
-
-        };
 
         function checkStart(term, value, row, column) {
 
@@ -19526,7 +19436,7 @@ angular.module('ocsApp.Bookings')
         }
 
 
-        var rowtpl = '<div ng-class="{ red: row.entity.issendemail == null }"><div ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader }" ui-grid-cell></div></div>';
+        var rowtpl = '<div ng-class="{ red: row.entity.issendemail == null || row.entity.headerCandidateId == null }"><div ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader }" ui-grid-cell></div></div>';
 
         this.gridOptions = {
             enableSorting: true,
@@ -19583,6 +19493,817 @@ angular.module('ocsApp.Bookings')
         });
 
     }]);
+
+/**
+ * Created by phuongnguyen on 27/11/15.
+ */
+angular.module('ocsApp.Bookings')
+    .controller('SelectApptSlotCtrl',['BookingFactory','$log','$uibModalInstance','$scope','mySocket','calendars','siteId','period','toastr', 
+                                        function (BookingFactory,$log,$uibModalInstance,$scope,mySocket,calendars,siteId,period,toastr) {
+
+        $log = $log.getInstance("ocsApp.Bookings.SelectApptSlotCtrl");
+        //$log.debug("I am SelectApptSlotCtrl");
+
+        this.calendars = calendars;
+        this.slot = null;
+        var that = this;
+        this.occupiedSlotByAnother = null;
+
+            //server will send message to client to notify that the appt has occupied by another user, so the client can re-load the calendars
+        mySocket.on('UpdateCalendar',function(occupiedSlot){
+            $log.debug('-->refresh calendars by server occupiedSlot = ',occupiedSlot);
+            //if(that.BookingCandidate.site && that.BookingCandidate.site.id){
+                  //getCalendar();
+            //}
+            if(occupiedSlot){
+                that.occupiedSlotByAnother = occupiedSlot;
+
+                that.calendars.forEach(function(cal){
+                    if(cal.date == occupiedSlot.calendarDate){
+                        cal.slots.forEach(function(slot,index){
+                            if(slot.calId == occupiedSlot.calId){
+                                cal.slots.splice(index,1);
+                            }
+                        });
+                    }
+                });             
+            }       
+        });
+
+
+        $scope.$on('$destroy', function () {
+            $log.debug('remove socket.io listener.....................');
+            mySocket.removeListener('UpdateCalendar');
+        });
+
+        $scope.$watch("SelectApptSlotCtrl.slot",function( newValue, oldValue ) {
+             if ( newValue === oldValue ) {
+                 return;
+             }
+             console.log( "$watch: that.BookingCandidate.slot changed.",newValue, oldValue);
+             mySocket.emit('OccupyAppt',newValue,oldValue);
+        });
+
+        this.selectedSlot = function(slot){
+            $log.debug('selected slot = ',slot);
+            if(that.occupiedSlotByAnother && that.occupiedSlotByAnother.calId == slot.calId){
+                //check again the selected slot with occupied slot as the Angular delays to update the UI so maybe the user can select the occupied slot 
+                toastr.error('Sorry !, Slot ' + slot.calendarTime  + ' is not available now. Please select another slot ' , 'Error');
+            }else{
+                that.slot = slot;
+                $uibModalInstance.close(that.slot);  
+            }            
+            
+        };
+
+        this.ok = function () {
+            $uibModalInstance.close(that.slot);
+        };
+
+        this.cancel = function () {
+            $uibModalInstance.dismiss('cancel');
+        };
+    }]);
+
+/**
+ * Created by phuongnguyen on 8/01/16.
+ */
+
+angular.module('ocsApp.Bookings')
+.factory('BookingFactory', ['Packages','BookingHeaders','toastr','BookingCandidates','$q','CompanyFactory','mysqlDate','Companies','$log','$window','RedimedSiteFactory',
+                          function (Packages,BookingHeaders,toastr,BookingCandidates,$q,CompanyFactory,mysqlDate,Companies,$log,$window,RedimedSiteFactory) {
+
+    $log = $log.getInstance("ocsApp.Bookings.BookingFactory");
+
+    function dateformat(date,format){
+
+        //console.log(mysqlDate(date));
+        var dateAfterFormat = moment(mysqlDate(date)).format(format);
+        if(dateAfterFormat =="Invalid date")
+            return "";
+        else
+            return dateAfterFormat;
+    };
+
+    function sendConfirmationEmail(candidate){
+            $log.debug("> Will send email to ",candidate);
+            if(candidate.appointmentStatus.indexOf('Pending')>=0 )
+            {
+                BookingCandidates.sendConfirmationEmail({id:candidate.candidateId,type:"pending"},function(rs){
+                    $log.debug(">>sendConfirmationEmail",rs);
+                    if(rs.sentEmailStatus.indexOf('Error')>=0){
+                        toastr.error(rs.sentEmailStatus, 'Error');
+                        $log.error("> Fail to send email to ",candidate);
+                    }else{
+                        toastr.success(rs.sentEmailStatus, '');
+                        $log.debug("> Send email successfullt ",rs.sentEmailStatus);
+                    }
+                });
+            }else{
+                BookingCandidates.sendConfirmationEmail({id:candidate.candidateId,type:"new"},function(rs){
+                    $log.debug(">>sendConfirmationEmail",rs);
+                    if(rs.sentEmailStatus.indexOf('Error')>=0){
+                        toastr.error(rs.sentEmailStatus, 'Error');
+                        $log.error("> Fail to send email to ",candidate);
+                    }else{
+                        toastr.success(rs.sentEmailStatus, '');
+                        $log.debug("> Send email successfullt ",rs.sentEmailStatus);
+                    }
+                });
+            }
+        };
+
+    function getPackage(packages,packId) {
+      // perform some asynchronous operation, resolve or reject the promise when appropriate.
+      return $q(function(resolve, reject) {
+
+        var package = _.where(packages, {id:packId})[0];
+
+        $log.debug("> package found in the catch for view booking form = ",package);
+
+        if(package){
+            //printForm($window,entity,package);
+
+            resolve(package);
+        }else{
+            Companies.getPackages({id:packId},function(res){
+                $log.debug("> package found in the server for view booking form = ",res);
+                if(res.packages.length > 0){
+                  resolve(res.packages[0]);
+                }else{
+                  resolve({});
+                }
+            },function(err){
+                reject(err);
+            });
+        }
+      });
+    };
+
+    function printForm(w,entity,package){
+      var packageView = "";
+      var pdfPackageView = [];
+      $log.debug(" printBookingForm has package ");
+      for(var i in package.AssessmentHeaders){
+          var header = package.AssessmentHeaders[i];
+          packageView = packageView + "<b>" + header.headerName + "</b><br>";
+          pdfPackageView.push({text:header.headerName,bold:true});
+          var pdfAss = [];
+          for(var j in header.Assessments){
+              var ass = header.Assessments[j];
+              packageView = packageView + " - " + ass.assName + "<br>";
+              pdfAss.push(" - " +ass.assName);
+          }
+          pdfPackageView.push(pdfAss);
+      }
+
+      $log.debug(" printBookingForm has package view ");
+
+      var siteName = entity.siteName;
+      if(entity.stateName){
+          siteName = siteName + ' - ' + entity.stateName;
+      }
+      if(entity.suburbName){
+          siteName = siteName + ' - ' + entity.suburbName;
+      }
+
+      var templateHTML =
+          '<table cellspacing="0" cellpadding="4" align="center" style="border-collapse: collapse"> \n' +
+          '<tbody><tr><td colspan="4" bgcolor="Silver"><b>Booking Details</b></td></tr> \n' +
+          '<tr> \n' +
+          '<td style="border:1px solid gray">Company</td> \n' + '<td style="border:1px solid gray" colspan="3">'+entity.fatherCompanyName+'</td> \n' +
+          '</tr> \n' +
+          '<tr> \n' +
+          '<td style="border:1px solid gray">Subsidiary</td> \n' + '<td style="border:1px solid gray" colspan="3">'+entity.companyName+'</td> \n' +
+          '</tr> \n' +
+          '<tr> \n' +
+          '<td style="border:1px solid gray">PO Number</td> \n' + '<td style="border:1px solid gray" colspan="3">'+entity.poNumber+'</td> \n' +
+          '</tr> \n' +
+          '<tr> \n' +
+          '<td style="border:1px solid gray">Project Identification</td> \n' +'<td style="border:1px solid gray" colspan="3">'+entity.projectIdentofication+'</td> \n' +
+          '</tr> \n' +
+          '<tr> \n' +
+          '<td style="border:1px solid gray">Booking Person</td> \n' +'<td style="border:1px solid gray" colspan="3">'+entity.bookingPerson+'</td> \n' +
+          '</tr> \n' +
+          '<tr> \n' +
+          '<td style="border:1px solid gray">Booking Person Contact Number</td> \n' +'<td style="border:1px solid gray" colspan="3">'+entity.contactNumber+'</td> \n' +
+          '</tr> \n' +
+          '<tr> \n' +
+          '<td style="border:1px solid gray">Results to</td> \n' +'<td style="border:1px solid gray" colspan="3">'+entity.resultEmail+'</td> \n' +
+          '</tr> \n' +
+          '<tr> \n' +
+          '<td style="border:1px solid gray">Invoices to</td> \n' +'<td style="border:1px solid gray" colspan="3">'+entity.invoiceEmail+'</td> \n' +
+          '</tr> \n' +
+          '<tr> \n' +
+          '<td style="border:1px solid gray">Comments</td> \n' +'<td style="border:1px solid gray" colspan="3">'+entity.comments+'</td> \n' +
+          '</tr> \n' +
+
+          '<tr><td colspan="4" bgcolor="Silver"><b>Worker Details</b></td></tr> \n' +
+          '<tr> \n' +
+          '<td style="border:1px solid gray">Name</td> \n' +
+          '<td style="border:1px solid gray">'+entity.candidatesName+'</td> \n' +
+          '<td style="border:1px solid gray">DOB</td> \n' +
+          '<td style="border:1px solid gray">'+ dateformat(entity.dob,"DD/MM/YYYY")+'</td> \n' +
+          '</tr> \n' +
+          '<tr> \n' +
+          '<td style="border:1px solid gray">Phone</td> \n' +
+          '<td style="border:1px solid gray">'+entity.phone+'</td> \n' +
+          '<td style="border:1px solid gray">Email</td> \n' +
+          '<td style="border:1px solid gray">'+entity.email+'</td> \n' +
+          '</tr> \n' +
+          '<tr> \n' +
+          '<td style="border:1px solid gray">Position applied for</td> \n' +
+          '<td style="border:1px solid gray" colspan="3">'+entity.position+'</td> \n' +
+          '</tr> \n' +
+          '<tr><td colspan="4" bgcolor="Silver"><b>Paperwork</b></td></tr> \n' +
+          '<tr> \n' +
+          '<td style="border:1px solid gray" colspan="4"> \n' +
+          ''+ entity.paperwork +'</td></tr> \n' +
+
+          '<tr><td colspan="4" bgcolor="Silver"><b>Assessment Details</b></td></tr> \n' +
+          '<tr> \n' +
+          '<td style="border:1px solid gray" colspan="4"> \n' +
+          ''+ packageView +'</td></tr> \n' +
+
+
+          '<tr><td colspan="4" bgcolor="Silver"><b>Appointment Details</b></td></tr> \n' +
+          '<tr> \n' +
+          '<td style="border:1px solid gray">Appointment location</td> \n' +
+          '<td style="border:1px solid gray" colspan="3">' + siteName + '</td> \n' +
+          '</tr> \n' +
+          '<tr> \n' +
+          '<td style="border:1px solid gray">Appointment time</td> \n' +
+          '<td style="border:1px solid gray" colspan="3">'+ dateformat(entity.appointmentTime,"DD/MM/YYYY HH:mm")+'</td> \n' +
+          '</tr> \n' +
+          '<tr> \n' +
+          '<td style="border:1px solid gray">Appointment Notes</td> \n' +
+          '<td style="border:1px solid gray" colspan="3">'+entity.appointmentNotes+'</td> \n' +
+          '</tr> \n' +
+          '<tr> \n' +
+          '<td style="border:1px solid gray">Appointment status</td> \n' +
+          '<td style="border:1px solid gray" colspan="3">'+entity.appointmentStatus+'</td> \n' +
+          '</tr> \n' +
+          '</tbody></table>';
+
+      $log.debug("Print candidate form");
+      var OpenWindow = w.open('modules/Bookings/views/bookingform.html', '','');
+      OpenWindow.dataFromParent = templateHTML;
+
+  };
+
+
+    return {
+        getCalendar:function(siteId,period,user){
+            var deferred = $q.defer();
+            //Plus toDate one date before query calendar because of time
+            var fromDate = new Date();
+            var toDate = new Date();
+            toDate.setDate(toDate.getDate() + 60);
+            RedimedSiteFactory.getCalendar(siteId,fromDate,toDate,period,function(data){
+                $log.debug("finished getCalendar....");
+                console.log(" BookingFactory.getCalendar = ",data)
+                deferred.resolve(data)
+            });
+            return deferred.promise;
+        },
+        cancelAppointment:function(candidate){
+            var deferred = $q.defer();
+            var updateValue = {};
+            updateValue.appointmentNotes = candidate.appointmentNotes;
+            updateValue.candidateId = candidate.candidateId;
+            $log.debug("will cancel the booking ",updateValue);
+
+            BookingHeaders.cancelBooking(updateValue,function(res,header){
+                $log.debug('updated successfully');
+                toastr.success('Successfully updated. The booking list will refresh shortly !');
+                //$uibModalInstance.close(that.BookingCandidate);
+                sendConfirmationEmail(candidate);
+                CompanyFactory.refreshBookingList(function(data){
+                    toastr.success('The booking list has been refresh');
+                    deferred.resolve('cancel successfully');
+                });
+            },
+            function(err){
+                $log.error('updated failed',err);
+                toastr.error("Fail to update err = "+ err.data.error.message, 'Error');
+                deferred.reject(err.data.error.message);
+            });
+            return deferred.promise;
+        },
+        attended:function(candidate){
+              var updateValue = {};
+              var deferred = $q.defer();
+              updateValue.appointmentStatus = 'Attended';
+              BookingCandidates.update({where:{candidateId:candidate.candidateId}},updateValue,function(res,header){
+                  deferred.resolve('Attended successfully');
+              },
+              function(err){
+                  $log.error('updated failed',err);
+                  toastr.error("Fail to update", 'Error');
+              });
+              return deferred.promise;
+        },
+        sendConfirmationEmail: function(candidate){
+            sendConfirmationEmail(candidate);
+        },
+        getPackage:function(packages,packId){
+            return getPackage(packages,packId);
+        },
+        viewBookingDetail: function(packages,entity){
+
+          var promise = getPackage(packages,entity.packageId);
+
+          promise.then(function(greeting) {
+              printForm($window,entity,greeting);
+          }, function(reason) {
+              printForm($window,entity,'');
+              $log.error('Failed: ' + reason);
+          });
+        }
+    }
+}]);
+
+/**
+ * Created by phuongnguyen on 27/11/15.
+ */
+angular.module('ocsApp.Companies')
+    .controller('ConfirmToDeleteCompanyCtrl',['$uibModalInstance','row', function ($uibModalInstance,row) {
+
+        this.formDefines = {
+            div1: {type:"div", fieldClass: "modal-header", fields: {h3:{type:"h3", fieldClass: "modal-title", label: "Delete Company", controllerAs:"ConfirmToDeleteCompanyCtrl"}}},
+            div2: {type:"div", fieldClass: "modal-body", fields: {h3:{type:"h3", fieldClass: "modal-title", label: "Do you want to delete company ?"}}},
+            div3: {type:"div", fieldClass: "modal-footer", fields: {
+                    btn1: {type:"button", fieldClass: "btn btn-primary", ngClick: "ok()",label: "Save"},
+                    btn2: {type:"button", fieldClass: "btn btn-warning", ngClick: "cancel()",label: "Cancel"}
+                }
+            }
+        };
+
+
+        this.ok = function () {
+            $uibModalInstance.close(row);
+        };
+
+        this.cancel = function () {
+            $uibModalInstance.dismiss(row);
+        };
+    }]);
+
+
+/**
+ * Created by phuongnguyen on 27/11/15.
+ */
+
+
+angular.module('ocsApp.Companies')
+    .controller('CompaniesMainCtrl',['$uibModal','Companies','$log','DetailModal','DeleteModal','$state','CompanyModuleFactory','$scope', function ($uibModal,Companies,$log,DetailModal,DeleteModal,$state,CompanyModuleFactory,$scope) {
+
+        TableBaseCtrl.call(this,$scope,$log,CompanyModuleFactory,DeleteModal,"CompaniesMainCtrl");
+
+        var that = this;
+
+        this.isSubmitted = false;
+        this.form = {};
+        this.company = {};
+
+        this.setDeleteTemplateUrl('<my-dynamic-form formdefine = "{{ConfirmToDeleteCompanyCtrl.formDefines}}" ></my-dynamic-form>');
+        this.setDeleteController('ConfirmToDeleteCompanyCtrl');
+        this.setDeleteWindowSize('md');
+
+        this.setCloseDeleteModal(function(row){
+            CompanyModuleFactory.deleteCompany(row);
+        });
+
+
+        this.detail = function(rowData){
+            console.log("rowData",rowData);
+            if(rowData){
+                $state.go('navigator.companies.detail',{row:rowData.id});
+            }else{
+                $state.go('navigator.companies.detail',{row:null});
+            }
+
+        };
+
+    }]);
+
+
+
+
+/**
+ * Created by phuongnguyen on 24/02/16.
+ *//**
+ * Created by phuongnguyen on 27/11/15.
+ */
+
+angular.module('ocsApp.Companies')
+    .controller('NewCompanyCtrl',['$state','$stateParams','Companies','$log','toastr','BookingStatusFactory','DetailModal2','DeleteModal','CompanyModuleFactory',function ($state,$stateParams,Companies,$log,toastr,BookingStatusFactory,DetailModal2,DeleteModal,CompanyModuleFactory) {
+
+        var id = parseInt($stateParams.row);
+        var row = CompanyModuleFactory.getMasterRow(id);
+        var that = this;
+
+        DetailWithTableBaseCtrl.call(this,CompanyModuleFactory,row,$log,toastr,DetailModal2,DeleteModal,'NewCompanyCtrl');
+
+        this.row.defaultStatusObject = {};
+        this.bookingStatus = [];
+
+        this.setDetailTemplateUrl('<my-dynamic-form formdefine = "{{NewSubCompanyCtrl.formDefines}}" ></my-dynamic-form>');
+        this.setDetailController('NewSubCompanyCtrl');
+        this.setDetailWindowSize('lg');
+
+        this.cancel = function () {
+            //$uibModalInstance.dismiss('cancel');
+            $state.go("navigator.companies.list");
+        };
+
+        if(row){
+            this.windowTitle = "Update Company";
+        }else{
+            this.windowTitle = "New Company";
+        }
+
+
+        $log.debug("modalTitle = ",this.windowTitle);
+
+        BookingStatusFactory.getStatus(function(data){
+            that.bookingStatus = data;
+            that.row.defaultStatusObject =  that.bookingStatus[_.findIndex(that.bookingStatus, 'bookingStatus', that.row.defaultStatus)];
+            console.log(" get status = ",data,that.row.defaultStatusObject);
+        });
+
+    }]);
+
+/**
+ * Created by phuongnguyen on 24/02/16.
+ *//**
+ * Created by phuongnguyen on 27/11/15.
+ */
+
+angular.module('ocsApp.Companies')
+    .controller('NewSubCompanyCtrl',['Companies','row','$log','toastr','BookingStatusFactory','$uibModalInstance','DetailModal','DeleteModal',function (Companies,row,$log,toastr,BookingStatusFactory,$uibModalInstance,DetailModal,DeleteModal) {
+
+        DetailWithTableBaseCtrl.call(this,$uibModalInstance,row,$log,toastr,DetailModal,DeleteModal,'NewSubCompanyCtrl');
+        var that = this;
+        this.row.defaultStatusObject = {};
+        this.bookingStatus = [];
+
+        if(row){
+            this.windowTitle = "Update Sub Company";
+        }else{
+            this.windowTitle = "New Sub Company";
+        }
+
+
+        $log.debug("modalTitle = ",this.windowTitle);
+
+        BookingStatusFactory.getStatus(function(data){
+            that.bookingStatus = data;
+            that.row.defaultStatusObject =  that.bookingStatus[_.findIndex(that.bookingStatus, 'bookingStatus', that.row.defaultStatus)];
+            console.log(" get status = ",data,that.row.defaultStatusObject);
+        });
+
+        this.saveRow = function(){
+            $log.debug("saveRow.....");
+            if(row){
+                $log.debug("will update company",row);
+
+                if(that.row.defaultStatusObject){
+                    that.row.defaultStatus = that.row.defaultStatusObject.bookingStatus;
+                }
+
+                Companies.update({where:{"id":that.row.id}},that.row,function(res){
+                    $log.debug("updated company",res);
+                    toastr.success('Company was updated successfully', '');
+                    that.closeModalAfterSave();
+                },function(err){
+                    $log.error("Fail to update position",err);
+                    toastr.error('Fail to update Position', 'Error');
+                });
+            }else{
+
+                if(that.row.defaultStatusObject){
+                    that.row.defaultStatus = that.row.defaultStatusObject.bookingStatus;
+                }
+
+                that.row.id = 0;
+                $log.debug("will create new company",row);
+
+                Companies.create(that.row,function(rs){
+                    $log.debug("created company",rs);
+                    toastr.success('Company was created successfully', '');
+                    $uibModalInstance.close({});
+                },function(err){
+                    toastr.error('Fail to create Position', 'Error');
+                    $log.error("failt to create position",err);
+                })
+                //that.closeModalAfterSave();
+            }
+        }
+
+
+        this.formDefines = {
+            "div1": {
+                type: "div",
+                fieldClass: "modal-header",
+                "controllerAs": "NewSubCompanyCtrl",
+                "isSubmitedVar": "isSubmitted",
+                fields: {"h3": {type:"h3",label: "{{NewSubCompanyCtrl.windowTitle}}", fieldClass: "modal-title"}}
+            },
+            "div2": {
+                type: "div",
+                fieldClass: "modal-body",
+                fields: {
+                    "form":{
+                        "type": "form",
+                        "name": "form",
+                        "fieldClass": "form-horizontal form-row-seperated",
+                        "fields": {
+                            "companyName": { field: 'companyName', ngModel : 'row.companyName', label: "Company Name", placeholder: "Company name", width: "100", isList: true, isNew: true, isUpdate: true, type: 'text', fieldClass:'form-control', isRequire: true, labelClass:'col-md-4 control-label', fieldGroupClass:'col-md-6', formGroupClass:'form-group', requiredHelpBlock : "Company name is required"},
+                            'addr': { field: 'addr', ngModel : 'row.addr', label: "Address", placeholder: "Address", width: "100", isList: true, isNew: true, isUpdate: true, type: 'text', fieldClass:'form-control', isRequire: false, labelClass:'col-md-4 control-label', fieldGroupClass:'col-md-6', formGroupClass:'form-group', requiredHelpBlock : "Company name is required"},
+                            'state': { field: 'state', ngModel : 'row.state', label: "State", placeholder: "State", width: "100", isList: true, isNew: true, isUpdate: true, type: 'select', fieldClass:'form-control', isRequire: true, labelClass:'col-md-4 control-label', fieldGroupClass:'col-md-6', formGroupClass:'form-group', requiredHelpBlock : "Company name is required","empty": "nothing selected",options:{
+                                "ACT": {
+                                    "label": "Australian Capital Territory"
+                                },
+                                "NSW": {
+                                    "label": "New South Wales"
+                                },
+                                "VIC": {
+                                    "label": "Victoria"
+                                },
+                                "QLD": {
+                                    "label": "Queensland"
+                                },
+                                "SA": {
+                                    "label": "South Australia"
+                                },
+                                "WA": {
+                                    "label": "Western Australia"
+                                },
+                                "NT": {
+                                    "label": "Northern Territory"
+                                }
+                            }
+                            },
+                            'country': { field: 'country', ngModel : 'row.country', label: "Country", placeholder: "Country", width: "100", isList: true, isNew: true, isUpdate: true, type: 'select', fieldClass:'form-control', isRequire: false, labelClass:'col-md-4 control-label', fieldGroupClass:'col-md-6', formGroupClass:'form-group', requiredHelpBlock : "Company name is required","empty": "nothing selected",options:{
+                                "Australia": {
+                                    "label": "Australia"
+                                }
+                            }
+                            },
+                            'defaultStatus': { field: 'defaultStatus', ngModel : 'row.defaultStatusObject', label: "Default Status", placeholder: "Default status", width: "100", isList: false, isNew: true, isUpdate: true, type: 'select', fieldClass:'form-control', isRequire: false, labelClass:'col-md-4 control-label', fieldGroupClass:'col-md-6', formGroupClass:'form-group', ngOptions: "status.bookingStatus for status in NewCompanyCtrl.bookingStatus"},
+                            'description': { field: 'description', ngModel : 'row.description', label: "Description", placeholder: "Description", width: "100", isList: false, isNew: true, isUpdate: true, type: 'text', fieldClass:'form-control', isRequire: false, labelClass:'col-md-4 control-label', fieldGroupClass:'col-md-6', formGroupClass:'form-group', requiredHelpBlock : "Company name is required"},
+                            'industry': { field: 'industry', ngModel : 'row.industry', label: "Industry", placeholder: "Industry", width: "100", isList: false, isNew: true, isUpdate: true, type: 'text', fieldClass:'form-control', isRequire: false, labelClass:'col-md-4 control-label', fieldGroupClass:'col-md-6', formGroupClass:'form-group', requiredHelpBlock : "Company name is required"},
+                            'invoiceEmail': { field: 'invoiceEmail', ngModel : 'row.invoiceEmail', label: "Invoice Email", placeholder: "Invoice email", width: "100", isList: false, isNew: true, isUpdate: true, type: 'text', fieldClass:'form-control', isRequire: false, labelClass:'col-md-4 control-label', fieldGroupClass:'col-md-6', formGroupClass:'form-group', requiredHelpBlock : "Invoice email is required", emailHelpBlock : "Email is invalid"},
+                            'resultEmail': { field: 'resultEmail', ngModel : 'row.resultEmail', label: "Result Email", placeholder: "Result email", width: "100", isList: false, isNew: true, isUpdate: true, type: 'text', fieldClass:'form-control', isRequire: false, labelClass:'col-md-4 control-label', fieldGroupClass:'col-md-6', formGroupClass:'form-group', requiredHelpBlock : "Result email is required", emailHelpBlock : "Email is invalid"},
+                            'reportToEmail': { field: 'reportToEmail', ngModel : 'row.reportToEmail', label: "Report Email", placeholder: "", width: "100", isList: false, isNew: true, isUpdate: true, type: 'email', fieldClass:'form-control', isRequire: false, labelClass:'col-md-4 control-label', fieldGroupClass:'col-md-6', formGroupClass:'form-group', requiredHelpBlock : "Report email is required", emailHelpBlock : "Email is invalid"},
+                            'fieldGroup' : {type:'horizontalFieldGroup', fieldClass :'col-md-12', columnClass: 'col-md-3' ,fields:{
+                                'isaddcontactemailtoresult': { field: 'isaddcontactemailtoresult', ngModel : 'row.isaddcontactemailtoresult', label: "Is Result Email", placeholder: "Is Result Email", width: "100", isList: false, isNew: true, isUpdate: true, type: 'checkbox', fieldClass:'form-control', isRequire: false, labelClass:'col-md-8 control-label', fieldGroupClass:'col-md-4', formGroupClass:'col-md-3', isOn: 1, isOff: 0 },
+                                'isinvoiceemailtouser': { field: 'isinvoiceemailtouser', ngModel : 'row.isinvoiceemailtouser', label: "Is Invoice Email", placeholder: "Is Invoice Email", width: "100", isList: false, isNew: true, isUpdate: true, type: 'checkbox', fieldClass:'form-control', isRequire: false, labelClass:'col-md-8 control-label', fieldGroupClass:'col-md-4', formGroupClass:'col-md-3', isOn: 1, isOff: 0},
+                                'ispo': { field: 'ispo', ngModel : 'row.ispo', label: "PO", placeholder: "PO", width: "100", isList: false, isNew: true, isUpdate: true, type: 'checkbox', fieldClass:'form-control', isRequire: false, labelClass:'col-md-8 control-label', fieldGroupClass:'col-md-4', formGroupClass:'col-md-3', isOn: 1, isOff: 0},
+                                'isproject': { field: 'isproject', ngModel : 'row.isproject', label: "Project", placeholder: "Project", width: "100", isList: false, isNew: true, isUpdate: true, type: 'checkbox', fieldClass:'form-control', isRequire: false, labelClass:'col-md-8 control-label', fieldGroupClass:'col-md-4', formGroupClass:'col-md-3', isOn: 1, isOff: 0}
+                            }
+                            },
+                            'poNumber': { field: 'poNumber', ngModel : 'row.poNumber', label: "PO Number", placeholder: "PO Number", width: "100", isList: false, isNew: true, isUpdate: true, type: 'text', fieldClass:'form-control', isRequire: false, labelClass:'col-md-4 control-label', fieldGroupClass:'col-md-6', formGroupClass:'form-group', requiredHelpBlock : "Company name is required"}
+                            //'submit': { label: "Submit", isNew: true, isUpdate: true, type: 'button', fieldClass:'btn btn-primary', ngClick: "okMainCtrl()"}
+                        }
+                    }
+                }
+            },
+            "div3": {
+                type: "div",
+                fieldClass: "modal-footer",
+                fields: {
+                    SaveButton:{type:"button",label:"Save", fieldClass:"btn btn-primary",ngClick:"ok()"},
+                    CancelButton:{type:"button",label:"Cancel", fieldClass:"btn btn-warning",ngClick:"cancel()"}
+                }
+            }
+        };
+
+        console.log(this.formDefines);
+    }]);
+
+/*
+ this.stdFormTemplate = {
+ "fieldset": {
+ "type": "fieldset",
+ "label": "fieldset",
+ "fields": {
+ "text": {
+ "type": "text",
+ "label": "text",
+ "placeholder": "text",
+ "required":true
+ },
+ "date": {
+ "type": "date",
+ "label": "date",
+ "placeholder": "date"
+ },
+ "datetime": {
+ "type": "datetime",
+ "label": "datetime",
+ "placeholder": "datetime"
+ },
+ "datetime-local": {
+ "type": "datetime-local",
+ "label": "datetime-local",
+ "placeholder": "datetime-local"
+ },
+ "email": {
+ "type": "email",
+ "label": "email",
+ "placeholder": "email",
+ "required":true
+ },
+ "month": {
+ "type": "month",
+ "label": "month",
+ "placeholder": "month"
+ },
+ "coordinates-fieldset": {
+ "type": "fieldset",
+ "label": "nested model example",
+ "fields": {
+ "coordinates.lat": {
+ "type": "number",
+ "label": "coordinates.lat",
+ "placeholder": "coordinates.lat",
+ "val": 36.5
+ },
+ "coordinates.lon": {
+ "type": "number",
+ "label": "coordinates.lon",
+ "placeholder": "coordinates.lon",
+ "val": -0.15
+ }
+ }
+ },
+ "number": {
+ "type": "number",
+ "label": "number",
+ "placeholder": "number"
+ },
+ "password": {
+ "type": "password",
+ "label": "password",
+ "placeholder": "password"
+ },
+ "search": {
+ "type": "search",
+ "label": "search",
+ "placeholder": "search"
+ },
+ "tel": {
+ "type": "tel",
+ "label": "tel",
+ "placeholder": "tel"
+ },
+ "textarea": {
+ "type": "textarea",
+ "label": "textarea",
+ "placeholder": "textarea",
+ "splitBy": "\n",
+ "val": ["This array should be","separated by new lines"]
+ },
+ "time": {
+ "type": "time",
+ "label": "time",
+ "placeholder": "time"
+ },
+ "url": {
+ "type": "url",
+ "label": "url",
+ "placeholder": "url"
+ },
+ "week": {
+ "type": "week",
+ "label": "week",
+ "placeholder": "week"
+ }
+ }
+ },
+ "checkbox": {
+ "type": "checkbox",
+ "label": "checkbox"
+ },
+ "color": {
+ "type": "color",
+ "label": "color"
+ },
+ "file": {
+ "type": "file",
+ "label": "file",
+ "multiple": true
+ },
+ "range": {
+ "type": "range",
+ "label": "range",
+ "model": "number",
+ "val": 42,
+ "minValue": -42,
+ "maxValue": 84
+ },
+ "select": {
+ "type": "select",
+ "label": "select",
+ "empty": "nothing selected",
+ "options": {
+ "first": {
+ "label": "first option"
+ },
+ "second": {
+ "label": "second option",
+ "group": "first group"
+ },
+ "third": {
+ "label": "third option",
+ "group": "second group"
+ },
+ "fourth": {
+ "label": "fourth option",
+ "group": "first group"
+ },
+ "fifth": {
+ "label": "fifth option"
+ },
+ "sixth": {
+ "label": "sixth option",
+ "group": "second group"
+ },
+ "seventh": {
+ "label": "seventh option"
+ },
+ "eighth": {
+ "label": "eighth option",
+ "group": "first group"
+ },
+ "ninth": {
+ "label": "ninth option",
+ "group": "second group"
+ },
+ "tenth": {
+ "label": "tenth option"
+ }
+ }
+ },
+ "checklist": {
+ "type": "checklist",
+ "label": "checklist",
+ "options": {
+ "first": {
+ "label": "first option"
+ },
+ "second": {
+ "label": "second option",
+ "isOn": "on",   //  If you use Angular versions 1.3.x and up, this needs to be changed to "'on'"...
+ "isOff": "off"  //  If you use Angular versions 1.3.x and up, this needs to be changed to "'off'"...
+ }
+ }
+ },
+ "radio": {
+ "type": "radio",
+ "label": "radio",
+ "values": {
+ "first": "first option",
+ "second": "second option",
+ "third": "third option",
+ "fourth": "fourth option",
+ "fifth": "fifth option"
+ }
+ },
+ "button": {
+ "type": "button",
+ "label": "button"
+ },
+ "hidden": {
+ "type": "hidden",
+ "label": "hidden",
+ "val": "hidden"
+ },
+ "image": {
+ "type": "image",
+ "label": "image",
+ "source": "http://angularjs.org/img/AngularJS-large.png"
+ },
+ "legend": {
+ "type": "legend",
+ "label": "legend"
+ },
+ "reset": {
+ "type": "reset",
+ "label": "reset"
+ },
+ "submit": {
+ "type": "submit",
+ "label": "submit"
+ },
+ "bogus": {
+ "type": "bogus",
+ "label": "bogus"
+ }
+ };
+ */
 
 /**
  * Created by phuongnguyen on 17/02/16.
@@ -20493,488 +21214,6 @@ angular.module('dynform', [])
 /*  End of dynamic-forms.js */
 
 /**
- * Created by phuongnguyen on 27/11/15.
- */
-angular.module('ocsApp.Companies')
-    .controller('ConfirmToDeleteCompanyCtrl',['$uibModalInstance','row', function ($uibModalInstance,row) {
-
-        this.formDefines = {
-            div1: {type:"div", fieldClass: "modal-header", fields: {h3:{type:"h3", fieldClass: "modal-title", label: "Delete Company", controllerAs:"ConfirmToDeleteCompanyCtrl"}}},
-            div2: {type:"div", fieldClass: "modal-body", fields: {h3:{type:"h3", fieldClass: "modal-title", label: "Do you want to delete company ?"}}},
-            div3: {type:"div", fieldClass: "modal-footer", fields: {
-                    btn1: {type:"button", fieldClass: "btn btn-primary", ngClick: "ok()",label: "Save"},
-                    btn2: {type:"button", fieldClass: "btn btn-warning", ngClick: "cancel()",label: "Cancel"}
-                }
-            }
-        };
-
-
-        this.ok = function () {
-            $uibModalInstance.close(row);
-        };
-
-        this.cancel = function () {
-            $uibModalInstance.dismiss(row);
-        };
-    }]);
-
-
-/**
- * Created by phuongnguyen on 27/11/15.
- */
-
-
-angular.module('ocsApp.Companies')
-    .controller('CompaniesMainCtrl',['$uibModal','Companies','$log','DetailModal','DeleteModal','$state','CompanyModuleFactory','$scope', function ($uibModal,Companies,$log,DetailModal,DeleteModal,$state,CompanyModuleFactory,$scope) {
-
-        TableBaseCtrl.call(this,$scope,$log,CompanyModuleFactory,DeleteModal,"CompaniesMainCtrl");
-
-        var that = this;
-
-        this.isSubmitted = false;
-        this.form = {};
-        this.company = {};
-
-        this.setDeleteTemplateUrl('<my-dynamic-form formdefine = "{{ConfirmToDeleteCompanyCtrl.formDefines}}" ></my-dynamic-form>');
-        this.setDeleteController('ConfirmToDeleteCompanyCtrl');
-        this.setDeleteWindowSize('md');
-
-        this.setCloseDeleteModal(function(row){
-            CompanyModuleFactory.deleteCompany(row);
-        });
-
-
-        this.detail = function(rowData){
-            console.log("rowData",rowData);
-            if(rowData){
-                $state.go('navigator.companies.detail',{row:rowData.id});
-            }else{
-                $state.go('navigator.companies.detail',{row:null});
-            }
-
-        };
-
-    }]);
-
-
-
-
-/**
- * Created by phuongnguyen on 24/02/16.
- *//**
- * Created by phuongnguyen on 27/11/15.
- */
-
-angular.module('ocsApp.Companies')
-    .controller('NewCompanyCtrl',['$state','$stateParams','Companies','$log','toastr','BookingStatusFactory','DetailModal2','DeleteModal','CompanyModuleFactory',function ($state,$stateParams,Companies,$log,toastr,BookingStatusFactory,DetailModal2,DeleteModal,CompanyModuleFactory) {
-
-        var id = parseInt($stateParams.row);
-        var row = CompanyModuleFactory.getMasterRow(id);
-        var that = this;
-
-        DetailWithTableBaseCtrl.call(this,CompanyModuleFactory,row,$log,toastr,DetailModal2,DeleteModal,'NewCompanyCtrl');
-
-        this.row.defaultStatusObject = {};
-        this.bookingStatus = [];
-
-        this.setDetailTemplateUrl('<my-dynamic-form formdefine = "{{NewSubCompanyCtrl.formDefines}}" ></my-dynamic-form>');
-        this.setDetailController('NewSubCompanyCtrl');
-        this.setDetailWindowSize('lg');
-
-        this.cancel = function () {
-            //$uibModalInstance.dismiss('cancel');
-            $state.go("navigator.companies.list");
-        };
-
-        if(row){
-            this.windowTitle = "Update Company";
-        }else{
-            this.windowTitle = "New Company";
-        }
-
-
-        $log.debug("modalTitle = ",this.windowTitle);
-
-        BookingStatusFactory.getStatus(function(data){
-            that.bookingStatus = data;
-            that.row.defaultStatusObject =  that.bookingStatus[_.findIndex(that.bookingStatus, 'bookingStatus', that.row.defaultStatus)];
-            console.log(" get status = ",data,that.row.defaultStatusObject);
-        });
-
-    }]);
-
-/**
- * Created by phuongnguyen on 24/02/16.
- *//**
- * Created by phuongnguyen on 27/11/15.
- */
-
-angular.module('ocsApp.Companies')
-    .controller('NewSubCompanyCtrl',['Companies','row','$log','toastr','BookingStatusFactory','$uibModalInstance','DetailModal','DeleteModal',function (Companies,row,$log,toastr,BookingStatusFactory,$uibModalInstance,DetailModal,DeleteModal) {
-
-        DetailWithTableBaseCtrl.call(this,$uibModalInstance,row,$log,toastr,DetailModal,DeleteModal,'NewSubCompanyCtrl');
-        var that = this;
-        this.row.defaultStatusObject = {};
-        this.bookingStatus = [];
-
-        if(row){
-            this.windowTitle = "Update Sub Company";
-        }else{
-            this.windowTitle = "New Sub Company";
-        }
-
-
-        $log.debug("modalTitle = ",this.windowTitle);
-
-        BookingStatusFactory.getStatus(function(data){
-            that.bookingStatus = data;
-            that.row.defaultStatusObject =  that.bookingStatus[_.findIndex(that.bookingStatus, 'bookingStatus', that.row.defaultStatus)];
-            console.log(" get status = ",data,that.row.defaultStatusObject);
-        });
-
-        this.saveRow = function(){
-            $log.debug("saveRow.....");
-            if(row){
-                $log.debug("will update company",row);
-
-                if(that.row.defaultStatusObject){
-                    that.row.defaultStatus = that.row.defaultStatusObject.bookingStatus;
-                }
-
-                Companies.update({where:{"id":that.row.id}},that.row,function(res){
-                    $log.debug("updated company",res);
-                    toastr.success('Company was updated successfully', '');
-                    that.closeModalAfterSave();
-                },function(err){
-                    $log.error("Fail to update position",err);
-                    toastr.error('Fail to update Position', 'Error');
-                });
-            }else{
-
-                if(that.row.defaultStatusObject){
-                    that.row.defaultStatus = that.row.defaultStatusObject.bookingStatus;
-                }
-
-                that.row.id = 0;
-                $log.debug("will create new company",row);
-
-                Companies.create(that.row,function(rs){
-                    $log.debug("created company",rs);
-                    toastr.success('Company was created successfully', '');
-                    $uibModalInstance.close({});
-                },function(err){
-                    toastr.error('Fail to create Position', 'Error');
-                    $log.error("failt to create position",err);
-                })
-                //that.closeModalAfterSave();
-            }
-        }
-
-
-        this.formDefines = {
-            "div1": {
-                type: "div",
-                fieldClass: "modal-header",
-                "controllerAs": "NewSubCompanyCtrl",
-                "isSubmitedVar": "isSubmitted",
-                fields: {"h3": {type:"h3",label: "{{NewSubCompanyCtrl.windowTitle}}", fieldClass: "modal-title"}}
-            },
-            "div2": {
-                type: "div",
-                fieldClass: "modal-body",
-                fields: {
-                    "form":{
-                        "type": "form",
-                        "name": "form",
-                        "fieldClass": "form-horizontal form-row-seperated",
-                        "fields": {
-                            "companyName": { field: 'companyName', ngModel : 'row.companyName', label: "Company Name", placeholder: "Company name", width: "100", isList: true, isNew: true, isUpdate: true, type: 'text', fieldClass:'form-control', isRequire: true, labelClass:'col-md-4 control-label', fieldGroupClass:'col-md-6', formGroupClass:'form-group', requiredHelpBlock : "Company name is required"},
-                            'addr': { field: 'addr', ngModel : 'row.addr', label: "Address", placeholder: "Address", width: "100", isList: true, isNew: true, isUpdate: true, type: 'text', fieldClass:'form-control', isRequire: false, labelClass:'col-md-4 control-label', fieldGroupClass:'col-md-6', formGroupClass:'form-group', requiredHelpBlock : "Company name is required"},
-                            'state': { field: 'state', ngModel : 'row.state', label: "State", placeholder: "State", width: "100", isList: true, isNew: true, isUpdate: true, type: 'select', fieldClass:'form-control', isRequire: true, labelClass:'col-md-4 control-label', fieldGroupClass:'col-md-6', formGroupClass:'form-group', requiredHelpBlock : "Company name is required","empty": "nothing selected",options:{
-                                "ACT": {
-                                    "label": "Australian Capital Territory"
-                                },
-                                "NSW": {
-                                    "label": "New South Wales"
-                                },
-                                "VIC": {
-                                    "label": "Victoria"
-                                },
-                                "QLD": {
-                                    "label": "Queensland"
-                                },
-                                "SA": {
-                                    "label": "South Australia"
-                                },
-                                "WA": {
-                                    "label": "Western Australia"
-                                },
-                                "NT": {
-                                    "label": "Northern Territory"
-                                }
-                            }
-                            },
-                            'country': { field: 'country', ngModel : 'row.country', label: "Country", placeholder: "Country", width: "100", isList: true, isNew: true, isUpdate: true, type: 'select', fieldClass:'form-control', isRequire: false, labelClass:'col-md-4 control-label', fieldGroupClass:'col-md-6', formGroupClass:'form-group', requiredHelpBlock : "Company name is required","empty": "nothing selected",options:{
-                                "Australia": {
-                                    "label": "Australia"
-                                }
-                            }
-                            },
-                            'defaultStatus': { field: 'defaultStatus', ngModel : 'row.defaultStatusObject', label: "Default Status", placeholder: "Default status", width: "100", isList: false, isNew: true, isUpdate: true, type: 'select', fieldClass:'form-control', isRequire: false, labelClass:'col-md-4 control-label', fieldGroupClass:'col-md-6', formGroupClass:'form-group', ngOptions: "status.bookingStatus for status in NewCompanyCtrl.bookingStatus"},
-                            'description': { field: 'description', ngModel : 'row.description', label: "Description", placeholder: "Description", width: "100", isList: false, isNew: true, isUpdate: true, type: 'text', fieldClass:'form-control', isRequire: false, labelClass:'col-md-4 control-label', fieldGroupClass:'col-md-6', formGroupClass:'form-group', requiredHelpBlock : "Company name is required"},
-                            'industry': { field: 'industry', ngModel : 'row.industry', label: "Industry", placeholder: "Industry", width: "100", isList: false, isNew: true, isUpdate: true, type: 'text', fieldClass:'form-control', isRequire: false, labelClass:'col-md-4 control-label', fieldGroupClass:'col-md-6', formGroupClass:'form-group', requiredHelpBlock : "Company name is required"},
-                            'invoiceEmail': { field: 'invoiceEmail', ngModel : 'row.invoiceEmail', label: "Invoice Email", placeholder: "Invoice email", width: "100", isList: false, isNew: true, isUpdate: true, type: 'text', fieldClass:'form-control', isRequire: false, labelClass:'col-md-4 control-label', fieldGroupClass:'col-md-6', formGroupClass:'form-group', requiredHelpBlock : "Invoice email is required", emailHelpBlock : "Email is invalid"},
-                            'resultEmail': { field: 'resultEmail', ngModel : 'row.resultEmail', label: "Result Email", placeholder: "Result email", width: "100", isList: false, isNew: true, isUpdate: true, type: 'text', fieldClass:'form-control', isRequire: false, labelClass:'col-md-4 control-label', fieldGroupClass:'col-md-6', formGroupClass:'form-group', requiredHelpBlock : "Result email is required", emailHelpBlock : "Email is invalid"},
-                            'reportToEmail': { field: 'reportToEmail', ngModel : 'row.reportToEmail', label: "Report Email", placeholder: "", width: "100", isList: false, isNew: true, isUpdate: true, type: 'email', fieldClass:'form-control', isRequire: false, labelClass:'col-md-4 control-label', fieldGroupClass:'col-md-6', formGroupClass:'form-group', requiredHelpBlock : "Report email is required", emailHelpBlock : "Email is invalid"},
-                            'fieldGroup' : {type:'horizontalFieldGroup', fieldClass :'col-md-12', columnClass: 'col-md-3' ,fields:{
-                                'isaddcontactemailtoresult': { field: 'isaddcontactemailtoresult', ngModel : 'row.isaddcontactemailtoresult', label: "Is Result Email", placeholder: "Is Result Email", width: "100", isList: false, isNew: true, isUpdate: true, type: 'checkbox', fieldClass:'form-control', isRequire: false, labelClass:'col-md-8 control-label', fieldGroupClass:'col-md-4', formGroupClass:'col-md-3', isOn: 1, isOff: 0 },
-                                'isinvoiceemailtouser': { field: 'isinvoiceemailtouser', ngModel : 'row.isinvoiceemailtouser', label: "Is Invoice Email", placeholder: "Is Invoice Email", width: "100", isList: false, isNew: true, isUpdate: true, type: 'checkbox', fieldClass:'form-control', isRequire: false, labelClass:'col-md-8 control-label', fieldGroupClass:'col-md-4', formGroupClass:'col-md-3', isOn: 1, isOff: 0},
-                                'ispo': { field: 'ispo', ngModel : 'row.ispo', label: "PO", placeholder: "PO", width: "100", isList: false, isNew: true, isUpdate: true, type: 'checkbox', fieldClass:'form-control', isRequire: false, labelClass:'col-md-8 control-label', fieldGroupClass:'col-md-4', formGroupClass:'col-md-3', isOn: 1, isOff: 0},
-                                'isproject': { field: 'isproject', ngModel : 'row.isproject', label: "Project", placeholder: "Project", width: "100", isList: false, isNew: true, isUpdate: true, type: 'checkbox', fieldClass:'form-control', isRequire: false, labelClass:'col-md-8 control-label', fieldGroupClass:'col-md-4', formGroupClass:'col-md-3', isOn: 1, isOff: 0}
-                            }
-                            },
-                            'poNumber': { field: 'poNumber', ngModel : 'row.poNumber', label: "PO Number", placeholder: "PO Number", width: "100", isList: false, isNew: true, isUpdate: true, type: 'text', fieldClass:'form-control', isRequire: false, labelClass:'col-md-4 control-label', fieldGroupClass:'col-md-6', formGroupClass:'form-group', requiredHelpBlock : "Company name is required"}
-                            //'submit': { label: "Submit", isNew: true, isUpdate: true, type: 'button', fieldClass:'btn btn-primary', ngClick: "okMainCtrl()"}
-                        }
-                    }
-                }
-            },
-            "div3": {
-                type: "div",
-                fieldClass: "modal-footer",
-                fields: {
-                    SaveButton:{type:"button",label:"Save", fieldClass:"btn btn-primary",ngClick:"ok()"},
-                    CancelButton:{type:"button",label:"Cancel", fieldClass:"btn btn-warning",ngClick:"cancel()"}
-                }
-            }
-        };
-
-        console.log(this.formDefines);
-    }]);
-
-/*
- this.stdFormTemplate = {
- "fieldset": {
- "type": "fieldset",
- "label": "fieldset",
- "fields": {
- "text": {
- "type": "text",
- "label": "text",
- "placeholder": "text",
- "required":true
- },
- "date": {
- "type": "date",
- "label": "date",
- "placeholder": "date"
- },
- "datetime": {
- "type": "datetime",
- "label": "datetime",
- "placeholder": "datetime"
- },
- "datetime-local": {
- "type": "datetime-local",
- "label": "datetime-local",
- "placeholder": "datetime-local"
- },
- "email": {
- "type": "email",
- "label": "email",
- "placeholder": "email",
- "required":true
- },
- "month": {
- "type": "month",
- "label": "month",
- "placeholder": "month"
- },
- "coordinates-fieldset": {
- "type": "fieldset",
- "label": "nested model example",
- "fields": {
- "coordinates.lat": {
- "type": "number",
- "label": "coordinates.lat",
- "placeholder": "coordinates.lat",
- "val": 36.5
- },
- "coordinates.lon": {
- "type": "number",
- "label": "coordinates.lon",
- "placeholder": "coordinates.lon",
- "val": -0.15
- }
- }
- },
- "number": {
- "type": "number",
- "label": "number",
- "placeholder": "number"
- },
- "password": {
- "type": "password",
- "label": "password",
- "placeholder": "password"
- },
- "search": {
- "type": "search",
- "label": "search",
- "placeholder": "search"
- },
- "tel": {
- "type": "tel",
- "label": "tel",
- "placeholder": "tel"
- },
- "textarea": {
- "type": "textarea",
- "label": "textarea",
- "placeholder": "textarea",
- "splitBy": "\n",
- "val": ["This array should be","separated by new lines"]
- },
- "time": {
- "type": "time",
- "label": "time",
- "placeholder": "time"
- },
- "url": {
- "type": "url",
- "label": "url",
- "placeholder": "url"
- },
- "week": {
- "type": "week",
- "label": "week",
- "placeholder": "week"
- }
- }
- },
- "checkbox": {
- "type": "checkbox",
- "label": "checkbox"
- },
- "color": {
- "type": "color",
- "label": "color"
- },
- "file": {
- "type": "file",
- "label": "file",
- "multiple": true
- },
- "range": {
- "type": "range",
- "label": "range",
- "model": "number",
- "val": 42,
- "minValue": -42,
- "maxValue": 84
- },
- "select": {
- "type": "select",
- "label": "select",
- "empty": "nothing selected",
- "options": {
- "first": {
- "label": "first option"
- },
- "second": {
- "label": "second option",
- "group": "first group"
- },
- "third": {
- "label": "third option",
- "group": "second group"
- },
- "fourth": {
- "label": "fourth option",
- "group": "first group"
- },
- "fifth": {
- "label": "fifth option"
- },
- "sixth": {
- "label": "sixth option",
- "group": "second group"
- },
- "seventh": {
- "label": "seventh option"
- },
- "eighth": {
- "label": "eighth option",
- "group": "first group"
- },
- "ninth": {
- "label": "ninth option",
- "group": "second group"
- },
- "tenth": {
- "label": "tenth option"
- }
- }
- },
- "checklist": {
- "type": "checklist",
- "label": "checklist",
- "options": {
- "first": {
- "label": "first option"
- },
- "second": {
- "label": "second option",
- "isOn": "on",   //  If you use Angular versions 1.3.x and up, this needs to be changed to "'on'"...
- "isOff": "off"  //  If you use Angular versions 1.3.x and up, this needs to be changed to "'off'"...
- }
- }
- },
- "radio": {
- "type": "radio",
- "label": "radio",
- "values": {
- "first": "first option",
- "second": "second option",
- "third": "third option",
- "fourth": "fourth option",
- "fifth": "fifth option"
- }
- },
- "button": {
- "type": "button",
- "label": "button"
- },
- "hidden": {
- "type": "hidden",
- "label": "hidden",
- "val": "hidden"
- },
- "image": {
- "type": "image",
- "label": "image",
- "source": "http://angularjs.org/img/AngularJS-large.png"
- },
- "legend": {
- "type": "legend",
- "label": "legend"
- },
- "reset": {
- "type": "reset",
- "label": "reset"
- },
- "submit": {
- "type": "submit",
- "label": "submit"
- },
- "bogus": {
- "type": "bogus",
- "label": "bogus"
- }
- };
- */
-
-/**
  * Created by phuongnguyen on 26/02/16.
  */
 angular.module('ocsApp.Companies')
@@ -21170,8 +21409,9 @@ angular.module('ocsApp.MakeBooking')
         this.isSubmitingToTheServer = false;
         this.isSubsidiary2 = false;
         this.isNoCandidate = false;//to display err if no candidate when submit the form
-        this.paperworkList = ["Redimed","Gorgon","BP","Company Specific","CPPC","Rail","Wheatstone","MACA Mining","Aerison paperwork","Newmont","Shell"];
+        this.paperworkList = ["Redimed","Gorgon","BP","Company Specific","CPPC","Rail","Wheatstone","MACA Mining","Aerison paperwork","Newmont","Shell","Woodside Offshore","Boral Paperwork"];
         this.newBooking.paperwork = "Redimed";
+        this.maxPeriod = 15;
         var that = this;
 
         var initData = function(){
@@ -21193,7 +21433,7 @@ angular.module('ocsApp.MakeBooking')
         });
 
         this.getAllSubsidiaries = function (callback) {
-            $log.debug("getAllSubsidiaries.Loading subsidiaries......",that.companyObject.subsidiaries);
+            $log.debug("getAllSubsidiaries.Loading subsidiaries......");
             callback(that.companyObject.subsidiaries);
         };
 
@@ -21202,12 +21442,13 @@ angular.module('ocsApp.MakeBooking')
         };
 
         this.newCompany = function(){
+            $log.debug("newCompany is running....... ");
             // add new sub company for Redimed when admin make a booking on behalf
             var modalInstance = $uibModal.open({
                 animation: true,
                 templateUrl: 'modules/MakeBooking/views/makeBooking.NewCompany.html',
-                controller: 'NewCompanyCtrl',
-                controllerAs: 'NewCompanyCtrl',
+                controller: 'NewCompanyAtMakingBookingCtrl',
+                controllerAs: 'NewCompanyAtMakingBookingCtrl',
                 size: 'md'
             });
 
@@ -21283,8 +21524,13 @@ angular.module('ocsApp.MakeBooking')
             return this.isSubsidiary2;
         }
 
+        this.isEditPackage = function(){
+            return this.newBooking.newCandidates.length > 0 ? false : true;
+        }
+
         this.selectedPackage = function(){
-            $log.debug("Package =",that.newBooking.package);
+            that.maxPeriod = 15;
+            $log.debug(" selected Package ");
 
             if(that.newBooking.package.packageName.indexOf("Custom") >= 0 ){
                 that.viewPackage = "";
@@ -21299,9 +21545,17 @@ angular.module('ocsApp.MakeBooking')
 
                 modalInstance.result.then(function (selectedItem) {
                     //$scope.selected = selectedItem;
-                    that.newBooking.customPackage = selectedItem;
+                    $log.debug('customPackage = ',selectedItem);
+                    var assIDs = [];
+                    selectedItem.forEach(function(ass){
+                      assIDs.push(ass.id);
+                      var p = ass.period;
+                      if(p > that.maxPeriod){
+                        that.maxPeriod = p;
+                      }
+                    });
+                    that.newBooking.customPackage = assIDs;
                     that.newCandidate();
-
                 }, function () {
                     $log.debug('Modal Package dismissed at: ' + new Date());
                 });
@@ -21310,6 +21564,10 @@ angular.module('ocsApp.MakeBooking')
                 for(var i in that.newBooking.package.AssessmentHeaders){
                     that.viewPackage = that.viewPackage +"<br><b>"+  that.newBooking.package.AssessmentHeaders[i].headerName + "</b>";
                     for(var j in that.newBooking.package.AssessmentHeaders[i].Assessments){
+                        var p = that.newBooking.package.AssessmentHeaders[i].Assessments[j].period;
+                        if(p > that.maxPeriod){
+                          that.maxPeriod = p;
+                        }
                         that.viewPackage = that.viewPackage +"<br> - "+  that.newBooking.package.AssessmentHeaders[i].Assessments[j].assName + "";
                     }
                 }
@@ -21327,54 +21585,75 @@ angular.module('ocsApp.MakeBooking')
             return that.companyObject.isproject == 1 ? true:false;
         };
 
+        this.isNotEditInvoiceAndResultEmails = function(){
+            return that.user.isnoteditemailsheader == 1 ? true:false;
+        };
+
         this.deleteCandidate = function(index,candidate){
             $log.debug("Remove candidate at " + index,candidate);
             that.newBooking.newCandidates.splice(index, 1);
         }
 
         this.newCandidate = function(index,candidate){
-            //if edit the new candidate, we must have the index of the candidate in the array, so we can replace the old value with the new one
-            $log.debug("New/replace candidate ",candidate," index = ",index);
-            //open modal to enter new candidate
-            var modalInstance = $uibModal.open({
-                animation: true,
-                templateUrl: 'modules/MakeBooking/views/makeBooking.NewCandidate.html',
-                controller: 'NewCandidateCtrl',
-                controllerAs: 'NewCandidateCtrl',
-                size: 'lg',
-                resolve: {
-                    candidate: function () {
-                        return candidate;
-                    },
-                    indexOfCandidate: function(){
-                        return index;
-                    }
-                }
-            });
+            if(that.newBooking.package||that.newBooking.customPackagepackage){
+              //if edit the new candidate, we must have the index of the candidate in the array, so we can replace the old value with the new one
+              $log.debug("New/replace candidate ",candidate," index = ",index);
+              //open modal to enter new candidate
+              var modalInstance = $uibModal.open({
+                  animation: true,
+                  backdrop: 'static',
+                  templateUrl: 'modules/MakeBooking/views/makeBooking.NewCandidate.html',
+                  controller: 'NewCandidateCtrl',
+                  controllerAs: 'NewCandidateCtrl',
+                  size: 'lg',
+                  resolve: {
+                      candidate: function () {
+                          return candidate;
+                      },
+                      indexOfCandidate: function(){
+                          return index;
+                      },
+                      maxPeriod: function(){
+                          return that.maxPeriod;
+                      }
+                  }
+              });
 
-            modalInstance.result.then(function (obj) {
-                //$scope.selected = selectedItem;
-                //if edit the new candidate, we must have the index of the candidate in the array, so we can replace the old value with the new one
-                var index = obj.index;
-                var candidate = obj.candidate;
-                if(index >= 0){
-                    $log.debug("repleace the candidate in the array with index = "+index,candidate);
-                    that.newBooking.newCandidates[index] = candidate;
-                }else{
-                    $log.debug("add candidate into array",candidate);
-                    that.newBooking.newCandidates.push(candidate);
-                }
-            }, function () {
-                $log.debug('Modal Candidate dismissed at: ' + new Date());
-            });
+              modalInstance.result.then(function (obj) {
+                  //$scope.selected = selectedItem;
+                  //if edit the new candidate, we must have the index of the candidate in the array, so we can replace the old value with the new one
+                  var index = obj.index;
+                  var candidate = obj.candidate;
+                  if(index >= 0){
+                      $log.debug("repleace the candidate in the array with index = "+index,candidate);
+                      that.newBooking.newCandidates[index] = candidate;
+                  }else{
+                      $log.debug("add candidate into array",candidate);
+                      that.newBooking.newCandidates.push(candidate);
+                  }
+              }, function (data) {
+                  $log.debug('Modal Candidate dismissed at: ' + new Date(),data);
+              });
+            }else{
+                toastr.error('Please select a package', 'Error');
+            }
         };
 
         function updateUI(conditionOnCompany,companyOrSubsidiary){
 
             $log.debug("Update PO,Emails,...");
 
+            if(companyOrSubsidiary.defaultNote){
+                that.newBooking.comments = companyOrSubsidiary.defaultNote;
+            }
+
+
             if(companyOrSubsidiary.poNumber){
                 that.newBooking.poNumber = companyOrSubsidiary.poNumber;
+            }
+
+            if(companyOrSubsidiary.projectIdentification){
+                that.newBooking.projectIdentification = companyOrSubsidiary.projectIdentification;
             }
 
             if(companyOrSubsidiary.invoiceEmail){
@@ -21400,6 +21679,7 @@ angular.module('ocsApp.MakeBooking')
                     that.newBooking.resultEmail = that.user.contactEmail;
                 }
             }
+
         };
     }]);
 
@@ -21410,14 +21690,18 @@ angular.module('ocsApp.MakeBooking').controller('NewCandidateCtrl',[
             '$uibModalInstance',
             'CompanyFactory',
             'RedimedSiteFactory',
+            'MakeBookingFactory',
             'mysqlDate',
-            '$log','candidate',
+            '$log',
+            'candidate',
             'indexOfCandidate',
+            'maxPeriod',
             '$scope',
             'mySocket',
-            function ( $uibModalInstance, CompanyFactory,RedimedSiteFactory,mysqlDate,$log,candidate,indexOfCandidate,$scope,mySocket) {
+            'toastr',
+            function ( $uibModalInstance, CompanyFactory,RedimedSiteFactory,MakeBookingFactory,mysqlDate,$log,candidate,indexOfCandidate,maxPeriod,$scope,mySocket,toastr) {
     $log = $log.getInstance("ocsApp.MakeBooking.NewCandidateCtrl");
-    $log.debug("I am NewCandidateCtrl");
+    //$log.debug("I am NewCandidateCtrl");
     var that = this
     this.status = {};
     this.BookingCandidate = {};
@@ -21426,8 +21710,8 @@ angular.module('ocsApp.MakeBooking').controller('NewCandidateCtrl',[
     this.dateStatus.fromDateOpened = false;
     this.dateStatus.toDateOpened = false;
     this.format = "dd/MM/yyyy";
-    this.BookingCandidate.dob = new Date(1990,0,1);
-
+    this.BookingCandidate.dob = null;
+    this.genderList = ['Male','Female'];
     var today = new Date();
     var tomorrow = new Date();
     var currentHolingId = 0;
@@ -21436,6 +21720,8 @@ angular.module('ocsApp.MakeBooking').controller('NewCandidateCtrl',[
     this.BookingCandidate.preferredFromDate = today;
     this.BookingCandidate.preferredToDate = tomorrow;
     this.BookingCandidate.holdingId = 0;
+    this.BookingCandidate.period = maxPeriod;
+
     this.companyObject = null;
     this.sites = null;
     this.states = null;
@@ -21443,10 +21729,14 @@ angular.module('ocsApp.MakeBooking').controller('NewCandidateCtrl',[
     this.calendars = [{id:1},{id:2}];
     this.isSubmitted = false;
     this.newCandidateForm = {};
-
+    this.occupiedSlotByAnother = null;
     if(candidate){
         this.BookingCandidate = candidate;
+        //$log.debug("candidateTempId = ",this.BookingCandidate.candidateTempId);
         getCalendar();
+    }else{
+        this.BookingCandidate.candidateTempId = MakeBookingFactory.getCandidateTempId();
+        //$log.debug("candidateTempId = ",this.BookingCandidate.candidateTempId);
     }
 
     CompanyFactory.getCompany(function(data){
@@ -21455,66 +21745,92 @@ angular.module('ocsApp.MakeBooking').controller('NewCandidateCtrl',[
 
     RedimedSiteFactory.getSite(function(data){
         that.sites = data;
-        $log.debug("sites",that.sites);
+        $log.debug("sites");
     });
     //server will send message to client to notify that the appt has occupied by another user, so the client can re-load the calendars
-    mySocket.on('UpdateCalendar',function(data){
-        $log.debug('refresh calendars by server',data);
-        if(that.BookingCandidate.site.id){
-          //if(!that.BookingCandidate.calendar){
-              getCalendar();
-          //}
+    mySocket.on('UpdateCalendar',function(occupiedSlot){
+        $log.debug('-->refresh calendars by server occupiedSlot = ',occupiedSlot);
+        //if(that.BookingCandidate.site && that.BookingCandidate.site.id){
+              //getCalendar();
+        //}
+        if(occupiedSlot){
+            that.occupiedSlotByAnother = occupiedSlot;
+            if(that.BookingCandidate.slot && that.BookingCandidate.slot.calId == occupiedSlot.calId){
+
+                toastr.error('Sorry !, Slot ' + that.BookingCandidate.slot.calendarTime  + ' is not available now. Please select another slot ' , 'Error');
+                that.BookingCandidate.slot = null;
+
+            }
+
+            that.calendars.forEach(function(cal){
+                if(cal.date == occupiedSlot.calendarDate){
+                    cal.slots.forEach(function(slot,index){
+                        if(slot.calId == occupiedSlot.calId){
+                            cal.slots.splice(index,1);
+                        }
+                    });
+                }
+            });
         }
+    });
+
+
+    this.selectedSlot = function(slot){
+        $log.debug('selected slot = ',slot);
+        if(that.occupiedSlotByAnother && that.occupiedSlotByAnother.calId == slot.calId){
+            //check again the selected slot with occupied slot as the Angular delays to update the UI so maybe the user can select the occupied slot
+            toastr.error('Sorry !, Slot ' + slot.calendarTime  + ' is not available now. Please select another slot ' , 'Error');
+        }else{
+            that.BookingCandidate.slot = slot;
+        }
+
+    };
+
+    $scope.$on('$destroy', function () {
+        $log.debug('remove socket.io listener.....................');
+        mySocket.removeListener('UpdateCalendar');
     });
 
     function getCalendar(){
         //Plus toDate one date before query calendar because of time
         var newDate = new Date(that.BookingCandidate.preferredToDate);
-        console.log('newDate = ',newDate);
         if(isNaN(newDate)){
           newDate = new Date(that.BookingCandidate.preferredFromDate);
         }
         newDate.setDate(newDate.getDate() + 2);
-        console.log('newDate = ',newDate);
-        $log.debug('will getCalendar with current calendar =',that.BookingCandidate.calendar);
+        //$log.debug('will getCalendar for site =',that.BookingCandidate.site);
+        //$log.debug('will getCalendar with current calendar =',that.BookingCandidate.calendar);
+        $log.debug('will getCalendar with maxperiod =',maxPeriod);
         if(that.BookingCandidate.site.id){
-          RedimedSiteFactory.getCalendar(that.BookingCandidate.site.id,that.BookingCandidate.preferredFromDate,newDate,function(data){
+          RedimedSiteFactory.getCalendar(that.BookingCandidate.site.id,that.BookingCandidate.preferredFromDate,newDate,maxPeriod,function(data){
               that.calendars = data;
-              $log.debug('received data from server getCalendar with current calendar =',that.BookingCandidate.calendar);
-              if(that.BookingCandidate.calendar){
-                that.calendars.unshift(that.BookingCandidate.calendar);
+              //$log.debug('>>>>>>>>>>>>received data from server getCalendar with current slot =',that.BookingCandidate.slot);
+              if(that.BookingCandidate.slot){
+                  //search the date of returned calendars to add the current slot into the slots array and remove the slot of the doctor that belong to the current slot
+                  that.calendars.forEach(function(cal){
+                        if(cal.date == that.BookingCandidate.slot.calendarDate){
+                            console.log('found the date in calendars = ',cal);
+                            cal.slots.push(that.BookingCandidate.slot);
+                            console.log('new cal = ',cal);
+                            cal.slots = _.sortBy(cal.slots, 'fromTimeInInt');
+                        }
+                  });
+                  console.log('>>>>>>>>Calendars after adding the current slot = ',that.calendars);
               }
           });
         }
     };
 
-     $scope.$watch(
-        "NewCandidateCtrl.BookingCandidate.calendar",
-        function( newValue, oldValue ) {
-            // Ignore initial setup.
-            if ( newValue === oldValue ) {
-                return;
-            }
+    $scope.$watch("NewCandidateCtrl.BookingCandidate.slot",function( newValue, oldValue ) {
+           // Ignore initial setup.
+           if ( newValue === oldValue ) {
+               return;
+           }
 
-            if(oldValue){
-                RedimedSiteFactory.removeHolding(currentHolingId,oldValue.calId,function(holdingData){
-                    console.log(' holdingData = ',holdingData);
-                });
-            }
-
-            if(newValue){
-                RedimedSiteFactory.setHolding(newValue.calId,function(holdingData){
-                    console.log(' holdingData = ',holdingData);
-                    currentHolingId = holdingData.holdingId;
-                    that.BookingCandidate.holdingId = holdingData.holdingId;
-                    //notify the server the appt that the client has occupied, so the server can let other users know
-                    mySocket.emit('OccupyAppt',newValue);
-                });
-            }
-
-            console.log( "$watch: that.BookingCandidate.calendar changed.",newValue, oldValue);
-        }
-    );
+           console.log( "$watch: that.BookingCandidate.slot changed.",newValue, oldValue);
+           //mySocket.emit('OccupyAppt',newValue,oldValue);
+           mySocket.emit('OccupyAppt',newValue,oldValue,that.BookingCandidate.candidateTempId);
+    });
 
 
     this.calendarChanged = function(){
@@ -21525,11 +21841,13 @@ angular.module('ocsApp.MakeBooking').controller('NewCandidateCtrl',[
     };
 
     this.selectedSite = function(){
+        $log.debug('selectedSite is running');
         that.states = that.BookingCandidate.site.States;
         that.BookingCandidate.suburb = null;
         that.BookingCandidate.state = null;
         that.suburbs = null;
         that.BookingCandidate.calendar = null;
+        that.BookingCandidate.slot = null;
         getCalendar();
     };
 
@@ -21559,6 +21877,7 @@ angular.module('ocsApp.MakeBooking').controller('NewCandidateCtrl',[
         that.dateStatus.toDateOpened = true;
     };
 
+
     this.ok = function () {
         that.isSubmitted = true;
         if(that.newCandidateForm.$valid){
@@ -21573,15 +21892,17 @@ angular.module('ocsApp.MakeBooking').controller('NewCandidateCtrl',[
     };
 
     this.cancel = function () {
-        $uibModalInstance.dismiss('cancel');
+        //when close dialog => remove the holding boooking
+        mySocket.emit('OccupyAppt',null,that.BookingCandidate.slot);
+        $uibModalInstance.dismiss(that.BookingCandidate.slot);
     };
 }]);
 
 /**
  * Created by phuongnguyen on 16/12/15.
  */
-angular.module('ocsApp.MakeBooking').controller('NewCompanyCtrl',['$uibModalInstance','$log',function ( $uibModalInstance,$log) {
-    $log = $log.getInstance("ocsApp.MakeBooking.NewCompanyCtrl");
+angular.module('ocsApp.MakeBooking').controller('NewCompanyAtMakingBookingCtrl',['$uibModalInstance','$log',function ( $uibModalInstance,$log) {
+    $log = $log.getInstance("ocsApp.MakeBooking.NewCompanyAtMakingBookingCtrl");
     $log.debug("NewCompanyCtrl is running...");
     var that = this;
     this.company = {};
@@ -21609,10 +21930,16 @@ angular.module('ocsApp.MakeBooking').controller('NewCompanyCtrl',['$uibModalInst
  */
 angular.module('ocsApp.MakeBooking')
 .factory('MakeBookingFactory', ['BookingHeaders','toastr','BookingCandidates','$q','CompanyFactory','mysqlDate','Companies','$log','mySharedService', function (BookingHeaders,toastr,BookingCandidates,$q,CompanyFactory,mysqlDate,Companies,$log,sharedService) {
+    var candidateTempId = 0;
     $log = $log.getInstance("ocsApp.MakeBooking.MakeBookingFactory");
+    $log.save();
     return {
+        getCandidateTempId: function(){
+            candidateTempId++;
+            return candidateTempId;
+        },
         submitBooking:function(newBookingObj,companyObject,user){
-             $log.debug("will submit the booking");   
+             $log.debug("will submit the booking");
             ///submit the online booking is here !
             var deferred = $q.defer();
             var bookingHeader = {};
@@ -21662,7 +21989,7 @@ angular.module('ocsApp.MakeBooking')
             bookingHeader.lastUpdatedBy = null;
             bookingHeader.lastUpdateDate = null;
 
-            
+
 
             var candidates = [];
             for(var i in newBookingObj.newCandidates){
@@ -21670,10 +21997,15 @@ angular.module('ocsApp.MakeBooking')
                 candidates[i].bookingId = 0;
                 candidates[i].candidateId = 0;
                 candidates[i].candidatesName  = newBookingObj.newCandidates[i].candidateName;
+                candidates[i].gender  = newBookingObj.newCandidates[i].gender;
                 candidates[i].dob = moment(newBookingObj.newCandidates[i].dob).format("YYYY-MM-DD");
+                if(candidates[i].dob=="Invalid date"){
+                  candidates[i].dob=null
+                }
                 candidates[i].phone = newBookingObj.newCandidates[i].phone;
                 candidates[i].email = newBookingObj.newCandidates[i].email;
                 candidates[i].position = newBookingObj.newCandidates[i].position;
+                candidates[i].period  = newBookingObj.newCandidates[i].period;
                 //If have Appointment time + date => appt status = 'confirmed' otherwise: 'pending': so send diffirent email template and receiver
                 candidates[i].appointmentStatus = "Pending";//companyObject.defaultStatus;
                 candidates[i].fromDate = moment(newBookingObj.newCandidates[i].preferredFromDate).format("YYYY-MM-DD");
@@ -21684,11 +22016,28 @@ angular.module('ocsApp.MakeBooking')
                 candidates[i].siteId = newBookingObj.newCandidates[i].site.id;
                 candidates[i].siteName = newBookingObj.newCandidates[i].site.siteName;
 
-                if(newBookingObj.newCandidates[i].calendar){
-                    candidates[i].calendarId = newBookingObj.newCandidates[i].calendar.calId;
-                    candidates[i].appointmentTime = moment(mysqlDate(newBookingObj.newCandidates[i].calendar.fromTime)).format("YYYY-MM-DD HH:mm ");
+                candidates[i].slots = [];
+                if(newBookingObj.newCandidates[i].slot){
+                    newBookingObj.newCandidates[i].slot.followingSlots.forEach(function(slot,index){
+                        candidates[i].slots.push(slot.calId);
+                        var calIndex = index + 2;
+                        if(calIndex <= 5){
+                            candidates[i]["calendarId"+calIndex] = slot.calId;
+                        }
+                    });
+
+                    var apptSlot = newBookingObj.newCandidates[i].slot;
+                    candidates[i].calendarId = apptSlot.calId;
+                    candidates[i].practitionerId = apptSlot.doctorId;
+                    candidates[i].redimedNote = apptSlot.doctorName;
+                    candidates[i].appointmentTime = moment(mysqlDate(apptSlot.fromTime)).format("YYYY-MM-DD HH:mm ");
+                    candidates[i].appointmentFromTime = moment(mysqlDate(apptSlot.fromTime)).format("YYYY-MM-DD HH:mm ");
+                    candidates[i].appointmentToTime = moment(mysqlDate(apptSlot.toTime)).format("YYYY-MM-DD HH:mm ");
                     candidates[i].appointmentStatus = "Confirmed";
                     candidates[i].holdingId = newBookingObj.newCandidates[i].holdingId;
+
+                }else{
+                    candidates[i].appointmentStatus = "Pending";
                 }
 
                 if (newBookingObj.newCandidates[i].state){
@@ -21709,13 +22058,9 @@ angular.module('ocsApp.MakeBooking')
                 //after submit the booking, refresh the booking list
                 CompanyFactory.refreshBookingList(function(data){
                     $log.debug("refresh bookinglist successfully");
-                   
+
                     sharedService.prepForBroadcast("Refresh booking list successfully");
                 });
-                CompanyFactory.refreshAllPackageList(function(data){
-
-                });
-
 
                 for(var i in data.booking.bookingCandidates){
                     var candidate = data.booking.bookingCandidates[i];
@@ -21738,8 +22083,12 @@ angular.module('ocsApp.MakeBooking')
             },
             function(err){
                 $log.error("Fail to Submit the booking",err);
-                toastr.error("Fail to submit the booking, please contact Redimed to assit", 'Error');
-                deferred.reject("Created Booking");                
+                if(err.data.error.code == "SLOT_NOT_AVAILABLE"){
+                    toastr.error(err.data.error.message, 'Error');
+                }else{
+                    toastr.error('Fail to submit the booking [' + err.data.error.message + ']', 'Error');
+                }
+                deferred.reject("Created Booking");
             });
 
             return deferred.promise;
@@ -21849,7 +22198,7 @@ angular.module('ocsApp.MakePEMPhoneBooking').controller('BookingFormCtrl',['$sta
 
     MakePEMPhoneBookingFactory.getAssessments().then(function(succ){
         that.allAssessments = succ.assessments;
-        $log.debug("assessments = ",that.allAssessments);
+        $log.debug("assessments");
         that.isAuth = true;
         that.isGettingAssessments = false;
 
@@ -22535,6 +22884,19 @@ angular.module('ocsApp.Navigator')
         Idle.watch();
         //get User information
         var that = this;
+        this.isRedimed = false;
+        this.isKaja = false;
+        var plogo = getLogo();
+        console.log(plogo);
+        if(plogo == 'REDIMED'){
+          this.isRedimed = true;
+        }
+
+        if(plogo == 'KAJA'){
+          this.isKaja = true;
+        }
+
+        
         this.user = CompanyFactory.getCurrentUser();
         this.currentCompany = null;
         $log.debug("user = ",this.user);
@@ -23004,6 +23366,172 @@ angular.module('ocsApp.Positions')
         };
     }]);
 
+
+/**
+ * Created by phuongnguyen on 27/11/15.
+ */
+angular.module('ocsApp.Scheduler')
+    .controller('EditRosterCtrl',['$uibModalInstance','fromTime','toTime','isRemove', function ($uibModalInstance,fromTime,toTime,isRemove) {
+
+        var that = this;
+        this.dateStatus = {};
+        this.dateStatus.fromTimeOpened = false;
+        this.dateStatus.toTimeOpened = false;
+        this.format = "dd/MM/yyyy HH:mm:ss";
+        this.fromTime = new Date(fromTime.format('YYYY-MM-DD HH:mm:ss'));
+        this.toTime = new Date(toTime.format('YYYY-MM-DD HH:mm:ss'));
+        this.title = "Do you want to remove slots ?";
+        this.header = "Remove Slots";
+        if(!isRemove){
+          this.title = "Do you want to unremove slots ?";
+          this.header = "Unremove Slots";
+        }
+
+        this.openFromTime = function($event) {
+            that.dateStatus.fromTimeOpened = true;
+        };
+
+        this.openFromTime = function($event) {
+            that.dateStatus.toTimeOpened = true;
+        };
+
+        this.ok = function () {
+            $uibModalInstance.close({fromTime:that.fromTime,toTime:that.toTime});
+        };
+
+        this.cancel = function () {
+            $uibModalInstance.dismiss('cancel');
+        };
+    }]);
+
+/**
+ * Created by phuongnguyen on 27/11/15.
+ */
+angular.module('ocsApp.Scheduler')
+    .controller('SchedulerMainCtrl',['$uibModal','$scope','RedimedSiteFactory','CompanyFactory','BookingFactory','$log', function ($uibModal,$scope,RedimedSiteFactory,CompanyFactory,BookingFactory,$log) {
+        $log = $log.getInstance("ocsApp.Packages.SchedulerMainCtrl");
+        $log.debug("I am Scheduler controller.");
+
+        var that = this;
+        var packages = [];
+        var fromDate = new Date();
+        var toDate = new Date();
+        var editRosterFunc = function(event,isRemove){
+          //open dialog to diable slot if new
+          var modalInstance = $uibModal.open({
+              animation: false,
+              backdrop: 'static',
+              windowTopClass : 'modal1',
+              templateUrl: 'modules/Scheduler/views/scheduler.editRoster.html',
+              controller: 'EditRosterCtrl',
+              controllerAs: 'EditRosterCtrl',
+              size: 'lg',
+              resolve : {
+                  fromTime:function(){return event.start;},
+                  toTime:function(){return event.end;},
+                  isRemove:function(){return isRemove}
+              }
+          });
+
+          modalInstance.result.then(function (rs) {
+              $log.debug('modal return value = ',rs);
+              $log.debug('isRemove = ',isRemove);
+
+              var refreshEventsFunc = function(){
+                  $('#calendar').fullCalendar( 'refetchEvents' );
+              };
+
+              if(isRemove){
+                RedimedSiteFactory.removeSlots(event.resourceId,rs.fromTime,rs.toTime,refreshEventsFunc);
+              }else{
+                RedimedSiteFactory.unRemoveSlots(event.resourceId,rs.fromTime,rs.toTime,refreshEventsFunc);
+              }
+
+              //$log.debug('Modal closed at: ' + new Date());
+          }, function (rs) {
+              //console.log(rs);
+              //$log.debug('Modal dismissed at: ' + new Date());
+          });
+        }
+
+        fromDate.setDate(fromDate.getDate() - 1);
+        toDate.setDate(toDate.getDate() + 7);
+
+        CompanyFactory.getCompany(function(data){
+            $log.debug("Make booking, get company info");
+            packages = data.packages;// ==null? data.packages:data.allPackages;
+        });
+
+        RedimedSiteFactory.getResources(1,fromDate,toDate,function(roster){
+
+          $('#calendar').fullCalendar({
+      			defaultView: 'agendaDay',
+      			defaultDate: moment(),
+      			editable: false,
+      			selectable: false,
+            slotDuration: '00:15:00',
+            minTime: '07:00:00',
+            maxTime: '18:00:00',
+      			eventLimit: true, // allow "more" link when too many events
+      			header: {
+      				left: 'prev,next today',
+      				center: 'title'
+      			},
+      			views: {
+      				agendaTwoDay: {
+      					type: 'agenda',
+      					duration: { days: 2 },
+      					// views that are more than a day will NOT do this behavior by default
+      					// so, we need to explicitly enable it
+      					groupByResource: true
+      					//// uncomment this line to group by day FIRST with resources underneath
+      					//groupByDateAndResource: true
+      				}
+      			},
+      			//// uncomment this line to hide the all-day slot
+      			//allDaySlot: false,
+      			resources: roster.resources,
+      			events: function(start,end,timezone,callback){
+                console.log('start = ',start,' - end =',end);
+                RedimedSiteFactory.getEvents(1,moment(start.format('DD/MM/YYYY'),'DD/MM/YYYY'),moment(end.format('DD/MM/YYYY'),'DD/MM/YYYY'),function(roster){
+                    console.log('RedimedSiteFactory.getEvents = ',roster.events);
+                    callback(roster.events);
+                });
+            },
+
+            eventClick: function( event, jsEvent, view ) {
+                console.log('You clicked on an event:',event);
+                if(event.Candidate){
+                    BookingFactory.viewBookingDetail(packages,event.Candidate);
+                }else{
+                  if(event.title == 'NoUse'){
+                      editRosterFunc(event,false);
+                  }else{
+                      editRosterFunc(event,true);
+                  }
+
+                }
+            },
+
+      			select: function(start, end, jsEvent, view, resource) {
+      				console.log(
+      					'select',
+      					start.format(),
+      					end.format(),
+      					resource ? resource.id : '(no resource)'
+      				);
+      			},
+      			dayClick: function(date, jsEvent, view, resource) {
+      				console.log(
+      					'dayClick',
+      					date.format(),
+      					resource ? resource.id : '(no resource)'
+      				);
+      			}
+      		});
+        });
+
+    }]);
 
 /**
  * Created by phuongnguyen on 27/11/15.
@@ -24102,386 +24630,6 @@ angular.module('ocsApp.Sites')
             }
         };
     }]);
-/**
- * Created by phuongnguyen on 3/01/16.
- */
-angular.module('ocsApp.Bookings').controller('AdminEditBookingCtrl',['candidate','RedimedSiteFactory','BookingStatusFactory','BookingCandidates','toastr','$uibModalInstance','mysqlDate','$log','CompanyFactory','mySharedService','mysqlDate','$cookieStore','$uibModal', function (candidate,RedimedSiteFactory,BookingStatusFactory,BookingCandidates,toastr,$uibModalInstance,mysqlDate,$log,CompanyFactory,sharedService,mysqlDate,$cookieStore,$uibModal) {
-    $log = $log.getInstance("ocsApp.Bookings.AdminEditBookingCtrl");
-    $log.debug("I am admin edit booking ctrl");
-    $log.debug("Candidate = ",candidate);
-    var that = this;
-    var prevStatus = candidate.appointmentStatus;
-    this.candidate = candidate;
-    this.user = CompanyFactory.getCurrentUser();
-    this.sites = [];
-    this.states = [];
-    this.suburbs = [];
-    this.site = {};
-    this.state = {};
-    this.suburb = {};
-    this.calendars = [];
-    this.calendar = {};
-    this.statuses = [];
-    this.isSubmitted = false;
-    this.form = {};
-    this.dateStatus = {};
-    this.dateStatus.fromDateOpened = false;
-    this.dateStatus.toDateOpened = false;
-    this.dateStatus.timeOpened = false;
-    this.isCalendarList = false;
-    this.isAppointmentTime = false;
-
-    this.format = "dd/MM/yyyy HH:mm";
-
-    this.apptDateAfterConvert = mysqlDate(this.candidate.appointmentTime);
-    this.apptTimeAfterConvert = mysqlDate(this.candidate.appointmentTime);
-    this.isAppointmentTimeChange = false;
-
-    //console.log("apptTimeAfterConvert=",this.apptTimeAfterConvert);
-
-    this.appointmentTimeChanged = function(){
-        that.isAppointmentTimeChange = true;
-        console.log(this.apptTimeAfterConvert);
-    }
-
-    this.openTime = function() {
-        that.dateStatus.timeOpened = true;
-    };
-
-    this.openFromDate = function($event) {
-        that.dateStatus.fromDateOpened = true;
-    };
-
-    BookingStatusFactory.getStatus(function(data){
-        that.statuses = data;
-        $log.debug(" status = ",that.statuses);
-    });
-
-    RedimedSiteFactory.getSite(function(data){
-        $log.debug("get sites...");
-        that.sites = data;
-        that.site =  that.sites[_.findIndex(that.sites, 'id', that.candidate.siteId)];
-
-        if(that.site.States.length > 0){
-            that.states = that.site.States;
-            that.state =  that.states[_.findIndex(that.states, 'stateName', that.candidate.stateName)];
-            if(that.state.SubStates.length > 0){
-                that.suburbs = that.state.SubStates;
-                that.suburb =  that.suburbs[_.findIndex(that.suburbs, 'suburbName', that.candidate.suburbName)];
-            }
-        }
-
-        if(that.site){
-            getCalendar();
-        }
-    });
-
-    this.selectedSite = function(){
-        $log.debug("Get calendar from the factory");
-        that.states = that.site.States;
-        that.suburb = null;
-        that.state = null;
-        that.suburbs = null;
-        getCalendar();
-    };
-
-    this.selectedState = function(){
-        if(that.state){
-            that.suburb = null;
-            that.suburbs = that.state.SubStates;
-        }
-    };
-
-    this.isStates = function(){
-        return that.states == null ? false : that.states.length <= 0 ? false:true;
-    };
-
-    this.isSuburbs = function(){
-        return (that.suburbs == null? false : that.suburbs.length <= 0 ? false:true);
-    };
-
-    this.isSendEmailDisabled = function(){
-        if(this.candidate.appointmentStatus =='Confirmed'||this.candidate.appointmentStatus =='Pending'){
-            return !that.isNotSave();
-        }else{
-            return false;
-        }
-    };
-
-    this.isNotSave = function(){
-        return that.form.$pristine
-    };
-
-    this.isAttended = function(){
-
-        if((that.candidate.appointmentStatus == 'Reschedule' || that.candidate.appointmentStatus == 'Confirmed') ){
-            return true;
-        }else{
-            return false;
-        }
-
-    };
-
-    this.isShowAttendedButton = function(){
-        if(that.user.userType.indexOf("RediMed") == -1 ){
-            // this is a Redimed user, will go booking first
-            return false;
-        }else{
-            return true;
-        }
-    };
-
-    this.attended = function(){
-
-                var updateValue = {};
-                updateValue.appointmentStatus = 'Attended';
-
-                BookingCandidates.update({where:{candidateId:that.candidate.candidateId}},updateValue,function(res,header){
-                        $log.debug('updated successfully');
-                        toastr.success('Successfully updated. The booking list will refresh shortly !');
-                        that.form.$setPristine();
-
-                        CompanyFactory.refreshBookingList(function(data){
-                            toastr.success('The booking list has been refresh');
-                            sharedService.prepForBroadcast("Refresh booking list successfully");
-                        });
-                    },
-                    function(err){
-                        $log.error('updated failed',err);
-                        toastr.error("Fail to update", 'Error');
-                    });
-    };
-
-    this.sendConfirmationEmail = function(){
-        $log.debug("> Will send email to ",that.candidate);
-        if(that.candidate.appointmentStatus.indexOf('Pending')>=0 )
-        {
-
-            BookingCandidates.sendConfirmationEmail({id:that.candidate.candidateId,type:"pending"},function(rs){
-                $log.debug(">>sendConfirmationEmail",rs);
-                if(rs.sentEmailStatus.indexOf('Error')>=0){
-                    toastr.error(rs.sentEmailStatus, 'Error');
-                    $log.error("> Fail to send email to ",candidate);
-                }else{
-                    toastr.success(rs.sentEmailStatus, '');
-                    $log.debug("> Send email successfullt ",rs.sentEmailStatus);
-                }
-
-            });
-
-        }else{
-            BookingCandidates.sendConfirmationEmail({id:that.candidate.candidateId,type:"new"},function(rs){
-                $log.debug(">>sendConfirmationEmail",rs);
-                if(rs.sentEmailStatus.indexOf('Error')>=0){
-                    toastr.error(rs.sentEmailStatus, 'Error');
-                    $log.error("> Fail to send email to ",candidate);
-                }else{
-                    toastr.success(rs.sentEmailStatus, '');
-                    $log.debug("> Send email successfullt ",rs.sentEmailStatus);
-                }
-
-            });
-        }
-
-    };
-
-    this.save = function (isSendEmail) {
-        that.isSubmitted = true;
-        var isSendConfirmationEmail = false;
-        if((!that.candidate.appointmentTime && that.calendars.length > 0 && ( that.calendar == undefined || that.calendar == null)) && isSendEmail) {
-            toastr.error("Please select the calendar", 'Error');
-        }else{
-            if(that.form.$valid){
-                var updateValue = {};
-
-                if(prevStatus.indexOf('Pending')>=0 && (that.calendar || that.apptTimeAfterConvert)){
-                    updateValue.appointmentStatus = 'Confirmed';
-                    that.candidate.appointmentStatus = 'Confirmed';
-                    isSendConfirmationEmail = true;
-                }
-
-                if(that.calendar){
-                    if( (prevStatus.indexOf('Confirmed')>=0 || prevStatus.indexOf('Reschedule') >= 0) && (that.calendar.calId != candidate.calendarId)){
-                        updateValue.appointmentStatus = 'Reschedule';
-                        that.candidate.appointmentStatus = 'Reschedule';
-                        isSendConfirmationEmail = true;
-                    }
-                }else{
-                    if( (prevStatus.indexOf('Confirmed')>=0 || prevStatus.indexOf('Reschedule') >= 0) && that.apptTimeAfterConvert && that.isAppointmentTimeChange){
-                        updateValue.appointmentStatus = 'Reschedule';
-                        that.candidate.appointmentStatus = 'Reschedule';
-                        isSendConfirmationEmail = true;
-                    }
-                }
-
-
-
-
-                updateValue.appointmentNotes = that.candidate.appointmentNotes;
-                updateValue.siteId = that.site.id;
-                updateValue.siteName = that.site.siteName;
-                //If WA and Eastern stated => do not send email automatically
-                if(updateValue.siteName.indexOf('Eastern States') >= 0 || updateValue.siteName.indexOf('WA') >= 0 || !isSendEmail){
-                    isSendConfirmationEmail = false;
-                }
-
-                if(that.state){
-                    updateValue.stateName = that.state.stateName;
-                    updateValue.stateId = that.state.id;
-                }else{
-                    updateValue.stateName = null;
-                    updateValue.stateId = null;
-                }
-
-                if(that.suburb){
-                    updateValue.suburbName = that.suburb.suburbName;
-                    updateValue.suburbId = that.suburb.id;
-                }else{
-                    updateValue.suburbName = null;
-                    updateValue.suburbId = null;
-                }
-
-                console.log("that.calendar = ",that.calendar);
-                if(that.calendar){
-                    updateValue.appointmentTime =  moment(mysqlDate(that.calendar.fromTime)).format("YYYY-MM-DD hh:mm");
-                    updateValue.calendarId = that.calendar.calId;
-                }else{
-
-                    if(that.apptTimeAfterConvert){
-                        //in case there is no calendar list i.e: in VIC,.....
-                        //admin enter the appt time directly
-                        updateValue.appointmentTime =  moment(that.apptDateAfterConvert).format("YYYY-MM-DD") + " " + moment(that.apptTimeAfterConvert).format("hh:mm");
-                    }
-
-                }
-
-                $log.debug("will update",updateValue);
-                BookingCandidates.update({where:{candidateId:that.candidate.candidateId}},updateValue,function(res,header){
-                        $log.debug('updated successfully');
-                        toastr.success('Successfully updated. The booking list will refresh shortly !');
-                        that.form.$setPristine();
-                        //$uibModalInstance.close(that.BookingCandidate);
-                        if(isSendConfirmationEmail){
-                            that.sendConfirmationEmail();
-                        }
-
-
-                        CompanyFactory.refreshBookingList(function(data){
-                            toastr.success('The booking list has been refresh');
-                            sharedService.prepForBroadcast("Refresh booking list successfully");
-                        });
-                    },
-                    function(err){
-                        $log.error('updated failed',err);
-                        toastr.error("Fail to update", 'Error');
-                    });
-            }
-        }
-    };
-
-    this.cancel = function () {
-        $uibModalInstance.dismiss('cancel');
-    };
-
-    this.canCancelAppt = function(){
-        if( that.candidate.appointmentStatus.indexOf('Confirmed') >= 0 ||  that.candidate.appointmentStatus.indexOf('Reschedule') >= 0){
-            return true;
-        }else{
-            return false;
-        }
-    }
-
-    this.cancelAppt = function () {
-                    //open modal to enter new candidate
-            $uibModalInstance.dismiss('cancel');
-            var modalInstance = $uibModal.open({
-                templateUrl: 'modules/Bookings/views/booking.ConfirmToCancelAppt.html',
-                controller: 'ConfirmToCancelApptCtrl',
-                controllerAs: 'ConfirmToCancelApptCtrl'
-            });
-
-            modalInstance.result.then(function (position) {
-                var updateValue = {};
-
-                updateValue.appointmentNotes = that.candidate.appointmentNotes;
-                updateValue.appointmentStatus = 'Cancel';
-
-                updateValue.calendarId = -1;
-
-                $log.debug("will cancel the booking ",updateValue);
-
-                BookingCandidates.update({where:{candidateId:that.candidate.candidateId}},updateValue,function(res,header){
-                        $log.debug('updated successfully');
-                        toastr.success('Successfully updated. The booking list will refresh shortly !');
-                        //$uibModalInstance.close(that.BookingCandidate);
-                        that.sendConfirmationEmail();
-                        CompanyFactory.refreshBookingList(function(data){
-                            toastr.success('The booking list has been refresh');
-                            sharedService.prepForBroadcast("Refresh booking list successfully");
-                        });
-                    },
-                    function(err){
-                        $log.error('updated failed',err);
-                        toastr.error("Fail to update", 'Error');
-                    });
-            }, function () {
-                $log.info('Modal dismissed at: ' + new Date());
-            });
-    };
-
-    function getCalendar(){
-        $log.debug("will getCalendar....",that.user);
-        //Plus toDate one date before query calendar because of time
-        var fromDate = new Date();
-        var toDate = new Date();
-        toDate.setDate(toDate.getDate() + 60);
-        RedimedSiteFactory.getCalendar(that.site.id,fromDate,toDate,function(data){
-            $log.debug("finished getCalendar....", that.user);
-            console.log(" RedimedSiteFactory.getCalendar = ",data)
-            that.calendars = data;
-            that.calendar =  that.calendars[_.findIndex(that.calendars, 'calId', that.candidate.calendarId)];
-
-            if(that.calendars.length > 0){
-                that.isCalendarList = true;
-                that.isAppointmentTime = false;
-            }else{
-                that.isCalendarList = false;
-                that.isAppointmentTime = true;
-            }
-
-
-            //if user is not an admin, not allow to select time and date ; only select in calendar list
-            if(that.user.userType.indexOf("RediMed") == -1 ){
-                // this is a Redimed user, will go booking first
-                that.isAppointmentTime = false;
-            }
-
-            console.log("that.calendars = ",that.calendars,"that.calendar = ", that.calendar);
-        });
-    };
-
-    this.isAdmin = function(){
-        return that.user.userType.indexOf("RediMed") >= 0 ? true :false;
-    };
-
-}]);
-
-/**
- * Created by phuongnguyen on 27/11/15.
- */
-angular.module('ocsApp.Bookings')
-    .controller('ConfirmToCancelApptCtrl',['$uibModalInstance', function ($uibModalInstance) {
-
-        this.ok = function () {
-            $uibModalInstance.close({});
-        };
-
-        this.cancel = function () {
-            $uibModalInstance.dismiss('cancel');
-        };
-    }]);
-
-
 /**
  * Created by phuongnguyen on 27/11/15.
  */

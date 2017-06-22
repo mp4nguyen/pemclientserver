@@ -2,28 +2,17 @@
  * Created by phuongnguyen on 18/01/16.
  */
 
-var getPort = function(){
-    console.log("Current length port is : " +(window.location.port.length   + ""));
-    if(window.location.port.length ==0)
-    {
-        console.log('api port = 443');
-        return 443;
-    }else{
-        console.log('api port = 2000');
-        return 8181;
-    }
-};
 
 angular
     .module('helper', [
     ])
     .factory("apiServerUrl",function() {
         // "printStackTrace" is a global object.
-        return "https://medicalbookings.redimed.com.au:"+getPort()+"/api";
+        return apiUrl + ":"+getPort()+"/api";
     })
     .factory("serverUrl",function() {
         // "printStackTrace" is a global object.
-        return "https://medicalbookings.redimed.com.au:"+getPort();
+        return apiUrl + ":"+getPort();
     })
     //  Fingerprint library is the global scope, but we want use as service in angular
     // this is used to indentify the computer of the user

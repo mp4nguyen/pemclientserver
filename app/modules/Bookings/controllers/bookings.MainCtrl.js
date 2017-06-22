@@ -2,9 +2,8 @@
  * Created by phuongnguyen on 27/11/15.
  */
 angular.module('ocsApp.Bookings')
-    .controller('BookingsMainCtrl',['uiGridConstants','$scope','$window','CompanyFactory','$uibModal','$cookieStore','$log','mysqlDate','mySharedService','Packages','$q', function (uiGridConstants,$scope,$window,CompanyFactory,$uibModal,$cookieStore,$log, mysqlDate,sharedService,Packages,$q) {
+    .controller('BookingsMainCtrl',['uiGridConstants','$scope','$window','CompanyFactory','BookingFactory','$uibModal','$cookieStore','$log','mysqlDate','mySharedService','Packages','$q', function (uiGridConstants,$scope,$window,CompanyFactory,BookingFactory,$uibModal,$cookieStore,$log, mysqlDate,sharedService,Packages,$q) {
         $log = $log.getInstance("ocsApp.Bookings.BookingsMainCtrl");
-        $log.debug("I am booking list controller.");
 
         var that = this;
         this.window = $window;
@@ -31,44 +30,21 @@ angular.module('ocsApp.Bookings')
 
         this.openPdf = function(entity,isDownload) {
           //console.log(" entity.packageId = ",entity.packageId);
-          var package = _.where(packages, {id:entity.packageId})[0];
 
-          function getPackage(packId) {
-            // perform some asynchronous operation, resolve or reject the promise when appropriate.
-            return $q(function(resolve, reject) {
+          var promise = BookingFactory.getPackage(packages,entity.packageId);
 
-              var package = _.where(packages, {id:packId})[0];
 
-              if(package){
-                  printForm(that.window,entity,package);
-                  resolve(package);
-              }else{
-                  Packages.findById({id:packId},function(res){
-                      //console.log("finded the package = ",res);
-                      resolve(res);
-                  },function(err){
-                      reject(err);
-                  });
-              }
-            });
-          }
-
-          var promise = getPackage(entity.packageId);
-
-          promise.then(function(greeting) {
-              printForm(entity,greeting);
+          promise.then(function(package) {
+              printForm(entity,package);
           }, function(reason) {
               printForm(entity,'');
               $log.error('Failed: ' + reason);
           });
 
-
-
-
       var printForm = function(entity,package){
           var packageView = "";
           var pdfPackageView = [];
-          $log.debug(" printBookingForm has package = ",package);
+          $log.debug(" printBookingForm has package ");
 
           for(var i in package.AssessmentHeaders){
               var header = package.AssessmentHeaders[i];
@@ -83,7 +59,7 @@ angular.module('ocsApp.Bookings')
               pdfPackageView.push(pdfAss);
           }
 
-          $log.debug(" pdf printBookingForm has package view = ",pdfPackageView);
+          $log.debug(" pdf printBookingForm has package view  ");
 
           var siteName = entity.siteName;
           if(entity.stateName){
@@ -165,7 +141,6 @@ angular.module('ocsApp.Bookings')
             }
           };
 
-          $log.debug("Print candidate pdf form",docDefinition);
           if(isDownload){
             pdfMake.createPdf(docDefinition).download();
           }else{
@@ -173,7 +148,7 @@ angular.module('ocsApp.Bookings')
           }
 
        };
-     }
+      }
 
        this.downloadPdf = function() {
          pdfMake.createPdf(docDefinition).download();
@@ -245,8 +220,9 @@ angular.module('ocsApp.Bookings')
         this.adminEditBooking = function(entity){
 
             var modalInstance = $uibModal.open({
-                animation: true,
+                animation: false,
                 backdrop: 'static',
+                windowTopClass : 'modal1',
                 templateUrl: 'modules/Bookings/views/bookings.adminEditBooking.html',
                 controller: 'AdminEditBookingCtrl',
                 controllerAs: 'AdminEditBookingCtrl',
@@ -258,163 +234,19 @@ angular.module('ocsApp.Bookings')
 
             modalInstance.result.then(function (rs) {
                 //console.log(rs);
-                $log.debug('Modal closed at: ' + new Date());
+
             }, function (rs) {
                 //console.log(rs);
-                $log.debug('Modal dismissed at: ' + new Date());
+
             });
         }
 
 
         this.printBookingForm = function(entity){
-            //console.log(" entity.packageId = ",entity.packageId);
-            var package = _.where(packages, {id:entity.packageId})[0];
-
-            function getPackage(packId) {
-              // perform some asynchronous operation, resolve or reject the promise when appropriate.
-              return $q(function(resolve, reject) {
-
-                var package = _.where(packages, {id:packId})[0];
-
-                if(package){
-                    printForm(that.window,entity,package);
-                    resolve(package);
-                }else{
-                    Packages.findById({id:packId},function(res){
-                        //console.log("finded the package = ",res);
-                        resolve(res);
-                    },function(err){
-                        reject(err);
-                    });
-                }
-              });
-            }
-
-            var promise = getPackage(entity.packageId);
-
-            promise.then(function(greeting) {
-                printForm(that.window,entity,greeting);
-            }, function(reason) {
-                printForm(that.window,entity,'');
-                $log.error('Failed: ' + reason);
-            });
-
-
+            BookingFactory.viewBookingDetail(packages,entity);
         };
 
-        var printForm = function(w,entity,package){
-            var packageView = "";
-            var pdfPackageView = [];
-            $log.debug(" printBookingForm has package = ",package);
 
-
-
-            for(var i in package.AssessmentHeaders){
-                var header = package.AssessmentHeaders[i];
-                packageView = packageView + "<b>" + header.headerName + "</b><br>";
-                pdfPackageView.push({text:header.headerName,bold:true});
-                var pdfAss = [];
-                for(var j in header.Assessments){
-                    var ass = header.Assessments[j];
-                    packageView = packageView + " - " + ass.assName + "<br>";
-                    pdfAss.push(" - " +ass.assName);
-                }
-                pdfPackageView.push(pdfAss);
-            }
-
-            $log.debug(" printBookingForm has package view = ",packageView);
-
-            var siteName = entity.siteName;
-            if(entity.stateName){
-                siteName = siteName + ' - ' + entity.stateName;
-            }
-            if(entity.suburbName){
-                siteName = siteName + ' - ' + entity.suburbName;
-            }
-
-            var templateHTML =
-                '<table cellspacing="0" cellpadding="4" align="center" style="border-collapse: collapse"> \n' +
-                '<tbody><tr><td colspan="4" bgcolor="Silver"><b>Booking Details</b></td></tr> \n' +
-                '<tr> \n' +
-                '<td style="border:1px solid gray">Company</td> \n' + '<td style="border:1px solid gray" colspan="3">'+entity.fatherCompanyName+'</td> \n' +
-                '</tr> \n' +
-                '<tr> \n' +
-                '<td style="border:1px solid gray">Subsidiary</td> \n' + '<td style="border:1px solid gray" colspan="3">'+entity.companyName+'</td> \n' +
-                '</tr> \n' +
-                '<tr> \n' +
-                '<td style="border:1px solid gray">PO Number</td> \n' + '<td style="border:1px solid gray" colspan="3">'+entity.poNumber+'</td> \n' +
-                '</tr> \n' +
-                '<tr> \n' +
-                '<td style="border:1px solid gray">Project Identification</td> \n' +'<td style="border:1px solid gray" colspan="3">'+entity.projectIdentofication+'</td> \n' +
-                '</tr> \n' +
-                '<tr> \n' +
-                '<td style="border:1px solid gray">Booking Person</td> \n' +'<td style="border:1px solid gray" colspan="3">'+entity.bookingPerson+'</td> \n' +
-                '</tr> \n' +
-                '<tr> \n' +
-                '<td style="border:1px solid gray">Booking Person Contact Number</td> \n' +'<td style="border:1px solid gray" colspan="3">'+entity.contactNumber+'</td> \n' +
-                '</tr> \n' +
-                '<tr> \n' +
-                '<td style="border:1px solid gray">Results to</td> \n' +'<td style="border:1px solid gray" colspan="3">'+entity.resultEmail+'</td> \n' +
-                '</tr> \n' +
-                '<tr> \n' +
-                '<td style="border:1px solid gray">Invoices to</td> \n' +'<td style="border:1px solid gray" colspan="3">'+entity.invoiceEmail+'</td> \n' +
-                '</tr> \n' +
-                '<tr> \n' +
-                '<td style="border:1px solid gray">Comments</td> \n' +'<td style="border:1px solid gray" colspan="3">'+entity.comments+'</td> \n' +
-                '</tr> \n' +
-
-                '<tr><td colspan="4" bgcolor="Silver"><b>Worker Details</b></td></tr> \n' +
-                '<tr> \n' +
-                '<td style="border:1px solid gray">Name</td> \n' +
-                '<td style="border:1px solid gray">'+entity.candidatesName+'</td> \n' +
-                '<td style="border:1px solid gray">DOB</td> \n' +
-                '<td style="border:1px solid gray">'+ dateformat(entity.dob,"DD/MM/YYYY")+'</td> \n' +
-                '</tr> \n' +
-                '<tr> \n' +
-                '<td style="border:1px solid gray">Phone</td> \n' +
-                '<td style="border:1px solid gray">'+entity.phone+'</td> \n' +
-                '<td style="border:1px solid gray">Email</td> \n' +
-                '<td style="border:1px solid gray">'+entity.email+'</td> \n' +
-                '</tr> \n' +
-                '<tr> \n' +
-                '<td style="border:1px solid gray">Position applied for</td> \n' +
-                '<td style="border:1px solid gray" colspan="3">'+entity.position+'</td> \n' +
-                '</tr> \n' +
-                '<tr><td colspan="4" bgcolor="Silver"><b>Paperwork</b></td></tr> \n' +
-                '<tr> \n' +
-                '<td style="border:1px solid gray" colspan="4"> \n' +
-                ''+ entity.paperwork +'</td></tr> \n' +
-
-                '<tr><td colspan="4" bgcolor="Silver"><b>Assessment Details</b></td></tr> \n' +
-                '<tr> \n' +
-                '<td style="border:1px solid gray" colspan="4"> \n' +
-                ''+ packageView +'</td></tr> \n' +
-
-
-                '<tr><td colspan="4" bgcolor="Silver"><b>Appointment Details</b></td></tr> \n' +
-                '<tr> \n' +
-                '<td style="border:1px solid gray">Appointment location</td> \n' +
-                '<td style="border:1px solid gray" colspan="3">' + siteName + '</td> \n' +
-                '</tr> \n' +
-                '<tr> \n' +
-                '<td style="border:1px solid gray">Appointment time</td> \n' +
-                '<td style="border:1px solid gray" colspan="3">'+ dateformat(entity.appointmentTime,"DD/MM/YYYY HH:mm")+'</td> \n' +
-                '</tr> \n' +
-                '<tr> \n' +
-                '<td style="border:1px solid gray">Appointment Notes</td> \n' +
-                '<td style="border:1px solid gray" colspan="3">'+entity.appointmentNotes+'</td> \n' +
-                '</tr> \n' +
-                '<tr> \n' +
-                '<td style="border:1px solid gray">Appointment status</td> \n' +
-                '<td style="border:1px solid gray" colspan="3">'+entity.appointmentStatus+'</td> \n' +
-                '</tr> \n' +
-                '</tbody></table>';
-
-            $log.debug("Print candidate form",templateHTML);
-            var OpenWindow = w.open('modules/Bookings/views/bookingform.html', '','');
-            OpenWindow.dataFromParent = templateHTML;
-
-        };
 
         function checkStart(term, value, row, column) {
 
@@ -440,7 +272,7 @@ angular.module('ocsApp.Bookings')
         }
 
 
-        var rowtpl = '<div ng-class="{ red: row.entity.issendemail == null }"><div ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader }" ui-grid-cell></div></div>';
+        var rowtpl = '<div ng-class="{ red: row.entity.issendemail == null || row.entity.headerCandidateId == null }"><div ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader }" ui-grid-cell></div></div>';
 
         this.gridOptions = {
             enableSorting: true,

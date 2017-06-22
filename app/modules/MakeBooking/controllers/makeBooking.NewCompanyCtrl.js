@@ -1,8 +1,8 @@
 /**
  * Created by phuongnguyen on 16/12/15.
  */
-angular.module('ocsApp.MakeBooking').controller('NewCompanyCtrl',['$uibModalInstance','$log',function ( $uibModalInstance,$log) {
-    $log = $log.getInstance("ocsApp.MakeBooking.NewCompanyCtrl");
+angular.module('ocsApp.MakeBooking').controller('NewCompanyAtMakingBookingCtrl',['$uibModalInstance','$log',function ( $uibModalInstance,$log) {
+    $log = $log.getInstance("ocsApp.MakeBooking.NewCompanyAtMakingBookingCtrl");
     $log.debug("NewCompanyCtrl is running...");
     var that = this;
     this.company = {};

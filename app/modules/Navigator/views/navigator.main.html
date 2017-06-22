@@ -8,8 +8,8 @@
 <!-- BEGIN LOGO -->
 <div class="page-logo">
     <a>
-        <img src="../assets/global/img/Logo REDIMED 128px.png" style="height: 60x;" alt="logo" class="logo-default">
-        <img src="../assets/global/img/kaja-logo.png" style="height: 40px;" alt="logo" class="logo-default">
+        <img src="../assets/global/img/Logo REDIMED 128px.png" style="height: 60x;" alt="logo" class="logo-default" ng-show="NavigatorMainCtrl.isRedimed">
+        <img src="../assets/global/img/kaja-logo.png" style="height: 40px;" alt="logo" class="logo-default" ng-show="NavigatorMainCtrl.isKaja">
     </a>
 </div>
 <!-- END LOGO -->
@@ -107,29 +107,32 @@
             <span class="arrow"></span>
         </a>
     </li>
-    <li class="menu-dropdown classic-menu-dropdown " ng-show="NavigatorMainCtrl.isSetting()">
-        <a  ui-sref="navigator.settings">
-            Settings
+    <li class="menu-dropdown classic-menu-dropdown" ng-show="NavigatorMainCtrl.isSetting()">
+        <a href="javascript:;"> Settings
             <span class="arrow"></span>
         </a>
-    </li>
-    <li class="menu-dropdown classic-menu-dropdown " ng-show="NavigatorMainCtrl.isReports()">
-        <a  ui-sref="navigator.bookingreports">
-            Reports
-            <span class="arrow"></span>
-        </a>
-    </li>
-    <li class="menu-dropdown classic-menu-dropdown " ng-show="NavigatorMainCtrl.isReports()">
-        <a  ui-sref="navigator.companies">
-            Companies
-            <span class="arrow"></span>
-        </a>
-    </li>
-    <li class="menu-dropdown classic-menu-dropdown " ng-show="NavigatorMainCtrl.isReports()">
-        <a  ui-sref="navigator.sites">
-            Sites
-            <span class="arrow"></span>
-        </a>
+        <ul class="dropdown-menu pull-left">
+            <li class=" active"  ng-show="NavigatorMainCtrl.isSetting()">
+                <a ui-sref="navigator.settings" class="nav-link">
+                    Settings
+                </a>
+            </li>
+            <li class=" " ng-show="NavigatorMainCtrl.isReports()">
+              <a ui-sref="navigator.bookingreports" >
+                Reports
+              </a>
+            </li>
+            <li class=" " ng-show="NavigatorMainCtrl.isReports()">
+              <a ui-sref="navigator.companies" >
+                Companies
+              </a>
+            </li>
+            <li class=" " ng-show="NavigatorMainCtrl.isReports()">
+              <a ui-sref="navigator.scheduler" >
+                Scheduler
+              </a>
+            </li>
+        </ul>
     </li>
 </ul>
 </div>
